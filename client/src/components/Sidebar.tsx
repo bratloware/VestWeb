@@ -1,0 +1,102 @@
+import { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  LayoutDashboard, HelpCircle, ClipboardList, Play,
+  Calendar, BookOpen, BarChart2, Users, MessageCircle,
+  Settings, LogOut, Menu, X, Brain
+} from 'lucide-react';
+import { AppDispatch, RootState } from '../store/store';
+import { logoutThunk } from '../slices/authSlice';
+import './Sidebar.css';
+
+const navItems = [
+  { label: 'Home', icon: LayoutDashboard, to: '/classroom/home' },
+  { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
+  { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
+  { label: 'Sinaflix', icon: Play, to: '/sinaflix' },
+  { label: 'Calendário', icon: Calendar, to: '/classroom/review-calendar' },
+  { label: 'Sala de Estudos', icon: BookOpen, to: '/classroom/study-room' },
+  { label: 'Métricas', icon: BarChart2, to: '/classroom/metrics' },
+  { label: 'Comunidade', icon: Users, to: '/classroom/community' },
+  { label: 'Mentoria', icon: MessageCircle, to: '/classroom/mentoring' },
+  { label: 'Configurações', icon: Settings, to: '/classroom/settings' },
+];
+
+const Sidebar = () => {
+  const [open, setOpen] = useState(false);
+  const { student } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await dispatch(logoutThunk());
+    navigate('/login');
+  };
+
+  const getInitials = (name: string) => {
+    return name ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : 'S';
+  };
+
+  return (
+    <>
+      {/* Overlay for mobile */}
+      {open && <div className="sidebar-overlay" onClick={() => setOpen(false)} />}
+
+      {/* Mobile toggle */}
+      <button className="sidebar-mobile-toggle" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+        {open ? <X size={22} /> : <Menu size={22} />}
+      </button>
+
+      <aside className={`sidebar${open ? ' open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-logo">
+            <div className="sidebar-logo-icon">
+              <Brain size={20} />
+            </div>
+            <span className="sidebar-logo-text">Sinapse</span>
+          </div>
+        </div>
+
+        {student && (
+          <div className="sidebar-user">
+            <div className="sidebar-avatar">
+              {student.avatar_url ? (
+                <img src={student.avatar_url} alt={student.name} />
+              ) : (
+                getInitials(student.name)
+              )}
+            </div>
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name">{student.name}</div>
+              <div className="sidebar-user-role">{student.role}</div>
+            </div>
+          </div>
+        )}
+
+        <nav className="sidebar-nav">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => `sidebar-nav-item${isActive ? ' active' : ''}`}
+              onClick={() => setOpen(false)}
+            >
+              <item.icon size={18} />
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <button className="sidebar-logout" onClick={handleLogout}>
+            <LogOut size={18} />
+            <span>Sair</span>
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+};
+
+export default Sidebar;

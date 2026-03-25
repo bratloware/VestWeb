@@ -1,0 +1,59 @@
+import { Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
+import LandingPage from './pages/LandingPage/LandingPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import SelectPlatform from './pages/SelectPlatform/SelectPlatform';
+import Sinaflix from './pages/Sinaflix/Sinaflix';
+import Home from './pages/Home/Home';
+import Questions from './pages/Questions/Questions';
+import Simulations from './pages/Simulations/Simulations';
+import ReviewCalendar from './pages/ReviewCalendar/ReviewCalendar';
+import StudyRoom from './pages/StudyRoom/StudyRoom';
+import Metrics from './pages/Metrics/Metrics';
+import Community from './pages/Community/Community';
+import Mentoring from './pages/Mentoring/Mentoring';
+import Settings from './pages/Settings/Settings';
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/select-platform" element={
+        <ProtectedRoute><SelectPlatform /></ProtectedRoute>
+      } />
+      <Route path="/sinaflix" element={
+        <ProtectedRoute><Sinaflix /></ProtectedRoute>
+      } />
+      <Route path="/classroom/home" element={
+        <ProtectedRoute><Home /></ProtectedRoute>
+      } />
+      <Route path="/classroom/questions" element={
+        <ProtectedRoute><Questions /></ProtectedRoute>
+      } />
+      <Route path="/classroom/simulations" element={
+        <ProtectedRoute><Simulations /></ProtectedRoute>
+      } />
+      <Route path="/classroom/review-calendar" element={
+        <ProtectedRoute><ReviewCalendar /></ProtectedRoute>
+      } />
+      <Route path="/classroom/study-room" element={
+        <ProtectedRoute><StudyRoom /></ProtectedRoute>
+      } />
+      <Route path="/classroom/metrics" element={
+        <ProtectedRoute><Metrics /></ProtectedRoute>
+      } />
+      <Route path="/classroom/community" element={
+        <ProtectedRoute><Community /></ProtectedRoute>
+      } />
+      <Route path="/classroom/mentoring" element={
+        <ProtectedRoute><Mentoring /></ProtectedRoute>
+      } />
+      <Route path="/classroom/settings" element={
+        <ProtectedRoute><Settings /></ProtectedRoute>
+      } />
+    </Routes>
+  );
+}
+
+export default App;

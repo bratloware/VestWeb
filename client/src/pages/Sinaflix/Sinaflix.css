@@ -1,0 +1,331 @@
+.sinaflix {
+  min-height: 100vh;
+  background: #141414;
+  color: white;
+  display: flex;
+}
+
+.sinaflix-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  overflow-x: hidden;
+}
+
+.sinaflix-header {
+  background: linear-gradient(to bottom, rgba(20,20,20,0.95), transparent);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 16px 5%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.sinaflix-header h1 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #e50914;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.sinaflix-search {
+  flex: 1;
+  min-width: 200px;
+  max-width: 380px;
+  position: relative;
+}
+
+.sinaflix-search input {
+  width: 100%;
+  padding: 9px 36px 9px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius);
+  color: white;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.sinaflix-search input:focus {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.3);
+  outline: none;
+}
+
+.sinaflix-search input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.sinaflix-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 8px 5% 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-wrap: wrap;
+}
+
+.sinaflix-tab {
+  padding: 7px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.7);
+}
+
+.sinaflix-tab:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.sinaflix-tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+.sinaflix-body {
+  padding: 24px 5%;
+}
+
+.sinaflix-row {
+  margin-bottom: 40px;
+}
+
+.sinaflix-row-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+  padding-left: 2px;
+}
+
+.sinaflix-videos-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+
+.sinaflix-video-card {
+  flex-shrink: 0;
+  width: 220px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+  background: #1e1e1e;
+}
+
+.sinaflix-video-card:hover {
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.sinaflix-video-thumb {
+  width: 220px;
+  height: 124px;
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.sinaflix-video-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sinaflix-video-thumb-icon {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #141414;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.sinaflix-video-card:hover .sinaflix-video-thumb-icon {
+  opacity: 1;
+}
+
+.sinaflix-video-info {
+  padding: 10px 12px;
+}
+
+.sinaflix-video-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sinaflix-video-topic {
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Modal */
+.sinaflix-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(4px);
+}
+
+.sinaflix-modal {
+  background: #1e1e1e;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 820px;
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.sinaflix-modal-video {
+  position: relative;
+  padding-top: 56.25%;
+}
+
+.sinaflix-modal-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.sinaflix-modal-body {
+  padding: 24px;
+}
+
+.sinaflix-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.sinaflix-modal-btn {
+  padding: 9px 20px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sinaflix-modal-btn-primary {
+  background: white;
+  color: #141414;
+}
+
+.sinaflix-modal-btn-primary:hover {
+  background: #e0e0e0;
+}
+
+.sinaflix-modal-btn-secondary {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.sinaflix-modal-btn-secondary:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.sinaflix-modal-btn-fav {
+  background: transparent;
+  color: #fbbf24;
+  border: 1px solid rgba(251,191,36,0.4);
+}
+
+.sinaflix-modal-btn-fav:hover {
+  background: rgba(251,191,36,0.1);
+}
+
+.sinaflix-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.sinaflix-modal-close:hover {
+  background: rgba(0,0,0,0.9);
+}
+
+.sinaflix-modal-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.sinaflix-modal-meta {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 16px;
+}
+
+.sinaflix-modal-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+}
+
+.sinaflix-loading {
+  text-align: center;
+  padding: 80px;
+  color: rgba(255,255,255,0.4);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .sinaflix-content {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(psql -U postgres -c \"SELECT version\\(\\);\")",
+      "Bash(cmd.exe /c \"psql -U postgres -c \"\"SELECT version\\(\\);\"\"\")",
+      "Bash(cmd.exe /c \"where psql 2>&1 & pg_isready 2>&1\")",
+      "Bash(powershell -Command \"Get-Service -Name ''*postgres*'' -ErrorAction SilentlyContinue | Select-Object Name, Status; where.exe psql 2>&1; where.exe pg_isready 2>&1\")",
+      "Bash(powershell -Command \"Get-ChildItem ''C:\\\\Program Files\\\\PostgreSQL'' -Recurse -Filter ''psql.exe'' -ErrorAction SilentlyContinue | Select-Object FullName\")",
+      "Bash(PGPASSWORD=\"123456LFta*\" node src/db/seed.js)"
+    ]
+  }
+}
