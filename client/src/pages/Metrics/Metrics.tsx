@@ -48,7 +48,7 @@ const Metrics = () => {
     <div className="metrics-page">
       <Sidebar />
       <main className="page-content">
-        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Metricas de Desempenho</h1>
+        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Métricas de Desempenho</h1>
 
         {/* Summary cards */}
         <div className="metrics-summary">

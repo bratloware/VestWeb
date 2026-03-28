@@ -27,35 +27,44 @@ const LandingHeader = () => {
   return (
     <>
       <header className={`landing-header${scrolled ? ' scrolled' : ''}`}>
-        <Link to="/" className="landing-header-logo">
-          <div className="landing-header-logo-icon">
-            <Brain size={22} />
-          </div>
-          <span className="landing-header-logo-text">Sinapse</span>
-        </Link>
+        {/* Bloco 1: Lado Esquerdo (Logo) */}
+        <div className="landing-header-left">
+          <Link to="/" className="landing-header-logo">
+            <div className="landing-header-logo-icon">
+              <Brain size={22} />
+            </div>
+            <span className="landing-header-logo-text">THE BEST</span>
+          </Link>
+        </div>
 
-        <nav>
+        {/* Bloco 2: Centro (Apenas os links de texto) */}
+        <nav className="landing-header-nav-container">
           <ul className="landing-header-nav">
             {navLinks.map(link => (
               <li key={link.href}>
                 <a href={link.href}>{link.label}</a>
               </li>
             ))}
-            <li>
-              <Link to="/login" className="landing-header-cta">Acessar Espaço Aluno</Link>
-            </li>
           </ul>
         </nav>
 
-        <button
-          className="landing-header-hamburger"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Bloco 3: Lado Direito (Botão Verde Água e Hamburger) */}
+        <div className="landing-header-right">
+          <Link to="/login" className="landing-header-cta">
+            Acessar Espaço Aluno
+          </Link>
+          
+          <button
+            className="landing-header-hamburger"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </header>
 
+      {/* Menu Mobile - Mantém a estrutura original para não quebrar funcionalidade */}
       <div className={`landing-mobile-menu${menuOpen ? ' open' : ''}`}>
         {navLinks.map(link => (
           <a key={link.href} href={link.href} onClick={handleNavClick}>{link.label}</a>

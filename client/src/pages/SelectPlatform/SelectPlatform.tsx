@@ -15,11 +15,11 @@ const SelectPlatform = () => {
           <div className="select-platform-logo-icon">
             <Brain size={24} />
           </div>
-          <span className="select-platform-logo-text">Sinapse</span>
+          <span className="select-platform-logo-text">THE BEST</span>
         </div>
 
-        <h1>Ola, {student?.name?.split(' ')[0] || 'Aluno'}!</h1>
-        <p>Escolha por onde voce quer comecar hoje</p>
+        <h1>Olá, {student?.name?.split(' ')[0] || 'Aluno'}!</h1>
+        <p>Escolha por onde você quer comecar hoje.</p>
 
         <div className="select-platform-cards">
           <Link to="/sinaflix" className="platform-card">
@@ -28,7 +28,7 @@ const SelectPlatform = () => {
             </div>
             <div className="platform-card-badge">Videoaulas</div>
             <h2>Sinaflix</h2>
-            <p>Assista as melhores videoaulas dos nossos professores, organizadas por disciplina e topico.</p>
+            <p>Assista as melhores vídeoaulas dos nossos professores, organizadas por disciplina e tópico.</p>
             <div className="platform-card-btn">Acessar Sinaflix</div>
           </Link>
 
@@ -39,8 +39,8 @@ const SelectPlatform = () => {
             <div className="platform-card-badge" style={{ background: 'rgba(15,139,141,0.2)', color: '#4dd8da' }}>
               Sala de Aula
             </div>
-            <h2>Espaco Aluno</h2>
-            <p>Questoes, simulados, calendario de revisao, mentoria, comunidade e muito mais.</p>
+            <h2>Espaço Aluno</h2>
+            <p>Questões, simulados, calendário de revisão, mentoria, comunidade e muito mais.</p>
             <div className="platform-card-btn">Acessar Espaco Aluno</div>
           </Link>
         </div>

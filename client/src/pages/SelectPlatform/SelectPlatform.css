@@ -1,6 +1,9 @@
 .select-platform {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0d1b2a 0%, #1a1a2e 50%, #0f3460 100%);
+  background-image: url('../../assets/images/bg-select-platform.jpg');
+  background-size: cover;  
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,9 +15,7 @@
 .select-platform-bg {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(circle at 30% 50%, rgba(15,139,141,0.15) 0%, transparent 50%),
-    radial-gradient(circle at 70% 30%, rgba(15,52,96,0.2) 0%, transparent 40%);
+  background: rgba(13, 27, 42, 0.7);
   pointer-events: none;
 }
 
@@ -52,15 +53,15 @@
 }
 
 .select-platform-inner h1 {
-  font-size: clamp(24px, 4vw, 36px);
+  font-size: clamp(28px, 4vw, 36px);
   font-weight: 800;
   color: white;
   margin-bottom: 8px;
 }
 
 .select-platform-inner p {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 48px;
 }
 
@@ -71,7 +72,7 @@
 }
 
 .platform-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(9, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   padding: 40px 36px;

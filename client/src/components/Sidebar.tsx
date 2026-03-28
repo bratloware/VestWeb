@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate,} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BookOpen, BarChart2, Users, MessageCircle,
-  Settings, LogOut, Menu, X, Brain
+  Settings, LogOut, Menu, X, Brain,
 } from 'lucide-react';
 import { AppDispatch, RootState } from '../store/store';
 import { logoutThunk } from '../slices/authSlice';
@@ -50,12 +50,12 @@ const Sidebar = () => {
 
       <aside className={`sidebar${open ? ' open' : ''}`}>
         <div className="sidebar-header">
-          <div className="sidebar-logo">
+          <Link to={"/"} className="sidebar-logo">
             <div className="sidebar-logo-icon">
               <Brain size={20} />
             </div>
             <span className="sidebar-logo-text">Sinapse</span>
-          </div>
+          </Link>
         </div>
 
         {student && (

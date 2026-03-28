@@ -99,12 +99,12 @@ const LandingPage = () => {
         <div className="hero-overlay" />
 
         <div className="hero-content">
-          <div className="hero-badge">Pre-vestibular medicina</div>
+          <div className="hero-badge">Pré-vestibular medicina</div>
           <h1 className="hero-title">
-            Sua <span>aprovacao</span> comeca aqui
+            Sua <span>aprovação</span> comeca aqui!
           </h1>
           <p className="hero-subtitle">
-            A plataforma completa para estudantes de medicina. Questoes, simulados, videoaulas, mentoria e muito mais — tudo integrado para maximizar seu aprendizado.
+            A plataforma completa para estudantes de medicina. Questões, simulados, videoaulas, mentorias e muito mais — tudo integrado para maximizar seu aprendizado.
           </p>
           <div className="hero-actions">
             <Link to="/login" className="hero-cta-primary">
@@ -116,15 +116,15 @@ const LandingPage = () => {
           </div>
           <div className="hero-stats">
             <div className="hero-stat">
-              <span className="hero-stat-number">10k+</span>
-              <span className="hero-stat-label">Questoes</span>
+              <span className="hero-stat-number">20k+</span>
+              <span className="hero-stat-label">Questões</span>
             </div>
             <div className="hero-stat">
-              <span className="hero-stat-number">500+</span>
-              <span className="hero-stat-label">Videoaulas</span>
+              <span className="hero-stat-number">100+</span>
+              <span className="hero-stat-label">Vídeoaulas</span>
             </div>
             <div className="hero-stat">
-              <span className="hero-stat-number">2k+</span>
+              <span className="hero-stat-number">100+</span>
               <span className="hero-stat-label">Alunos</span>
             </div>
             <div className="hero-stat">
@@ -151,8 +151,8 @@ const LandingPage = () => {
       <section id="espaco-aluno" className="section">
         <div className="section-header">
           <div className="section-tag">Recursos</div>
-          <h2 className="section-title">Tudo que voce precisa em um so lugar</h2>
-          <p className="section-desc">Nossa plataforma foi desenvolvida especialmente para estudantes de medicina, com ferramentas que fazem a diferenca.</p>
+          <h2 className="section-title">Tudo que você precisa em um só lugar!</h2>
+          <p className="section-desc">Nossa plataforma foi desenvolvida especialmente para estudantes de medicina, com ferramentas que fazem a diferença.</p>
         </div>
         <div className="features-grid">
           {features.map((f, i) => (
@@ -173,7 +173,7 @@ const LandingPage = () => {
           <div className="about-video-wrapper">
             {instVideo && getYoutubeEmbedUrl(instVideo.youtube_url) ? (
               <iframe
-                src={getYoutubeEmbedUrl(instVideo.youtube_url)}
+                src="https://www.youtube.com/embed/hYaL1JUd_Zg"
                 title={instVideo.title}
                 allowFullScreen
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -188,16 +188,16 @@ const LandingPage = () => {
             )}
           </div>
           <div className="about-text">
-            <div className="section-tag">Sobre nos</div>
-            <h2>O cursinho que ja aprovou milhares de medicos</h2>
+            <div className="section-tag">Sobre Nós</div>
+            <h2>O cursinho que já aprovou milhares de medicos!</h2>
             <p>
-              O Sinapse nasceu com o objetivo de democratizar o acesso a educacao de qualidade para estudantes que desejam ingressar nas melhores faculdades de medicina do Brasil.
+              O Sinapse nasceu com o objetivo de democratizar o acesso a educação de qualidade para estudantes que desejam ingressar nas melhores faculdades de medicina do Brasil.
             </p>
             <p>
-              Nossa plataforma digital combina metodologia pedagogica comprovada com tecnologia de ponta, oferecendo uma experiencia de aprendizado personalizada e eficiente.
+              Nossa plataforma digital combina metodologia pedagógica comprovada com tecnologia de ponta, oferecendo uma experiência de aprendizado personalizada e eficiente.
             </p>
             <div className="about-highlights">
-              {['Professores com experiencia em grandes vestibulares', 'Metodologia baseada em evidencias cientificas', 'Suporte 24h para alunos', 'Taxa de aprovacao acima da media nacional'].map((h, i) => (
+              {['Professores com experiência em grandes vestibulares.', 'Metodologia baseada em evidências científicas.', 'Suporte 24h para alunos.', 'Taxa de aprovação acima da média nacional.'].map((h, i) => (
                 <div key={i} className="about-highlight">
                   <div className="about-highlight-dot" />
                   <span>{h}</span>
@@ -212,7 +212,7 @@ const LandingPage = () => {
       <section id="colaboradores" className="section">
         <div className="section-header">
           <div className="section-tag">Equipe</div>
-          <h2 className="section-title">Nossos professores</h2>
+          <h2 className="section-title">Nossos Professores</h2>
           <p className="section-desc">Uma equipe de especialistas dedicados ao seu sucesso no vestibular.</p>
         </div>
         {collaborators.length === 0 ? (
@@ -221,7 +221,7 @@ const LandingPage = () => {
               <div key={i} className="collaborator-card">
                 <div className="collaborator-avatar">{name[5]}</div>
                 <div className="collaborator-name">{name}</div>
-                <div className="collaborator-specialty">{['Biologia', 'Quimica', 'Fisica', 'Portugues'][i]}</div>
+                <div className="collaborator-specialty">{['Biologia', 'Química', 'Física', 'Português'][i]}</div>
               </div>
             ))}
           </div>
@@ -245,7 +245,7 @@ const LandingPage = () => {
         <div className="section-header">
           <div className="section-tag">Depoimentos</div>
           <h2 className="section-title">O que nossos alunos dizem</h2>
-          <p className="section-desc">Historias reais de estudantes que realizaram o sonho de cursar medicina.</p>
+          <p className="section-desc">Histórias reais de estudantes que realizaram o sonho de cursar medicina.</p>
         </div>
         <div className="testimonials-grid">
           {testimonials.map(t => (
@@ -271,12 +271,12 @@ const LandingPage = () => {
         <div className="section-header">
           <div className="section-tag">Contato</div>
           <h2 className="section-title">Fale conosco</h2>
-          <p className="section-desc">Tem alguma duvida? Nossa equipe esta pronta para ajudar.</p>
+          <p className="section-desc">Tem alguma dúvida? Nossa equipe esta pronta para ajudar.</p>
         </div>
         <div className="contact-content">
           <div className="contact-info">
             <h3>Entre em contato</h3>
-            <p>Estamos disponiveis para tirar suas duvidas sobre a plataforma, planos e muito mais. Nao deixe para amanha o que pode resolver hoje!</p>
+            <p>Estamos disponivéis para tirar suas dúvidas sobre a plataforma, planos e muito mais. Não deixe para amanhã o que pode resolver hoje!</p>
             <div className="contact-links">
               <a href="mailto:contato@sinapse.com.br" className="contact-link">
                 <div className="contact-link-icon"><Mail size={20} /></div>
@@ -288,7 +288,7 @@ const LandingPage = () => {
               </a>
               <div className="contact-link">
                 <div className="contact-link-icon"><MapPin size={20} /></div>
-                Sao Paulo, SP - Brasil
+                Brasilia, DF - Brasil
               </div>
             </div>
           </div>
@@ -343,13 +343,13 @@ const LandingPage = () => {
         <div className="footer-content">
           <div className="footer-brand">
             <h3>Sinapse</h3>
-            <p>A plataforma educacional mais completa para quem quer passar em medicina. Estude com inteligencia, conquiste sua aprovacao.</p>
+            <p>A plataforma educacional mais completa para quem quer passar em medicina. Estude com inteligência, conquiste sua aprovação.</p>
           </div>
           <div className="footer-links">
             <h4>Plataforma</h4>
             <ul>
               <li><a href="#espaco-aluno">Espaco Aluno</a></li>
-              <li><a href="#sobre">Sobre nos</a></li>
+              <li><a href="#sobre">Sobre nós</a></li>
               <li><a href="#colaboradores">Professores</a></li>
               <li><a href="#depoimentos">Depoimentos</a></li>
             </ul>
@@ -371,7 +371,7 @@ const LandingPage = () => {
 
       {/* WhatsApp floating button */}
       <a
-        href="https://wa.me/5511999999999"
+        href="https://wa.me/5561994319166"
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float"

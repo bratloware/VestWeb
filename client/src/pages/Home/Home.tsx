@@ -22,15 +22,15 @@ const tips = [
 ];
 
 const quickAccess = [
-  { label: 'Questoes', icon: HelpCircle, to: '/classroom/questions' },
+  { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
   { label: 'Sinaflix', icon: Play, to: '/sinaflix' },
-  { label: 'Calendario', icon: Calendar, to: '/classroom/review-calendar' },
+  { label: 'Calendário', icon: Calendar, to: '/classroom/review-calendar' },
   { label: 'Mentoria', icon: MessageCircle, to: '/classroom/mentoring' },
-  { label: 'Metricas', icon: BarChart2, to: '/classroom/metrics' },
+  { label: 'Métricas', icon: BarChart2, to: '/classroom/metrics' },
   { label: 'Comunidade', icon: Users, to: '/classroom/community' },
   { label: 'Sala Estudos', icon: BookOpen, to: '/classroom/study-room' },
-  { label: 'Configuracoes', icon: Zap, to: '/classroom/settings' },
+  { label: 'Configurações', icon: Zap, to: '/classroom/settings' },
 ];
 
 const Home = () => {
@@ -65,7 +65,7 @@ const Home = () => {
       <main className="page-content">
         <div className="home-header">
           <h1>{getGreeting()}, <span>{student?.name?.split(' ')[0] || 'Aluno'}</span>! 👋</h1>
-          <p>Pronto para mais um dia de estudos? Vamos la!</p>
+          <p>Pronto para mais um dia de estudos? Vamos lá!</p>
         </div>
 
         <div className="home-metrics">
@@ -75,7 +75,7 @@ const Home = () => {
             </div>
             <div className="metric-info">
               <h3>{metrics.total_answered}</h3>
-              <p>Questoes respondidas</p>
+              <p>Questões respondidas</p>
             </div>
           </div>
           <div className="metric-card">
@@ -93,7 +93,7 @@ const Home = () => {
             </div>
             <div className="metric-info">
               <h3>{metrics.rank > 0 ? `#${metrics.rank}` : '--'}</h3>
-              <p>Posicao no ranking</p>
+              <p>Posição no ranking</p>
             </div>
           </div>
           <div className="metric-card">
@@ -108,7 +108,7 @@ const Home = () => {
         </div>
 
         <div className="home-quick-access">
-          <h2>Acesso rapido</h2>
+          <h2>Acesso rápido</h2>
           <div className="quick-access-grid">
             {quickAccess.map(item => (
               <Link key={item.to} to={item.to} className="quick-access-btn">
@@ -125,7 +125,7 @@ const Home = () => {
           <div className="home-activity">
             <h2>Atividade recente</h2>
             {[
-              { icon: HelpCircle, text: 'Respondeu 10 questoes de Biologia', time: 'Hoje, 09:32' },
+              { icon: HelpCircle, text: 'Respondeu 10 questões de Biologia', time: 'Hoje, 09:32' },
               { icon: ClipboardList, text: 'Completou Simulado FUVEST 2024', time: 'Ontem, 15:20' },
               { icon: Play, text: 'Assistiu: Ciclo Celular - Mitose', time: '2 dias atras' },
               { icon: Users, text: 'Criou post na comunidade', time: '3 dias atras' },
@@ -153,7 +153,7 @@ const Home = () => {
               <div className="streak-fire">🔥</div>
               <div className="streak-info">
                 <strong>{metrics.streak} dias</strong>
-                <span>de sequencia de estudos</span>
+                <span>de sequência de estudos</span>
               </div>
             </div>
           </div>
