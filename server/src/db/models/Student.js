@@ -30,6 +30,18 @@ const Student = sequelize.define('Student', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  specialty: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+  },
+  bio: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  experience_years: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   role: {
     type: DataTypes.ENUM('student', 'teacher', 'admin'),
     defaultValue: 'student',

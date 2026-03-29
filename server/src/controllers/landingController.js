@@ -37,7 +37,7 @@ export const getCollaborators = async (req, res) => {
   try {
     const collaborators = await Student.findAll({
       where: { role: 'teacher' },
-      attributes: ['id', 'name', 'avatar_url', 'email'],
+      attributes: ['id', 'name', 'avatar_url', 'email', 'specialty', 'bio', 'experience_years'],
     });
     return res.json({ message: 'Collaborators fetched', data: collaborators });
   } catch (error) {

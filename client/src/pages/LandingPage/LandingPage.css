@@ -382,12 +382,43 @@
   text-align: center;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: var(--transition);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .collaborator-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+}
+
+.collaborator-extra {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+
+.collaborator-card:hover .collaborator-extra {
+  max-height: 200px;
+  opacity: 1;
+  margin-top: 14px;
+}
+
+.collaborator-bio {
+  font-size: 13px;
+  color: var(--text-light, #666);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.collaborator-exp {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  padding: 4px 12px;
+  border-radius: 20px;
 }
 
 .collaborator-avatar {

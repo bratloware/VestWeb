@@ -6,6 +6,7 @@ import { loginThunk } from '../../slices/authSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import './LoginPage.css';
 
+
 const LoginPage = () => {
   const [enrollment, setEnrollment] = useState('');
   const [password, setPassword] = useState('');
@@ -35,19 +36,20 @@ const LoginPage = () => {
             <div className="login-left-logo-icon">
               <Brain size={28} />
             </div>
-            <span className="login-left-logo-text">Sinapse</span>
+            <span className="login-left-logo-text">THE BEST</span>
           </div>
           <h1 className="login-left-title">Bem-vindo de volta!</h1>
           <p className="login-left-subtitle">
-            Continue sua jornada rumo a aprovacao. Cada dia de estudo te aproxima do seu objetivo.
+            Continue sua jornada rumo a aprovação. Cada dia de estudo te aproxima do seu objetivo.
           </p>
           <div className="login-left-features">
             {[
               'Banco com mais de 10.000 questoes',
-              'Simulados com correcao automatica',
+              'Simulados com correção automática',
               'Videoaulas com os melhores professores',
-              'Acompanhamento de desempenho em tempo real',
+              'Acompanhe seu desempenho em tempo real',
               'Comunidade de estudantes engajados',
+              'A plataforma número 1 dos vestibulandos'
             ].map((f, i) => (
               <div key={i} className="login-left-feature">
                 <div className="login-left-feature-dot" />
@@ -62,10 +64,10 @@ const LoginPage = () => {
         <div className="login-card">
           <div className="login-card-logo">
             <Brain size={28} color="var(--primary)" />
-            <span className="login-card-logo-text">Sinapse</span>
+            <span className="login-card-logo-text">THE BEST</span>
           </div>
           <h2>Acesse sua conta</h2>
-          <p>Entre com sua matricula e senha para continuar</p>
+          <p>Entre com sua matricula e senha para continuar.</p>
 
           {error && <div className="login-error">{error}</div>}
 

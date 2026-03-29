@@ -54,7 +54,7 @@ const Sidebar = () => {
             <div className="sidebar-logo-icon">
               <Brain size={20} />
             </div>
-            <span className="sidebar-logo-text">Sinapse</span>
+            <span className="sidebar-logo-text">THE BEST</span>
           </Link>
         </div>
 

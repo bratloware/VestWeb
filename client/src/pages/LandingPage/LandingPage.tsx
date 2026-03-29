@@ -10,7 +10,7 @@ import './LandingPage.css';
 
 interface Banner { id: number; image_url: string; title?: string; subtitle?: string; }
 interface Testimonial { id: number; name: string; photo_url?: string; course?: string; university?: string; text: string; }
-interface Collaborator { id: number; name: string; avatar_url?: string; email?: string; }
+interface Collaborator { id: number; name: string; avatar_url?: string; email?: string; specialty?: string; bio?: string; experience_years?: number; }
 interface InstVideo { youtube_url: string; title: string; }
 
 const features = [
@@ -233,7 +233,13 @@ const LandingPage = () => {
                   {c.avatar_url ? <img src={c.avatar_url} alt={c.name} /> : getInitials(c.name)}
                 </div>
                 <div className="collaborator-name">{c.name}</div>
-                <div className="collaborator-specialty">Professor</div>
+                <div className="collaborator-specialty">{c.specialty || 'Professor'}</div>
+                <div className="collaborator-extra">
+                  {c.bio && <p className="collaborator-bio">{c.bio}</p>}
+                  {c.experience_years && (
+                    <div className="collaborator-exp">{c.experience_years} anos de experiência</div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
