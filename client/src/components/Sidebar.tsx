@@ -1,16 +1,23 @@
 import { useState } from 'react';
-import { Link, NavLink, useNavigate,} from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BookOpen, BarChart2, Users, MessageCircle,
-  Settings, LogOut, Menu, X, Brain,
+  Settings, LogOut, Menu, X, Brain, LucideIcon,
 } from 'lucide-react';
 import { AppDispatch, RootState } from '../store/store';
 import { logoutThunk } from '../slices/authSlice';
+import { getInitials } from '../utils/stringUtils';
 import './Sidebar.css';
 
-const navItems = [
+export interface NavItem {
+  label: string;
+  icon: LucideIcon;
+  to: string;
+}
+
+const defaultNavItems: NavItem[] = [
   { label: 'Home', icon: LayoutDashboard, to: '/classroom/home' },
   { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
@@ -23,7 +30,12 @@ const navItems = [
   { label: 'Configurações', icon: Settings, to: '/classroom/settings' },
 ];
 
-const Sidebar = () => {
+interface SidebarProps {
+  navItems?: NavItem[];
+  roleLabel?: string;
+}
+
+const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
   const [open, setOpen] = useState(false);
   const { student } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
@@ -34,23 +46,17 @@ const Sidebar = () => {
     navigate('/login');
   };
 
-  const getInitials = (name: string) => {
-    return name ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : 'S';
-  };
-
   return (
     <>
-      {/* Overlay for mobile */}
       {open && <div className="sidebar-overlay" onClick={() => setOpen(false)} />}
 
-      {/* Mobile toggle */}
       <button className="sidebar-mobile-toggle" onClick={() => setOpen(!open)} aria-label="Toggle menu">
         {open ? <X size={22} /> : <Menu size={22} />}
       </button>
 
       <aside className={`sidebar${open ? ' open' : ''}`}>
         <div className="sidebar-header">
-          <Link to={"/"} className="sidebar-logo">
+          <Link to="/" className="sidebar-logo">
             <div className="sidebar-logo-icon">
               <Brain size={20} />
             </div>
@@ -69,7 +75,7 @@ const Sidebar = () => {
             </div>
             <div className="sidebar-user-info">
               <div className="sidebar-user-name">{student.name}</div>
-              <div className="sidebar-user-role">{student.role}</div>
+              <div className="sidebar-user-role">{roleLabel ?? student.role}</div>
             </div>
           </div>
         )}

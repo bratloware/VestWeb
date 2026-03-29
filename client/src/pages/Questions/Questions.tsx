@@ -13,7 +13,7 @@ const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { questions, subjects, loading } = useSelector((state: RootState) => state.questions);
 
-  const [filters, setFilters] = useState({ subject_id: '', topic_id: '', difficulty: '' });
+  const [filters, setFilters] = useState({ subject_id: '', topic_id: '', difficulty: '', bank: '' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAlt, setSelectedAlt] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -156,9 +156,29 @@ const Questions = () => {
                 onChange={e => setFilters({ ...filters, difficulty: e.target.value })}
               >
                 <option value="">Todas</option>
-                <option value="easy">Facil</option>
-                <option value="medium">Media</option>
-                <option value="hard">Dificil</option>
+                <option value="easy">Fácil</option>
+                <option value="medium">Média</option>
+                <option value="hard">Difícil</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Banca</label>
+              <select
+                className="form-control"
+                value={filters.bank}
+                onChange={e => setFilters({ ...filters, bank: e.target.value })}
+              >
+                <option value="">Todas as bancas</option>
+                <option value="INEP">ENEM / INEP</option>
+                <option value="CESPE/CEBRASPE">CESPE / CEBRASPE</option>
+                <option value="CESGRANRIO">CESGRANRIO</option>
+                <option value="FCC">FCC</option>
+                <option value="FGV">FGV</option>
+                <option value="USP">FUVEST / USP</option>
+                <option value="UNICAMP">UNICAMP</option>
+                <option value="UNESP">UNESP</option>
+                <option value="ITA">ITA</option>
               </select>
             </div>
 

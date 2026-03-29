@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { User, Lock, Bell, Shield } from 'lucide-react';
-import Sidebar from '../../components/Sidebar';
+import TeacherSidebar from '../../components/TeacherSidebar';
 import api from '../../api/api';
 import { RootState } from '../../store/store';
 import { getInitials } from '../../utils/stringUtils';
-import './Settings.css';
+import '../../pages/Settings/Settings.css';
 
-const Settings = () => {
+const TeacherSettings = () => {
   const { student } = useSelector((s: RootState) => s.auth);
   const [activeSection, setActiveSection] = useState<'profile' | 'password' | 'notifications' | 'privacy'>('profile');
 
@@ -34,7 +34,7 @@ const Settings = () => {
     setProfileLoading(true);
     setProfileMsg(null);
     try {
-      await api.put('/auth/me', profileForm); // endpoint may need to be added
+      await api.put('/auth/me', profileForm);
       setProfileMsg({ type: 'success', text: 'Perfil atualizado com sucesso!' });
     } catch {
       setProfileMsg({ type: 'error', text: 'Erro ao atualizar perfil. Tente novamente.' });
@@ -46,7 +46,7 @@ const Settings = () => {
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.new_password !== passwordForm.confirm_password) {
-      setPasswordMsg({ type: 'error', text: 'As senhas nao coincidem.' });
+      setPasswordMsg({ type: 'error', text: 'As senhas não coincidem.' });
       return;
     }
     if (passwordForm.new_password.length < 6) {
@@ -56,7 +56,7 @@ const Settings = () => {
     setPasswordLoading(true);
     setPasswordMsg(null);
     try {
-      await api.put('/auth/change-password', passwordForm); // endpoint may need to be added
+      await api.put('/auth/change-password', passwordForm);
       setPasswordMsg({ type: 'success', text: 'Senha alterada com sucesso!' });
       setPasswordForm({ current_password: '', new_password: '', confirm_password: '' });
     } catch {
@@ -69,15 +69,15 @@ const Settings = () => {
   const navItems = [
     { id: 'profile', label: 'Perfil', icon: User },
     { id: 'password', label: 'Senha', icon: Lock },
-    { id: 'notifications', label: 'Notificacoes', icon: Bell },
+    { id: 'notifications', label: 'Notificações', icon: Bell },
     { id: 'privacy', label: 'Privacidade', icon: Shield },
   ];
 
   return (
-    <div className="settings-page">
-      <Sidebar />
-      <main className="page-content">
-        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Configuracoes</h1>
+    <div className="teacher-layout">
+      <TeacherSidebar />
+      <main className="teacher-main">
+        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Configurações</h1>
 
         <div className="settings-layout">
           <div className="settings-nav">
@@ -96,8 +96,8 @@ const Settings = () => {
           <div>
             {activeSection === 'profile' && (
               <div className="settings-section">
-                <h2>Informacoes do perfil</h2>
-                <p className="settings-desc">Atualize suas informacoes pessoais e foto de perfil.</p>
+                <h2>Informações do perfil</h2>
+                <p className="settings-desc">Atualize suas informações pessoais e foto de perfil.</p>
 
                 <div className="avatar-section">
                   <div className="avatar-large">
@@ -109,7 +109,7 @@ const Settings = () => {
                   </div>
                   <div className="avatar-info">
                     <h3>{student?.name}</h3>
-                    <p>Matricula: {student?.enrollment}</p>
+                    <p>Matrícula: {student?.enrollment}</p>
                     <div className="form-group" style={{ marginBottom: 0 }}>
                       <input
                         type="text"
@@ -148,7 +148,7 @@ const Settings = () => {
                   </div>
 
                   <button type="submit" className="btn-primary" disabled={profileLoading} style={{ fontSize: '14px' }}>
-                    {profileLoading ? 'Salvando...' : 'Salvar alteracoes'}
+                    {profileLoading ? 'Salvando...' : 'Salvar alterações'}
                   </button>
 
                   {profileMsg && (
@@ -186,7 +186,7 @@ const Settings = () => {
                         value={passwordForm.new_password}
                         onChange={e => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
                         required
-                        placeholder="Minimo 6 caracteres"
+                        placeholder="Mínimo 6 caracteres"
                         minLength={6}
                       />
                     </div>
@@ -218,13 +218,13 @@ const Settings = () => {
 
             {activeSection === 'notifications' && (
               <div className="settings-section">
-                <h2>Notificacoes</h2>
-                <p className="settings-desc">Configure como voce deseja receber notificacoes.</p>
+                <h2>Notificações</h2>
+                <p className="settings-desc">Configure como você deseja receber notificações.</p>
                 {[
-                  { label: 'Novos simulados disponíveis', desc: 'Receba avisos quando novos simulados forem publicados.' },
-                  { label: 'Lembretes de revisao', desc: 'Lembretes para os eventos do seu calendario.' },
-                  { label: 'Atualizacoes da comunidade', desc: 'Comentarios e curtidas nos seus posts.' },
-                  { label: 'Sessoes de mentoria', desc: 'Confirmacao e lembretes de sessoes agendadas.' },
+                  { label: 'Novas sessões de mentoria', desc: 'Receba avisos quando um aluno agendar uma sessão.' },
+                  { label: 'Lembretes de sessões', desc: 'Lembretes para sessões confirmadas no seu calendário.' },
+                  { label: 'Atualizações de questões', desc: 'Notificações sobre o desempenho dos alunos nas suas questões.' },
+                  { label: 'Mensagens da plataforma', desc: 'Avisos administrativos e novidades do sistema.' },
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
                     <div>
@@ -242,13 +242,13 @@ const Settings = () => {
 
             {activeSection === 'privacy' && (
               <div className="settings-section">
-                <h2>Privacidade e seguranca</h2>
-                <p className="settings-desc">Gerencie as configuracoes de privacidade da sua conta.</p>
+                <h2>Privacidade e segurança</h2>
+                <p className="settings-desc">Gerencie as configurações de privacidade da sua conta.</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {[
-                    { label: 'Perfil publico na comunidade', desc: 'Outros alunos podem ver seu perfil no ranking.' },
-                    { label: 'Mostrar progresso no ranking', desc: 'Sua posicao e pontuacao ficam visiveis para todos.' },
-                    { label: 'Permitir mensagens diretas', desc: 'Outros alunos podem enviar mensagens para voce.' },
+                    { label: 'Perfil público para alunos', desc: 'Alunos podem ver seu perfil e informações de contato.' },
+                    { label: 'Mostrar disponibilidade', desc: 'Sua disponibilidade para mentoria fica visível na plataforma.' },
+                    { label: 'Permitir mensagens diretas', desc: 'Alunos podem enviar mensagens diretamente para você.' },
                   ].map((item, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
                       <div>
@@ -271,4 +271,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default TeacherSettings;

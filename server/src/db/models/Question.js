@@ -31,6 +31,7 @@ const Question = sequelize.define('Question', {
   bank: {
     type: DataTypes.STRING(100),
     allowNull: true,
+    index: true,
   },
   created_by: {
     type: DataTypes.INTEGER,

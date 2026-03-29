@@ -22,6 +22,11 @@ const LandingHeader = () => {
     { href: '#contato', label: 'Contato' },
   ];
 
+  const ctaLinks = [
+    { to: '/login', label: 'Área do Colaborador', className: 'landing-header-cta-collab' },
+    { to: '/login', label: 'Acessar Espaço Aluno', className: 'landing-header-cta' },
+  ];
+
   const handleNavClick = () => setMenuOpen(false);
 
   return (
@@ -48,12 +53,14 @@ const LandingHeader = () => {
           </ul>
         </nav>
 
-        {/* Bloco 3: Lado Direito (Botão Verde Água e Hamburger) */}
+        {/* Bloco 3: Lado Direito (Botões e Hamburger) */}
         <div className="landing-header-right">
-          <Link to="/login" className="landing-header-cta">
-            Acessar Espaço Aluno
-          </Link>
-          
+          {ctaLinks.map(link => (
+            <Link key={link.className} to={link.to} className={link.className}>
+              {link.label}
+            </Link>
+          ))}
+
           <button
             className="landing-header-hamburger"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -69,9 +76,11 @@ const LandingHeader = () => {
         {navLinks.map(link => (
           <a key={link.href} href={link.href} onClick={handleNavClick}>{link.label}</a>
         ))}
-        <Link to="/login" className="landing-header-cta" onClick={handleNavClick}>
-          Acessar Espaço Aluno
-        </Link>
+        {ctaLinks.map(link => (
+          <Link key={link.className} to={link.to} className={link.className} onClick={handleNavClick}>
+            {link.label}
+          </Link>
+        ))}
       </div>
     </>
   );

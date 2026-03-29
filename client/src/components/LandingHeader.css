@@ -65,17 +65,27 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.landing-header-cta-collab,
 .landing-header-cta {
   background: var(--primary);
   color: white !important;
-  padding: 8px 20px !important;
+  padding: 5px 17px !important;
   border-radius: var(--radius) !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
+  text-decoration: none;
 }
 
+.landing-header-cta-collab:hover,
 .landing-header-cta:hover {
   background: var(--primary-dark) !important;
   color: white !important;
+}
+
+.landing-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .landing-header-hamburger {
@@ -120,11 +130,12 @@
   color: white;
 }
 
+.landing-mobile-menu .landing-header-cta-collab,
 .landing-mobile-menu .landing-header-cta {
   background: var(--primary);
-  text-align: center;
-  margin-top: 8px;
   color: white !important;
+  text-align: center;
+  margin-top: 6px;
 }
 
 @media (max-width: 900px) {

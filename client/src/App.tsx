@@ -1,7 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import TeacherRoute from './components/TeacherRoute';
 import LandingPage from './pages/LandingPage/LandingPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import TeacherHome from './pages/TeacherArea/TeacherHome';
+import TeacherSessions from './pages/TeacherArea/TeacherSessions';
+import TeacherQuestions from './pages/TeacherArea/TeacherQuestions';
+import TeacherSettings from './pages/TeacherArea/TeacherSettings';
 import SelectPlatform from './pages/SelectPlatform/SelectPlatform';
 import Sinaflix from './pages/Sinaflix/Sinaflix';
 import Home from './pages/Home/Home';
@@ -51,6 +56,19 @@ function App() {
       } />
       <Route path="/classroom/settings" element={
         <ProtectedRoute><Settings /></ProtectedRoute>
+      } />
+
+      <Route path="/teacher/home" element={
+        <TeacherRoute><TeacherHome /></TeacherRoute>
+      } />
+      <Route path="/teacher/questions" element={
+        <TeacherRoute><TeacherQuestions /></TeacherRoute>
+      } />
+      <Route path="/teacher/sessions" element={
+        <TeacherRoute><TeacherSessions /></TeacherRoute>
+      } />
+      <Route path="/teacher/settings" element={
+        <TeacherRoute><TeacherSettings /></TeacherRoute>
       } />
     </Routes>
   );

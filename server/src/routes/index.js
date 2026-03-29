@@ -8,6 +8,7 @@ import mentoringRoutes from './mentoringRoutes.js';
 import calendarRoutes from './calendarRoutes.js';
 import gamificationRoutes from './gamificationRoutes.js';
 import landingRoutes from './landingRoutes.js';
+import teacherRoutes from './teacherRoutes.js';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/mentoring', mentoringRoutes);
 router.use('/calendar', calendarRoutes);
 router.use('/gamification', gamificationRoutes);
 router.use('/landing', landingRoutes);
+router.use('/teacher', teacherRoutes);
 
 export default router;

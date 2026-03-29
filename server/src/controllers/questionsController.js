@@ -3,12 +3,13 @@ import { Op } from 'sequelize';
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, topic_id, difficulty, limit = 10, offset = 0 } = req.query;
+    const { subject_id, topic_id, difficulty, bank, limit = 10, offset = 0 } = req.query;
     const where = {};
     const topicWhere = {};
 
     if (topic_id) where.topic_id = topic_id;
     if (difficulty) where.difficulty = difficulty;
+    if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
 
     const questions = await Question.findAndCountAll({

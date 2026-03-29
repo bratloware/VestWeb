@@ -4,8 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Eye, EyeOff, Brain } from 'lucide-react';
 import { loginThunk } from '../../slices/authSlice';
 import { AppDispatch, RootState } from '../../store/store';
+import { isTeacherRole } from '../../utils/roles';
 import './LoginPage.css';
 
+const getRedirectPath = (role: string) =>
+  isTeacherRole(role) ? '/teacher/home' : '/select-platform';
 
 const LoginPage = () => {
   const [enrollment, setEnrollment] = useState('');
@@ -14,16 +17,17 @@ const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error, token } = useSelector((state: RootState) => state.auth);
+  const role = useSelector((state: RootState) => state.auth.student?.role);
 
   useEffect(() => {
-    if (token) navigate('/select-platform');
-  }, [token, navigate]);
+    if (token && role) navigate(getRedirectPath(role));
+  }, [token, role, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = await dispatch(loginThunk({ enrollment, password }));
     if (loginThunk.fulfilled.match(result)) {
-      navigate('/select-platform');
+      navigate(getRedirectPath(result.payload.student.role));
     }
   };
 

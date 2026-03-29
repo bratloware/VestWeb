@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "seed": "node src/db/seed.js"
+    "seed": "node src/db/seed.js",
+    "import:questions": "node src/db/importQuestions.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
