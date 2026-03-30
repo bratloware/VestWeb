@@ -65,12 +65,64 @@ export const create = async (req, res) => {
   }
 };
 
+export const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const video = await Video.findByPk(id);
+    if (!video) return res.status(404).json({ message: 'Video not found' });
+
+    const { role } = req.user;
+    if (role !== 'admin' && video.created_by !== req.user.id) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const { title, description, youtube_url, thumbnail_url, topic_id, published_at } = req.body;
+    await video.update({ title, description, youtube_url, thumbnail_url, topic_id, published_at });
+    return res.json({ message: 'Video updated', data: video });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const destroy = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const video = await Video.findByPk(id);
+    if (!video) return res.status(404).json({ message: 'Video not found' });
+
+    const { role } = req.user;
+    if (role !== 'admin' && video.created_by !== req.user.id) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    await video.destroy();
+    return res.json({ message: 'Video deleted' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const getMyVideos = async (req, res) => {
+  try {
+    const videos = await Video.findAll({
+      where: { created_by: req.user.id },
+      include: [
+        { model: Topic, as: 'topic', include: [{ model: Subject, as: 'subject' }] },
+      ],
+      order: [['created_at', 'DESC']],
+    });
+    return res.json({ message: 'Videos fetched', data: videos });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 export const updateProgress = async (req, res) => {
   try {
     const { id } = req.params;
     const { watched, progress_seconds } = req.body;
 
-    const [progress, created] = await VideoProgress.findOrCreate({
+    const [progress] = await VideoProgress.findOrCreate({
       where: { student_id: req.user.id, video_id: id },
       defaults: { watched: false, progress_seconds: 0 },
     });

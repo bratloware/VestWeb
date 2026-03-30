@@ -23,7 +23,7 @@ const LandingHeader = () => {
   ];
 
   const ctaLinks = [
-    { to: '/login', label: 'Área do Colaborador', className: 'landing-header-cta-collab' },
+    { to: '/teacher/login', label: 'Área do Colaborador', className: 'landing-header-cta-collab' },
     { to: '/login', label: 'Acessar Espaço Aluno', className: 'landing-header-cta' },
   ];
 

@@ -3,9 +3,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 import TeacherRoute from './components/TeacherRoute';
 import LandingPage from './pages/LandingPage/LandingPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import TeacherLoginPage from './pages/TeacherLoginPage/TeacherLoginPage';
 import TeacherHome from './pages/TeacherArea/TeacherHome';
 import TeacherSessions from './pages/TeacherArea/TeacherSessions';
 import TeacherQuestions from './pages/TeacherArea/TeacherQuestions';
+import TeacherSinaflix from './pages/TeacherArea/TeacherSinaflix';
 import TeacherSettings from './pages/TeacherArea/TeacherSettings';
 import SelectPlatform from './pages/SelectPlatform/SelectPlatform';
 import Sinaflix from './pages/Sinaflix/Sinaflix';
@@ -24,6 +26,7 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/teacher/login" element={<TeacherLoginPage />} />
       <Route path="/select-platform" element={
         <ProtectedRoute><SelectPlatform /></ProtectedRoute>
       } />
@@ -63,6 +66,9 @@ function App() {
       } />
       <Route path="/teacher/questions" element={
         <TeacherRoute><TeacherQuestions /></TeacherRoute>
+      } />
+      <Route path="/teacher/sinaflix" element={
+        <TeacherRoute><TeacherSinaflix /></TeacherRoute>
       } />
       <Route path="/teacher/sessions" element={
         <TeacherRoute><TeacherSessions /></TeacherRoute>

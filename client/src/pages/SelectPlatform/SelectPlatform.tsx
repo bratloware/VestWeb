@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Play, GraduationCap, Brain } from 'lucide-react';
+import { Play, GraduationCap, Brain, ArrowLeft } from 'lucide-react';
 import { RootState } from '../../store/store';
 import './SelectPlatform.css';
 
@@ -17,6 +17,11 @@ const SelectPlatform = () => {
           </div>
           <span className="select-platform-logo-text">THE BEST</span>
         </div>
+
+        <Link to="/" className="select-platform-back-btn">
+          <ArrowLeft size={16} />
+          Voltar para home
+        </Link>
 
         <h1>Olá, {student?.name?.split(' ')[0] || 'Aluno'}!</h1>
         <p>Escolha por onde você quer comecar hoje.</p>

@@ -11,17 +11,20 @@ export const login = async (req, res) => {
 
     const student = await Student.findOne({ where: { enrollment } });
     if (!student) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Matrícula ou senha inválidos' });
     }
 
     const isMatch = await comparePassword(password, student.password_hash);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Matrícula ou senha inválidos' });
+    }
+
+    if (student.role === 'teacher' || student.role === 'admin') {
+      return res.status(403).json({ message: 'Professores devem acessar pelo Portal do Professor' });
     }
 
     const token = generateToken({ id: student.id, role: student.role });
 
-    // Store session
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
     await Session.create({ student_id: student.id, token, expires_at: expiresAt });
@@ -35,6 +38,46 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const teacherLogin = async (req, res) => {
+  try {
+    const { enrollment, password } = req.body;
+    if (!enrollment || !password) {
+      return res.status(400).json({ message: 'Matrícula e senha são obrigatórios' });
+    }
+
+    const student = await Student.findOne({ where: { enrollment } });
+    if (!student) {
+      return res.status(401).json({ message: 'Matrícula ou senha inválidos' });
+    }
+
+    const isMatch = await comparePassword(password, student.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Matrícula ou senha inválidos' });
+    }
+
+    if (student.role !== 'teacher' && student.role !== 'admin') {
+      return res.status(403).json({ message: 'Acesso restrito a professores' });
+    }
+
+    const token = generateToken({ id: student.id, role: student.role });
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+    await Session.create({ student_id: student.id, token, expires_at: expiresAt });
+
+    return res.json({
+      message: 'Login successful',
+      data: {
+        token,
+        student: student.toJSON(),
+      },
+    });
+  } catch (error) {
+    console.error('Teacher login error:', error);
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };

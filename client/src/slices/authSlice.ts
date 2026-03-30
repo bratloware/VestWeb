@@ -40,6 +40,18 @@ export const loginThunk = createAsyncThunk(
   }
 );
 
+export const teacherLoginThunk = createAsyncThunk(
+  'auth/teacherLogin',
+  async ({ enrollment, password }: { enrollment: string; password: string }, { rejectWithValue }) => {
+    try {
+      const res = await api.post('/auth/teacher-login', { enrollment, password });
+      return res.data.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Erro ao fazer login');
+    }
+  }
+);
+
 export const fetchMe = createAsyncThunk(
   'auth/fetchMe',
   async (_, { rejectWithValue }) => {
@@ -101,6 +113,21 @@ const authSlice = createSlice({
         localStorage.setItem('sinapse_student', JSON.stringify(action.payload.student));
       })
       .addCase(loginThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(teacherLoginThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(teacherLoginThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        state.student = action.payload.student;
+        localStorage.setItem('sinapse_token', action.payload.token);
+        localStorage.setItem('sinapse_student', JSON.stringify(action.payload.student));
+      })
+      .addCase(teacherLoginThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
