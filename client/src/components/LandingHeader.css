@@ -139,11 +139,16 @@
 }
 
 @media (max-width: 900px) {
-  .landing-header-nav {
+  .landing-header-nav-container {
     display: none;
   }
 
   .landing-header-hamburger {
     display: flex;
+  }
+
+  .landing-header-right .landing-header-cta,
+  .landing-header-right .landing-header-cta-collab {
+    display: none;
   }
 }
