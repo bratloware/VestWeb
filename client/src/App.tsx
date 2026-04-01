@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from './store/store';
 import ProtectedRoute from './components/ProtectedRoute';
 import TeacherRoute from './components/TeacherRoute';
 import LandingPage from './pages/LandingPage/LandingPage';
@@ -22,6 +25,12 @@ import Mentoring from './pages/Mentoring/Mentoring';
 import Settings from './pages/Settings/Settings';
 
 function App() {
+  const { mode } = useSelector((state: RootState) => state.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', mode);
+  }, [mode]);
+
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />

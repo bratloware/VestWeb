@@ -158,6 +158,28 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.sidebar-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: 500;
+  transition: var(--transition);
+  border-radius: var(--radius);
+  cursor: pointer;
+  width: 100%;
+  background: transparent;
+  border: none;
+  margin-bottom: 4px;
+}
+
+.sidebar-theme-toggle:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .sidebar-logout {
   display: flex;
   align-items: center;

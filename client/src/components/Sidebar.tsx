@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BookOpen, BarChart2, Users, MessageCircle,
-  Settings, LogOut, Menu, X, Brain, LucideIcon,
+  Settings, LogOut, Menu, X, Brain, LucideIcon, Sun, Moon,
 } from 'lucide-react';
 import { AppDispatch, RootState } from '../store/store';
 import { logoutThunk } from '../slices/authSlice';
+import { toggleTheme } from '../slices/themeSlice';
 import { getInitials } from '../utils/stringUtils';
 import './Sidebar.css';
 
@@ -38,6 +39,7 @@ interface SidebarProps {
 const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
   const [open, setOpen] = useState(false);
   const { student } = useSelector((state: RootState) => state.auth);
+  const { mode } = useSelector((state: RootState) => state.theme);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -95,6 +97,10 @@ const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
         </nav>
 
         <div className="sidebar-footer">
+          <button className="sidebar-theme-toggle" onClick={() => dispatch(toggleTheme())} aria-label="Alternar tema">
+            {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            <span>{mode === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>
+          </button>
           <button className="sidebar-logout" onClick={handleLogout}>
             <LogOut size={18} />
             <span>Sair</span>
