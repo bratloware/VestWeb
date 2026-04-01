@@ -6,7 +6,7 @@ import { fetchVideos, toggleFavorite, updateProgress, Video } from '../../slices
 import { AppDispatch, RootState } from '../../store/store';
 import './Sinaflix.css';
 
-const Sinaflix = () => {
+const VestWebFlix = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { videos, loading } = useSelector((state: RootState) => state.videos);
   const [search, setSearch] = useState('');
@@ -55,12 +55,12 @@ const Sinaflix = () => {
   };
 
   return (
-    <div className="sinaflix">
+    <div className="VestWebFlix">
       <Sidebar />
-      <div className="sinaflix-content">
-        <div className="sinaflix-header">
-          <h1>SINAFLIX</h1>
-          <div className="sinaflix-search">
+      <div className="VestWebFlix-content">
+        <div className="VestWebFlix-header">
+          <h1>VestWebFlix</h1>
+          <div className="VestWebFlix-search">
             <input
               type="text"
               placeholder="Buscar videoaulas..."
@@ -71,9 +71,9 @@ const Sinaflix = () => {
           </div>
         </div>
 
-        <div className="sinaflix-tabs">
+        <div className="VestWebFlix-tabs">
           <button
-            className={`sinaflix-tab${activeSubject === 'all' ? ' active' : ''}`}
+            className={`VestWebFlix-tab${activeSubject === 'all' ? ' active' : ''}`}
             onClick={() => setActiveSubject('all')}
           >
             Todas
@@ -81,7 +81,7 @@ const Sinaflix = () => {
           {subjects.map(s => (
             <button
               key={s}
-              className={`sinaflix-tab${activeSubject === s ? ' active' : ''}`}
+              className={`VestWebFlix-tab${activeSubject === s ? ' active' : ''}`}
               onClick={() => setActiveSubject(s!)}
             >
               {s}
@@ -89,35 +89,35 @@ const Sinaflix = () => {
           ))}
         </div>
 
-        <div className="sinaflix-body">
+        <div className="VestWebFlix-body">
           {loading ? (
-            <div className="sinaflix-loading">
+            <div className="VestWebFlix-loading">
               <div className="spinner" />
               <p>Carregando videoaulas...</p>
             </div>
           ) : Object.keys(groupedBySubject).length === 0 ? (
-            <div className="sinaflix-loading">
+            <div className="VestWebFlix-loading">
               <Play size={48} style={{ color: 'rgba(255,255,255,0.2)', marginBottom: '16px' }} />
               <p>Nenhuma videoaula encontrada</p>
             </div>
           ) : (
             Object.entries(groupedBySubject).map(([subject, vids]) => (
-              <div key={subject} className="sinaflix-row">
-                <div className="sinaflix-row-title">{subject}</div>
-                <div className="sinaflix-videos-scroll">
+              <div key={subject} className="VestWebFlix-row">
+                <div className="VestWebFlix-row-title">{subject}</div>
+                <div className="VestWebFlix-videos-scroll">
                   {vids.map(video => {
                     const thumb = video.thumbnail_url || getYoutubeThumbnail(video.youtube_url);
                     return (
-                      <div key={video.id} className="sinaflix-video-card" onClick={() => setSelectedVideo(video)}>
-                        <div className="sinaflix-video-thumb">
+                      <div key={video.id} className="VestWebFlix-video-card" onClick={() => setSelectedVideo(video)}>
+                        <div className="VestWebFlix-video-thumb">
                           {thumb && <img src={thumb} alt={video.title} />}
-                          <div className="sinaflix-video-thumb-icon">
+                          <div className="VestWebFlix-video-thumb-icon">
                             <Play size={20} style={{ marginLeft: '2px' }} />
                           </div>
                         </div>
-                        <div className="sinaflix-video-info">
-                          <div className="sinaflix-video-title">{video.title}</div>
-                          <div className="sinaflix-video-topic">{video.topic?.name || subject}</div>
+                        <div className="VestWebFlix-video-info">
+                          <div className="VestWebFlix-video-title">{video.title}</div>
+                          <div className="VestWebFlix-video-topic">{video.topic?.name || subject}</div>
                         </div>
                       </div>
                     );
@@ -131,10 +131,10 @@ const Sinaflix = () => {
 
       {/* Modal */}
       {selectedVideo && (
-        <div className="sinaflix-modal-overlay" onClick={() => setSelectedVideo(null)}>
-          <div className="sinaflix-modal" onClick={e => e.stopPropagation()}>
+        <div className="VestWebFlix-modal-overlay" onClick={() => setSelectedVideo(null)}>
+          <div className="VestWebFlix-modal" onClick={e => e.stopPropagation()}>
             <div style={{ position: 'relative' }}>
-              <div className="sinaflix-modal-video">
+              <div className="VestWebFlix-modal-video">
                 <iframe
                   src={getYoutubeEmbedUrl(selectedVideo.youtube_url)}
                   title={selectedVideo.title}
@@ -142,36 +142,36 @@ const Sinaflix = () => {
                   allowFullScreen
                 />
               </div>
-              <button className="sinaflix-modal-close" onClick={() => setSelectedVideo(null)}>
+              <button className="VestWebFlix-modal-close" onClick={() => setSelectedVideo(null)}>
                 <X size={18} />
               </button>
             </div>
 
-            <div className="sinaflix-modal-body">
-              <div className="sinaflix-modal-actions">
-                <button className="sinaflix-modal-btn sinaflix-modal-btn-primary" onClick={handleMarkWatched}>
+            <div className="VestWebFlix-modal-body">
+              <div className="VestWebFlix-modal-actions">
+                <button className="VestWebFlix-modal-btn VestWebFlix-modal-btn-primary" onClick={handleMarkWatched}>
                   <Check size={16} />
                   Marcar como assistido
                 </button>
                 <button
-                  className="sinaflix-modal-btn sinaflix-modal-btn-fav"
+                  className="VestWebFlix-modal-btn VestWebFlix-modal-btn-fav"
                   onClick={e => handleToggleFavorite(e, selectedVideo.id)}
                 >
                   <Heart size={16} />
                   {selectedVideo.isFavorite ? 'Remover favorito' : 'Favoritar'}
                 </button>
-                <button className="sinaflix-modal-btn sinaflix-modal-btn-secondary" onClick={() => setSelectedVideo(null)}>
+                <button className="VestWebFlix-modal-btn VestWebFlix-modal-btn-secondary" onClick={() => setSelectedVideo(null)}>
                   <X size={16} />
                   Fechar
                 </button>
               </div>
-              <h2 className="sinaflix-modal-title">{selectedVideo.title}</h2>
-              <div className="sinaflix-modal-meta">
+              <h2 className="VestWebFlix-modal-title">{selectedVideo.title}</h2>
+              <div className="VestWebFlix-modal-meta">
                 {selectedVideo.topic?.subject?.name && <span>{selectedVideo.topic.subject.name} · </span>}
                 {selectedVideo.topic?.name && <span>{selectedVideo.topic.name}</span>}
               </div>
               {selectedVideo.description && (
-                <p className="sinaflix-modal-desc">{selectedVideo.description}</p>
+                <p className="VestWebFlix-modal-desc">{selectedVideo.description}</p>
               )}
             </div>
           </div>
@@ -181,4 +181,4 @@ const Sinaflix = () => {
   );
 };
 
-export default Sinaflix;
+export default VestWebFlix;

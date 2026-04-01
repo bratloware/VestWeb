@@ -38,7 +38,7 @@ const LandingHeader = () => {
             <div className="landing-header-logo-icon">
               <Brain size={22} />
             </div>
-            <span className="landing-header-logo-text">THE BEST</span>
+            <span className="landing-header-logo-text">VestWeb</span>
           </Link>
         </div>
 

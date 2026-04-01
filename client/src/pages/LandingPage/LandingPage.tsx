@@ -16,16 +16,16 @@ interface InstVideo { youtube_url: string; title: string; }
 const features = [
   { icon: HelpCircle, title: 'Banco de Questões', desc: 'Milhares de questões de vestibulares anteriores organizadas por matéria e dificuldade.' },
   { icon: ClipboardList, title: 'Simulados', desc: 'Simulados completos com timer, correção automática e análise detalhada de desempenho.' },
-  { icon: Play, title: 'Sinaflix', desc: 'Videoaulas com os melhores professores, organizadas como uma plataforma de streaming.' },
+  { icon: Play, title: 'VestWebFlix', desc: 'Videoaulas com os melhores professores, organizadas como uma plataforma de streaming.' },
   { icon: MessageCircle, title: 'Mentoria', desc: 'Sessões individuais com tutores especializados para tirar dúvidas e orientar estudos.' },
   { icon: Calendar, title: 'Calendário de Revisão', desc: 'Planejamento inteligente de revisões para fixar o conteúdo no longo prazo.' },
   { icon: Users, title: 'Comunidade', desc: 'Conecte-se com outros estudantes, compartilhe dúvidas e conquiste pontos no ranking.' },
 ];
 
 const staticTestimonials = [
-  { id: 1, name: 'Ana Lima', course: 'Medicina', university: 'USP', text: 'O Sinapse me ajudou a organizar meus estudos e aumentar minha taxa de acerto em 40%! A plataforma é incrível.' },
+  { id: 1, name: 'Ana Lima', course: 'Medicina', university: 'USP', text: 'O VestWeb me ajudou a organizar meus estudos e aumentar minha taxa de acerto em 40%! A plataforma é incrível.' },
   { id: 2, name: 'Carlos Souza', course: 'Medicina', university: 'UNICAMP', text: 'Os simulados são muito próximos das provas reais. Me senti preparado no dia do vestibular.' },
-  { id: 3, name: 'Mariana Santos', course: 'Medicina', university: 'UNIFESP', text: 'A Sinaflix é diferente de tudo que já usei. As aulas são objetivas e os professores são excelentes!' },
+  { id: 3, name: 'Mariana Santos', course: 'Medicina', university: 'UNIFESP', text: 'A VestWebFlix é diferente de tudo que já usei. As aulas são objetivas e os professores são excelentes!' },
 ];
 
 const LandingPage = () => {
@@ -191,7 +191,7 @@ const LandingPage = () => {
             <div className="section-tag">Sobre Nós</div>
             <h2>O cursinho que já aprovou milhares de medicos!</h2>
             <p>
-              O Sinapse nasceu com o objetivo de democratizar o acesso a educação de qualidade para estudantes que desejam ingressar nas melhores faculdades de medicina do Brasil.
+              O VestWeb nasceu com o objetivo de democratizar o acesso a educação de qualidade para estudantes que desejam ingressar nas melhores faculdades de medicina do Brasil.
             </p>
             <p>
               Nossa plataforma digital combina metodologia pedagógica comprovada com tecnologia de ponta, oferecendo uma experiência de aprendizado personalizada e eficiente.
@@ -264,7 +264,7 @@ const LandingPage = () => {
                 </div>
                 <div className="testimonial-author-info">
                   <h4>{t.name}</h4>
-                  <p>{t.course && t.university ? `${t.course} — ${t.university}` : t.course || t.university || 'Aluno Sinapse'}</p>
+                  <p>{t.course && t.university ? `${t.course} — ${t.university}` : t.course || t.university || 'Aluno VestWeb'}</p>
                 </div>
               </div>
             </div>
@@ -284,9 +284,9 @@ const LandingPage = () => {
             <h3>Entre em contato</h3>
             <p>Estamos disponivéis para tirar suas dúvidas sobre a plataforma, planos e muito mais. Não deixe para amanhã o que pode resolver hoje!</p>
             <div className="contact-links">
-              <a href="mailto:contato@sinapse.com.br" className="contact-link">
+              <a href="mailto:contato@VestWeb.com.br" className="contact-link">
                 <div className="contact-link-icon"><Mail size={20} /></div>
-                contato@sinapse.com.br
+                contato@VestWeb.com.br
               </a>
               <a href="tel:+5511999999999" className="contact-link">
                 <div className="contact-link-icon"><Phone size={20} /></div>
@@ -348,7 +348,7 @@ const LandingPage = () => {
       <footer className="landing-footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <h3>Sinapse</h3>
+            <h3>VestWeb</h3>
             <p>A plataforma educacional mais completa para quem quer passar em medicina. Estude com inteligência, conquiste sua aprovação.</p>
           </div>
           <div className="footer-links">
@@ -371,7 +371,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>© {new Date().getFullYear()} Sinapse. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} VestWeb. Todos os direitos reservados.</p>
         </div>
       </footer>
 

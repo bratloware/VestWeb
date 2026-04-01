@@ -21,7 +21,7 @@ const defaultNavItems: NavItem[] = [
   { label: 'Home', icon: LayoutDashboard, to: '/classroom/home' },
   { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
-  { label: 'Sinaflix', icon: Play, to: '/sinaflix' },
+  { label: 'VestWebFlix', icon: Play, to: '/VestWebFlix' },
   { label: 'Calendário', icon: Calendar, to: '/classroom/review-calendar' },
   { label: 'Sala de Estudos', icon: BookOpen, to: '/classroom/study-room' },
   { label: 'Métricas', icon: BarChart2, to: '/classroom/metrics' },
@@ -60,7 +60,7 @@ const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
             <div className="sidebar-logo-icon">
               <Brain size={20} />
             </div>
-            <span className="sidebar-logo-text">THE BEST</span>
+            <span className="sidebar-logo-text">VestWeb</span>
           </Link>
         </div>
 

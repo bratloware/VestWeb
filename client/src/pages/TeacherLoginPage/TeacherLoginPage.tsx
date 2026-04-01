@@ -37,7 +37,7 @@ const TeacherLoginPage = () => {
             <div className="teacher-login-left-logo-icon">
               <Brain size={28} />
             </div>
-            <span className="teacher-login-left-logo-text">THE BEST</span>
+            <span className="teacher-login-left-logo-text">VestWeb</span>
           </div>
           <h1 className="teacher-login-left-title">Portal do Professor</h1>
           <p className="teacher-login-left-subtitle">
@@ -63,7 +63,7 @@ const TeacherLoginPage = () => {
         <div className="teacher-login-card">
           <div className="teacher-login-card-logo">
             <Brain size={28} color="var(--teacher-accent)" />
-            <span className="teacher-login-card-logo-text">THE BEST</span>
+            <span className="teacher-login-card-logo-text">VestWeb</span>
           </div>
           <div className="teacher-login-badge">Área do Professor</div>
           <h2>Acesse o portal</h2>

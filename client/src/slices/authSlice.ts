@@ -18,8 +18,8 @@ interface AuthState {
   error: string | null;
 }
 
-const storedToken = localStorage.getItem('sinapse_token');
-const storedStudent = localStorage.getItem('sinapse_student');
+const storedToken = localStorage.getItem('VestWeb_token');
+const storedStudent = localStorage.getItem('VestWeb_student');
 
 const initialState: AuthState = {
   student: storedStudent ? JSON.parse(storedStudent) : null,
@@ -72,8 +72,8 @@ export const logoutThunk = createAsyncThunk(
     } catch {
       // ignore
     }
-    localStorage.removeItem('sinapse_token');
-    localStorage.removeItem('sinapse_student');
+    localStorage.removeItem('VestWeb_token');
+    localStorage.removeItem('VestWeb_student');
   }
 );
 
@@ -89,8 +89,8 @@ const authSlice = createSlice({
       state.student = null;
       state.token = null;
       state.error = null;
-      localStorage.removeItem('sinapse_token');
-      localStorage.removeItem('sinapse_student');
+      localStorage.removeItem('VestWeb_token');
+      localStorage.removeItem('VestWeb_student');
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
@@ -109,8 +109,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
         state.student = action.payload.student;
-        localStorage.setItem('sinapse_token', action.payload.token);
-        localStorage.setItem('sinapse_student', JSON.stringify(action.payload.student));
+        localStorage.setItem('VestWeb_token', action.payload.token);
+        localStorage.setItem('VestWeb_student', JSON.stringify(action.payload.student));
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
@@ -124,8 +124,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = action.payload.token;
         state.student = action.payload.student;
-        localStorage.setItem('sinapse_token', action.payload.token);
-        localStorage.setItem('sinapse_student', JSON.stringify(action.payload.student));
+        localStorage.setItem('VestWeb_token', action.payload.token);
+        localStorage.setItem('VestWeb_student', JSON.stringify(action.payload.student));
       })
       .addCase(teacherLoginThunk.rejected, (state, action) => {
         state.loading = false;
@@ -133,7 +133,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.student = action.payload;
-        localStorage.setItem('sinapse_student', JSON.stringify(action.payload));
+        localStorage.setItem('VestWeb_student', JSON.stringify(action.payload));
       })
       .addCase(logoutThunk.fulfilled, (state) => {
         state.student = null;

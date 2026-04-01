@@ -1,12 +1,12 @@
 /* Header overrides */
-.teacher-sinaflix .teacher-page-header {
+.teacher-VestWebFlix .teacher-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
 }
 
-.teacher-sinaflix .teacher-page-header .teacher-btn-primary {
+.teacher-VestWebFlix .teacher-page-header .teacher-btn-primary {
   font-size: 12px;
 }
 

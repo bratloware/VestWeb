@@ -40,7 +40,7 @@ const LoginPage = () => {
             <div className="login-left-logo-icon">
               <Brain size={28} />
             </div>
-            <span className="login-left-logo-text">THE BEST</span>
+            <span className="login-left-logo-text">VestWeb</span>
           </div>
           <h1 className="login-left-title">Bem-vindo de volta!</h1>
           <p className="login-left-subtitle">
@@ -68,7 +68,7 @@ const LoginPage = () => {
         <div className="login-card">
           <div className="login-card-logo">
             <Brain size={28} color="var(--primary)" />
-            <span className="login-card-logo-text">THE BEST</span>
+            <span className="login-card-logo-text">VestWeb</span>
           </div>
           <h2>Acesse sua conta</h2>
           <p>Entre com sua matricula e senha para continuar.</p>

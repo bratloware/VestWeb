@@ -1,4 +1,4 @@
-# 🧠 Sinapse — Prompt de Desenvolvimento Completo
+# 🧠 VestWeb — Prompt de Desenvolvimento Completo
 
 > Você é um desenvolvedor fullstack sênior especializado em React, Node.js e PostgreSQL. Vou te descrever um sistema completo que preciso que você desenvolva.
 
@@ -6,7 +6,7 @@
 
 ## 📌 Sobre o Projeto
 
-O sistema se chama **Sinapse** — uma plataforma web educacional voltada para alunos de cursinho pré-vestibular com foco em medicina. O sistema tem duas grandes partes: uma **landing page pública** e um **Espaço Aluno** (área logada).
+O sistema se chama **VestWeb** — uma plataforma web educacional voltada para alunos de cursinho pré-vestibular com foco em medicina. O sistema tem duas grandes partes: uma **landing page pública** e um **Espaço Aluno** (área logada).
 
 ---
 
@@ -31,7 +31,7 @@ O sistema se chama **Sinapse** — uma plataforma web educacional voltada para a
 ## 📁 Estrutura de Pastas
 
 ```
-sinapse/
+VestWeb/
 ├── client/                  ← React
 │   ├── src/
 │   │   ├── api/             ← axios configurado com interceptor
@@ -175,7 +175,7 @@ answers
 └── answered_at
 ```
 
-### Sinaflix — Videoaulas
+### VestWebFlix — Videoaulas
 
 ```
 videos
@@ -325,7 +325,7 @@ streaks
 /login
     ↓ login bem-sucedido
 /select-platform
-    ├── /sinaflix              ← videoaulas estilo Netflix
+    ├── /VestWebFlix              ← videoaulas estilo Netflix
     └── /classroom             ← Espaço Aluno (rotas protegidas)
             ├── /home          ← dashboard com métricas
             ├── /questions     ← resolver questões
@@ -346,7 +346,7 @@ streaks
 
 **Referência visual de estilo:** https://med.estrategia.com/
 
-Usar essa página como referência de estilo visual e composição geral da landing page — design moderno, sóbrio com destaques coloridos, seções bem definidas com muito espaçamento, tipografia grande e impactante, imagens de alta qualidade e CTAs bem destacados. Adaptar cores e identidade visual para o Sinapse (cor primária: `#0f8b8d`).
+Usar essa página como referência de estilo visual e composição geral da landing page — design moderno, sóbrio com destaques coloridos, seções bem definidas com muito espaçamento, tipografia grande e impactante, imagens de alta qualidade e CTAs bem destacados. Adaptar cores e identidade visual para o VestWeb (cor primária: `#0f8b8d`).
 
 **Header fixo no topo com navegação por âncoras (não são páginas separadas — são seções dentro da própria landing page):**
 
@@ -365,7 +365,7 @@ O header deve ser fixo (`position: sticky` ou `fixed`), com fundo semi-transpare
 
 1. **Hero (`#home`)** — Banner principal com título impactante, subtítulo, botão de CTA e imagem ou vídeo de fundo. Carrossel de banners com autoplay e navegação manual. Conteúdo vem da API.
 
-2. **Espaço Aluno (`#espaco-aluno`)** — Apresentação visual dos módulos da plataforma (Questões, Simulados, Sinaflix, Mentoria, etc.) com ícones e descrições curtas. Botão para acessar o login.
+2. **Espaço Aluno (`#espaco-aluno`)** — Apresentação visual dos módulos da plataforma (Questões, Simulados, VestWebFlix, Mentoria, etc.) com ícones e descrições curtas. Botão para acessar o login.
 
 3. **Sobre (`#sobre`)** — Seção com vídeo institucional embedado do YouTube (URL configurável via admin) e texto sobre a proposta do cursinho.
 
@@ -387,19 +387,19 @@ Todo o conteúdo dinâmico (banners, vídeo, depoimentos, colaboradores) deve vi
 
 **Referência visual de layout:** https://app.missao193.com.br/
 
-Usar essa página como referência de estrutura e composição visual da tela de login, com as seguintes adaptações para o Sinapse:
-- A **imagem de fundo** deve ser trocada por uma imagem temática do Sinapse (medicina, estudos, vestibular)
-- A **logo** deve ser a logo do Sinapse no lugar da logo Missão 193
+Usar essa página como referência de estrutura e composição visual da tela de login, com as seguintes adaptações para o VestWeb:
+- A **imagem de fundo** deve ser trocada por uma imagem temática do VestWeb (medicina, estudos, vestibular)
+- A **logo** deve ser a logo do VestWeb no lugar da logo Missão 193
 - O campo de **e-mail** deve ser substituído por **matrícula** (`enrollment`)
 - Manter a estrutura geral: tela dividida com imagem de fundo ocupando parte da tela e card de login centralizado com logo, título, campos e botão de entrar
 - Manter elementos como Esqueceu a senha, toggle de mostrar/ocultar senha e mensagem de ambiente seguro
-- As cores do card e botão devem seguir a identidade visual do Sinapse (cor primária: `#0f8b8d`)
+- As cores do card e botão devem seguir a identidade visual do VestWeb (cor primária: `#0f8b8d`)
 
 ### Seleção de Plataforma (`/select-platform`)
-- Dois cards: Sinaflix e Espaço Aluno
+- Dois cards: VestWebFlix e Espaço Aluno
 - Cada card navega para sua respectiva área
 
-### Sinaflix (`/sinaflix`)
+### VestWebFlix (`/VestWebFlix`)
 - Interface estilo Netflix com cards de vídeo por matéria
 - Busca por título, matéria e professor
 - Player embedado via YouTube
@@ -519,7 +519,7 @@ O sistema deve ser totalmente responsivo, adaptando o layout para os seguintes b
 - Tablet → layout em coluna única com padding reduzido
 - Mobile → layout em coluna única, botões de alternativa em largura total
 
-**Sinaflix**
+**VestWebFlix**
 - Desktop → grid de cards com 4 colunas por linha
 - Tablet → grid com 2 colunas
 - Mobile → grid com 1 coluna, cards em largura total

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'sinapse_default_secret_change_me';
+const JWT_SECRET = process.env.JWT_SECRET || 'VestWeb_default_secret_change_me';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 export const generateToken = (payload) => {

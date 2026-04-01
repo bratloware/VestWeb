@@ -7,10 +7,10 @@ import TeacherLoginPage from './pages/TeacherLoginPage/TeacherLoginPage';
 import TeacherHome from './pages/TeacherArea/TeacherHome';
 import TeacherSessions from './pages/TeacherArea/TeacherSessions';
 import TeacherQuestions from './pages/TeacherArea/TeacherQuestions';
-import TeacherSinaflix from './pages/TeacherArea/TeacherSinaflix';
+import TeacherVestWebFlix from './pages/TeacherArea/TeacherSinaflix';
 import TeacherSettings from './pages/TeacherArea/TeacherSettings';
 import SelectPlatform from './pages/SelectPlatform/SelectPlatform';
-import Sinaflix from './pages/Sinaflix/Sinaflix';
+import VestWebFlix from './pages/Sinaflix/Sinaflix';
 import Home from './pages/Home/Home';
 import Questions from './pages/Questions/Questions';
 import Simulations from './pages/Simulations/Simulations';
@@ -30,8 +30,8 @@ function App() {
       <Route path="/select-platform" element={
         <ProtectedRoute><SelectPlatform /></ProtectedRoute>
       } />
-      <Route path="/sinaflix" element={
-        <ProtectedRoute><Sinaflix /></ProtectedRoute>
+      <Route path="/VestWebFlix" element={
+        <ProtectedRoute><VestWebFlix /></ProtectedRoute>
       } />
       <Route path="/classroom/home" element={
         <ProtectedRoute><Home /></ProtectedRoute>
@@ -67,8 +67,8 @@ function App() {
       <Route path="/teacher/questions" element={
         <TeacherRoute><TeacherQuestions /></TeacherRoute>
       } />
-      <Route path="/teacher/sinaflix" element={
-        <TeacherRoute><TeacherSinaflix /></TeacherRoute>
+      <Route path="/teacher/VestWebFlix" element={
+        <TeacherRoute><TeacherVestWebFlix /></TeacherRoute>
       } />
       <Route path="/teacher/sessions" element={
         <TeacherRoute><TeacherSessions /></TeacherRoute>

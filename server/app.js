@@ -34,7 +34,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Sinapse server running on port ${PORT}`);
+  console.log(`VestWeb server running on port ${PORT}`);
 });
 
 export default app;

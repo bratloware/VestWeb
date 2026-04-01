@@ -44,15 +44,15 @@ async function seed() {
   console.log('🌱  Criando alunos...');
 
   const studentData = [
-    { name: 'Admin Sinapse',      email: 'admin@sinapse.com',     enrollment: 'ADM001', role: 'admin',   avatar_url: 'https://i.pravatar.cc/150?img=1' },
-    { name: 'Prof. Ana Lima',        email: 'ana.lima@sinapse.com',  enrollment: 'TCH001', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=5',  specialty: 'Biologia',  bio: 'Especialista em Biologia para o ENEM com foco em genética e ecologia.',      experience_years: 10 },
-    { name: 'Prof. Carlos Braga',    email: 'carlos@sinapse.com',    enrollment: 'TCH002', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=12', specialty: 'Química',   bio: 'Mestre em Química Orgânica pela USP, apaixonado por simplificar o difícil.',  experience_years: 8  },
-    { name: 'Prof. Marta Fonseca',   email: 'marta@sinapse.com',     enrollment: 'TCH003', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=20', specialty: 'Física',    bio: 'Referência em Física para vestibulares de medicina há mais de uma década.',   experience_years: 12 },
-    { name: 'Prof. Fernanda Torres', email: 'fernanda@sinapse.com',  enrollment: 'TCH004', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=25', specialty: 'Matemática',bio: 'Transforma a Matemática em algo acessível e objetivo para o vestibular.',     experience_years: 7  },
-    { name: 'Prof. Ricardo Moura',   email: 'ricardo@sinapse.com',   enrollment: 'TCH005', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=15', specialty: 'Português', bio: 'Especialista em redação e interpretação de texto para o ENEM.',              experience_years: 9  },
-    { name: 'Prof. Vocês são mlks',  email: 'prof1@sinapse.com',     enrollment: 'TCH006', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=30', specialty: 'História',  bio: 'Apaixonado por história do Brasil e questões de ciências humanas do ENEM.',  experience_years: 6  },
-    { name: 'Prof. Molina',          email: 'prof2@sinapse.com',     enrollment: 'TCH007', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=35', specialty: 'Geografia', bio: 'Especialista em geopolítica e geografia física para vestibulares.',           experience_years: 5  },
-    { name: 'Prof. Franscisco',      email: 'prof3@sinapse.com',     enrollment: 'TCH008', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=40', specialty: 'Inglês',    bio: 'Fluente em 3 idiomas, foca em inglês instrumental para provas de medicina.',  experience_years: 11 },
+    { name: 'Admin VestWeb',      email: 'admin@VestWeb.com',     enrollment: 'ADM001', role: 'admin',   avatar_url: 'https://i.pravatar.cc/150?img=1' },
+    { name: 'Prof. Ana Lima',        email: 'ana.lima@VestWeb.com',  enrollment: 'TCH001', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=5',  specialty: 'Biologia',  bio: 'Especialista em Biologia para o ENEM com foco em genética e ecologia.',      experience_years: 10 },
+    { name: 'Prof. Carlos Braga',    email: 'carlos@VestWeb.com',    enrollment: 'TCH002', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=12', specialty: 'Química',   bio: 'Mestre em Química Orgânica pela USP, apaixonado por simplificar o difícil.',  experience_years: 8  },
+    { name: 'Prof. Marta Fonseca',   email: 'marta@VestWeb.com',     enrollment: 'TCH003', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=20', specialty: 'Física',    bio: 'Referência em Física para vestibulares de medicina há mais de uma década.',   experience_years: 12 },
+    { name: 'Prof. Fernanda Torres', email: 'fernanda@VestWeb.com',  enrollment: 'TCH004', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=25', specialty: 'Matemática',bio: 'Transforma a Matemática em algo acessível e objetivo para o vestibular.',     experience_years: 7  },
+    { name: 'Prof. Ricardo Moura',   email: 'ricardo@VestWeb.com',   enrollment: 'TCH005', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=15', specialty: 'Português', bio: 'Especialista em redação e interpretação de texto para o ENEM.',              experience_years: 9  },
+    { name: 'Prof. Vocês são mlks',  email: 'prof1@VestWeb.com',     enrollment: 'TCH006', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=30', specialty: 'História',  bio: 'Apaixonado por história do Brasil e questões de ciências humanas do ENEM.',  experience_years: 6  },
+    { name: 'Prof. Molina',          email: 'prof2@VestWeb.com',     enrollment: 'TCH007', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=35', specialty: 'Geografia', bio: 'Especialista em geopolítica e geografia física para vestibulares.',           experience_years: 5  },
+    { name: 'Prof. Franscisco',      email: 'prof3@VestWeb.com',     enrollment: 'TCH008', role: 'teacher', avatar_url: 'https://i.pravatar.cc/150?img=40', specialty: 'Inglês',    bio: 'Fluente em 3 idiomas, foca em inglês instrumental para provas de medicina.',  experience_years: 11 },
     { name: 'João Silva',         email: 'joao@email.com',        enrollment: 'ALU001', role: 'student', avatar_url: 'https://i.pravatar.cc/150?img=33' },
     { name: 'Maria Souza',        email: 'maria@email.com',       enrollment: 'ALU002', role: 'student', avatar_url: 'https://i.pravatar.cc/150?img=47' },
     { name: 'Pedro Alves',        email: 'pedro@email.com',       enrollment: 'ALU003', role: 'student', avatar_url: 'https://i.pravatar.cc/150?img=52' },
@@ -64,11 +64,11 @@ async function seed() {
   ];
 
   const students = await Promise.all(
-    studentData.map(async (s) => Student.create({ ...s, password_hash: await hash('sinapse123') }))
+    studentData.map(async (s) => Student.create({ ...s, password_hash: await hash('VestWeb123') }))
   );
 
   const [admin, teacher1, teacher2, teacher3, ...students_only] = students;
-  console.log(`   → ${students.length} alunos criados  (senha padrão: sinapse123)`);
+  console.log(`   → ${students.length} alunos criados  (senha padrão: VestWeb123)`);
 
   // ── 2. BANNERS ─────────────────────────────────────────────────────────────
   console.log('🌱  Criando banners...');
@@ -82,10 +82,10 @@ async function seed() {
   // ── 3. TESTIMONIALS ────────────────────────────────────────────────────────
   console.log('🌱  Criando depoimentos...');
   await Testimonial.bulkCreate([
-    { name: 'Ana Paula Ramos',    photo_url: 'https://i.pravatar.cc/150?img=23', course: 'Medicina',           university: 'USP',     text: 'O Sinapse foi fundamental na minha aprovação. A metodologia de questões e simulados me deu toda a segurança que precisava!',             active: true },
-    { name: 'Gabriel Torres',    photo_url: 'https://i.pravatar.cc/150?img=70', course: 'Medicina',           university: 'UNIFESP', text: 'Estudei por 1 ano no Sinapse e passei na primeira tentativa. Os professores são incríveis e o material é muito bem feito.',           active: true },
-    { name: 'Fernanda Lopes',    photo_url: 'https://i.pravatar.cc/150?img=25', course: 'Medicina',           university: 'UNICAMP', text: 'A plataforma é completa demais! Sinaflix, simulados, calendário... tudo integrado me ajudou muito a organizar meus estudos.',          active: true },
-    { name: 'Bruno Carvalho',    photo_url: 'https://i.pravatar.cc/150?img=65', course: 'Biomedicina',        university: 'UFRJ',    text: 'Mesmo não sendo medicina, os conteúdos do Sinapse foram perfeitos para minha área. Super recomendo!',                                 active: true },
+    { name: 'Ana Paula Ramos',    photo_url: 'https://i.pravatar.cc/150?img=23', course: 'Medicina',           university: 'USP',     text: 'O VestWeb foi fundamental na minha aprovação. A metodologia de questões e simulados me deu toda a segurança que precisava!',             active: true },
+    { name: 'Gabriel Torres',    photo_url: 'https://i.pravatar.cc/150?img=70', course: 'Medicina',           university: 'UNIFESP', text: 'Estudei por 1 ano no VestWeb e passei na primeira tentativa. Os professores são incríveis e o material é muito bem feito.',           active: true },
+    { name: 'Fernanda Lopes',    photo_url: 'https://i.pravatar.cc/150?img=25', course: 'Medicina',           university: 'UNICAMP', text: 'A plataforma é completa demais! VestWebFlix, simulados, calendário... tudo integrado me ajudou muito a organizar meus estudos.',          active: true },
+    { name: 'Bruno Carvalho',    photo_url: 'https://i.pravatar.cc/150?img=65', course: 'Biomedicina',        university: 'UFRJ',    text: 'Mesmo não sendo medicina, os conteúdos do VestWeb foram perfeitos para minha área. Super recomendo!',                                 active: true },
     { name: 'Isabela Martins',   photo_url: 'https://i.pravatar.cc/150?img=36', course: 'Medicina',           university: 'FMUSP',   text: 'As mentorias foram o diferencial. Poder conversar com médicos e estudantes aprovados me deu uma visão completamente diferente.',       active: true },
     { name: 'Thiago Nascimento', photo_url: 'https://i.pravatar.cc/150?img=59', course: 'Medicina Veterinária', university: 'UNESP', text: 'Excelente plataforma! O sistema de gamificação com pontos e streaks me manteve motivado durante toda a preparação.',                 active: true },
   ]);
@@ -95,7 +95,7 @@ async function seed() {
   console.log('🌱  Criando vídeo institucional...');
   await InstitutionalVideo.create({
     youtube_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    title: 'Conheça o Sinapse — A plataforma que transforma sua preparação',
+    title: 'Conheça o VestWeb — A plataforma que transforma sua preparação',
   });
 
   // ── 5. SUBJECTS & TOPICS ───────────────────────────────────────────────────
@@ -236,7 +236,7 @@ async function seed() {
   console.log('   → Sessões e respostas criadas');
 
   // ── 9. VIDEOS ──────────────────────────────────────────────────────────────
-  console.log('🌱  Criando vídeos (Sinaflix)...');
+  console.log('🌱  Criando vídeos (VestWebFlix)...');
 
   const videosData = [
     { title: 'Introdução à Citologia', description: 'Aprenda os fundamentos da biologia celular de forma clara e objetiva.', youtube_url: 'https://www.youtube.com/embed/rvMIRMX5m1E', thumbnail_url: 'https://img.youtube.com/vi/rvMIRMX5m1E/hqdefault.jpg', topic: 'Citologia', teacher: teacher1 },
@@ -333,7 +333,7 @@ async function seed() {
     'Dica: para memorizar as organelas celulares, use mapas mentais com cores! Funcionou muito bem pra mim 🧠',
     'Fiz o simulado de Biologia hoje e tirei 8/10! Estou evoluindo. Quem quiser discutir as questões, me chama!',
     'Alguém tem dica de como estudar Química Orgânica? Estou tendo dificuldade com nomenclatura de compostos.',
-    'Acabei de assistir a aula de Leis de Newton no Sinaflix. Sensacional! O professor explica muito bem 🔥',
+    'Acabei de assistir a aula de Leis de Newton no VestWebFlix. Sensacional! O professor explica muito bem 🔥',
     'Lembrete para quem está desanimado: cada questão que você erra hoje é uma acerto no vestibular! 💪',
     'Pergunta rápida: qual a diferença entre mitose e meiose em termos de função biológica?',
     'Galera, criamos um grupo de estudos online. Quem quiser entrar, me manda mensagem! Estudamos de segunda a sexta 19h.',
@@ -356,7 +356,7 @@ async function seed() {
     'Concordo! É um dos temas mais complexos mesmo.',
     'Essa dica é incrível! Já comecei a usar mapas mentais.',
     'Parabéns!! Continua assim!',
-    'Eu recomendo a aula do Sinaflix sobre isso, ajuda muito!',
+    'Eu recomendo a aula do VestWebFlix sobre isso, ajuda muito!',
     'Também tive essa dificuldade no começo. Com prática melhora!',
     'Boa reflexão! Muda muito a perspectiva.',
     'A meiose produz células haploides (n) para reprodução, a mitose produz células diploides (2n) para crescimento.',
@@ -427,11 +427,11 @@ async function seed() {
   // ── DONE ──────────────────────────────────────────────────────────────────
   console.log('\n✅  Seed completo!\n');
   console.log('📋  Usuários criados:');
-  console.log('   Admin:    matrícula=ADM001   senha=sinapse123');
-  console.log('   Teacher1: matrícula=TCH001   senha=sinapse123  (Prof. Ana Lima)');
-  console.log('   Teacher2: matrícula=TCH002   senha=sinapse123  (Prof. Carlos Braga)');
-  console.log('   Student:  matrícula=ALU001   senha=sinapse123  (João Silva)');
-  console.log('   Student:  matrícula=ALU002   senha=sinapse123  (Maria Souza)');
+  console.log('   Admin:    matrícula=ADM001   senha=VestWeb123');
+  console.log('   Teacher1: matrícula=TCH001   senha=VestWeb123  (Prof. Ana Lima)');
+  console.log('   Teacher2: matrícula=TCH002   senha=VestWeb123  (Prof. Carlos Braga)');
+  console.log('   Student:  matrícula=ALU001   senha=VestWeb123  (João Silva)');
+  console.log('   Student:  matrícula=ALU002   senha=VestWeb123  (Maria Souza)');
   console.log('   ... e mais 3 alunos (ALU003 a ALU008)\n');
 
   await sequelize.close();

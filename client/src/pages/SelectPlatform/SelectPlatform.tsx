@@ -15,7 +15,7 @@ const SelectPlatform = () => {
           <div className="select-platform-logo-icon">
             <Brain size={24} />
           </div>
-          <span className="select-platform-logo-text">THE BEST</span>
+          <span className="select-platform-logo-text">VestWeb</span>
         </div>
 
         <Link to="/" className="select-platform-back-btn">
@@ -27,14 +27,14 @@ const SelectPlatform = () => {
         <p>Escolha por onde você quer comecar hoje.</p>
 
         <div className="select-platform-cards">
-          <Link to="/sinaflix" className="platform-card">
-            <div className="platform-card-icon platform-card-icon-sinaflix">
+          <Link to="/VestWebFlix" className="platform-card">
+            <div className="platform-card-icon platform-card-icon-VestWebFlix">
               <Play size={36} />
             </div>
             <div className="platform-card-badge">Videoaulas</div>
-            <h2>Sinaflix</h2>
+            <h2>VestWebFlix</h2>
             <p>Assista as melhores vídeoaulas dos nossos professores, organizadas por disciplina e tópico.</p>
-            <div className="platform-card-btn">Acessar Sinaflix</div>
+            <div className="platform-card-btn">Acessar VestWebFlix</div>
           </Link>
 
           <Link to="/classroom/home" className="platform-card">

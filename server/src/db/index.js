@@ -4,7 +4,7 @@ import 'dotenv/config';
 const {
   DB_HOST = 'localhost',
   DB_PORT = '5432',
-  DB_NAME = 'db_sinapse',
+  DB_NAME = 'db_VestWeb',
   DB_USER = 'postgres',
   DB_PASSWORD = '',
   NODE_ENV = 'development',

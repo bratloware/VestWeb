@@ -48,7 +48,7 @@ const getThumbnail = (video: Video) => {
   return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 };
 
-const TeacherSinaflix = () => {
+const TeacherVestWebFlix = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
@@ -151,11 +151,11 @@ const TeacherSinaflix = () => {
     <div className="teacher-layout">
       <TeacherSidebar />
       <main className="teacher-main">
-        <div className="teacher-sinaflix">
+        <div className="teacher-VestWebFlix">
 
           <div className="teacher-page-header">
             <div>
-              <h1>Sinaflix — Minhas Aulas</h1>
+              <h1>VestWebFlix — Minhas Aulas</h1>
               <p>Adicione, edite e gerencie suas videoaulas.</p>
             </div>
             <button
@@ -373,4 +373,4 @@ const TeacherSinaflix = () => {
   );
 };
 
-export default TeacherSinaflix;
+export default TeacherVestWebFlix;

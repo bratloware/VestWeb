@@ -61,7 +61,7 @@ function validate(q, index) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log('\n📥  Importador de Questões — SinapseWeb');
+  console.log('\n📥  Importador de Questões — VestWebWeb');
   console.log(`📂  Arquivo: ${inputFile}\n`);
 
   // 1. Conectar

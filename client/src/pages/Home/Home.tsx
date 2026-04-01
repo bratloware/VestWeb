@@ -24,7 +24,7 @@ const tips = [
 const quickAccess = [
   { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
-  { label: 'Sinaflix', icon: Play, to: '/sinaflix' },
+  { label: 'VestWebFlix', icon: Play, to: '/VestWebFlix' },
   { label: 'Calendário', icon: Calendar, to: '/classroom/review-calendar' },
   { label: 'Mentoria', icon: MessageCircle, to: '/classroom/mentoring' },
   { label: 'Métricas', icon: BarChart2, to: '/classroom/metrics' },
