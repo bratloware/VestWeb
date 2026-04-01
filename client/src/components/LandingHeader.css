@@ -88,6 +88,24 @@
   gap: 4px;
 }
 
+.landing-header-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.landing-header-theme-toggle:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .landing-header-hamburger {
   display: none;
   background: transparent;

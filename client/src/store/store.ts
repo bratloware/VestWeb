@@ -4,6 +4,7 @@ import questionsReducer from '../slices/questionsSlice';
 import simulationsReducer from '../slices/simulationsSlice';
 import videosReducer from '../slices/videosSlice';
 import communityReducer from '../slices/communitySlice';
+import themeReducer from '../slices/themeSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     simulations: simulationsReducer,
     videos: videosReducer,
     community: communityReducer,
+    theme: themeReducer,
   },
 });
 

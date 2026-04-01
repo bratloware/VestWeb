@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, Menu, X } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Brain, Menu, X, Sun, Moon } from 'lucide-react';
+import { RootState } from '../store/store';
+import { toggleTheme } from '../slices/themeSlice';
 import './LandingHeader.css';
 
 const LandingHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { mode } = useSelector((state: RootState) => state.theme);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -60,6 +65,14 @@ const LandingHeader = () => {
               {link.label}
             </Link>
           ))}
+
+          <button
+            className="landing-header-theme-toggle"
+            onClick={() => dispatch(toggleTheme())}
+            aria-label="Alternar tema"
+          >
+            {mode === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
 
           <button
             className="landing-header-hamburger"
