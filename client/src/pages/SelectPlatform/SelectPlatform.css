@@ -51,21 +51,10 @@
   margin-bottom: 16px;
 }
 
-.select-platform-logo-icon {
-  width: 44px;
+.select-platform-logo-img {
   height: 44px;
-  background: var(--primary);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.select-platform-logo-text {
-  font-size: 28px;
-  font-weight: 800;
-  color: white;
+  width: auto;
+  object-fit: contain;
 }
 
 .select-platform-inner h1 {

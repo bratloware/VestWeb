@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BookOpen, BarChart2, Users, MessageCircle,
-  Settings, LogOut, Menu, X, Brain, LucideIcon, Sun, Moon,
+  Settings, LogOut, Menu, X, LucideIcon, Sun, Moon,
 } from 'lucide-react';
+import logo from '../assets/images/logo.png';
 import { AppDispatch, RootState } from '../store/store';
 import { logoutThunk } from '../slices/authSlice';
 import { toggleTheme } from '../slices/themeSlice';
@@ -59,10 +60,7 @@ const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
       <aside className={`sidebar${open ? ' open' : ''}`}>
         <div className="sidebar-header">
           <Link to="/" className="sidebar-logo">
-            <div className="sidebar-logo-icon">
-              <Brain size={20} />
-            </div>
-            <span className="sidebar-logo-text">VestWeb</span>
+            <img src={logo} alt="VestWeb" className="sidebar-logo-img" />
           </Link>
         </div>
 

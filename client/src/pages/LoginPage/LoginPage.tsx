@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Eye, EyeOff, Brain } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
+import logo from '../../assets/images/logo.png';
 import { loginThunk } from '../../slices/authSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import { isTeacherRole } from '../../utils/roles';
@@ -37,10 +38,7 @@ const LoginPage = () => {
         <div className="login-left-pattern" />
         <div className="login-left-content">
           <div className="login-left-logo">
-            <div className="login-left-logo-icon">
-              <Brain size={28} />
-            </div>
-            <span className="login-left-logo-text">VestWeb</span>
+            <img src={logo} alt="VestWeb" className="login-logo-img" />
           </div>
           <h1 className="login-left-title">Bem-vindo de volta!</h1>
           <p className="login-left-subtitle">
@@ -67,8 +65,7 @@ const LoginPage = () => {
       <div className="login-right">
         <div className="login-card">
           <div className="login-card-logo">
-            <Brain size={28} color="var(--primary)" />
-            <span className="login-card-logo-text">VestWeb</span>
+            <img src={logo} alt="VestWeb" className="login-logo-img" />
           </div>
           <h2>Acesse sua conta</h2>
           <p>Entre com sua matricula e senha para continuar.</p>

@@ -15,7 +15,7 @@ interface Metrics {
 }
 
 const tips = [
-  { subject: 'Biologia', text: 'Revise o ciclo celular hoje! Mitose e meiose sao frequentemente cobrados em vestibulares de medicina.' },
+  { subject: 'Biologia', text: 'Revise o ciclo celular hoje! Mitose e meiose sao frequentemente cobrados nos principais vestibulares do Brasil.' },
   { subject: 'Quimica', text: 'Pratique balanceamento de equacoes quimicas. Essa habilidade e fundamental para resolver questoes de estequiometria.' },
   { subject: 'Fisica', text: 'Resolva ao menos 5 questoes de cinetica hoje. A pratica constante e a chave para dominar os calculos.' },
   { subject: 'Portugues', text: 'Leia um editorial ou artigo de opiniao hoje. Isso melhora sua interpretacao de texto e vocabulario.' },

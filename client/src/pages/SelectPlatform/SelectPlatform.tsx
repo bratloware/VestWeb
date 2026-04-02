@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Play, GraduationCap, Brain, ArrowLeft } from 'lucide-react';
+import { Play, GraduationCap, ArrowLeft } from 'lucide-react';
+import logo from '../../assets/images/logo.png';
 import { RootState } from '../../store/store';
 import './SelectPlatform.css';
 
@@ -12,10 +13,7 @@ const SelectPlatform = () => {
       <div className="select-platform-bg" />
       <div className="select-platform-inner">
         <div className="select-platform-logo">
-          <div className="select-platform-logo-icon">
-            <Brain size={24} />
-          </div>
-          <span className="select-platform-logo-text">VestWeb</span>
+          <img src={logo} alt="VestWeb" className="select-platform-logo-img" />
         </div>
 
         <Link to="/" className="select-platform-back-btn">

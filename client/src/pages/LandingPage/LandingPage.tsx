@@ -23,9 +23,9 @@ const features = [
 ];
 
 const staticTestimonials = [
-  { id: 1, name: 'Ana Lima', course: 'Medicina', university: 'USP', text: 'O VestWeb me ajudou a organizar meus estudos e aumentar minha taxa de acerto em 40%! A plataforma é incrível.' },
-  { id: 2, name: 'Carlos Souza', course: 'Medicina', university: 'UNICAMP', text: 'Os simulados são muito próximos das provas reais. Me senti preparado no dia do vestibular.' },
-  { id: 3, name: 'Mariana Santos', course: 'Medicina', university: 'UNIFESP', text: 'A VestWebFlix é diferente de tudo que já usei. As aulas são objetivas e os professores são excelentes!' },
+  { id: 1, name: 'Ana Lima', course: 'Direito', university: 'USP', text: 'O VestWeb me ajudou a organizar meus estudos e aumentar minha taxa de acerto em 40%! A plataforma é incrível.' },
+  { id: 2, name: 'Carlos Souza', course: 'Engenharia', university: 'UNICAMP', text: 'Os simulados são muito próximos das provas reais. Me senti preparado no dia do vestibular.' },
+  { id: 3, name: 'Mariana Santos', course: 'Arquitetura', university: 'UNIFESP', text: 'A VestWebFlix é diferente de tudo que já usei. As aulas são objetivas e os professores são excelentes!' },
 ];
 
 const LandingPage = () => {
@@ -99,12 +99,12 @@ const LandingPage = () => {
         <div className="hero-overlay" />
 
         <div className="hero-content">
-          <div className="hero-badge">Pré-vestibular medicina</div>
+          <div className="hero-badge">Pré-vestibular</div>
           <h1 className="hero-title">
             Sua <span>aprovação</span> comeca aqui!
           </h1>
           <p className="hero-subtitle">
-            A plataforma completa para estudantes de medicina. Questões, simulados, videoaulas, mentorias e muito mais — tudo integrado para maximizar seu aprendizado.
+            A plataforma completa para vestibulandos. Questões, simulados, videoaulas, mentorias e muito mais — tudo integrado para maximizar seu aprendizado.
           </p>
           <div className="hero-actions">
             <Link to="/login" className="hero-cta-primary">
@@ -152,7 +152,7 @@ const LandingPage = () => {
         <div className="section-header">
           <div className="section-tag">Recursos</div>
           <h2 className="section-title">Tudo que você precisa em um só lugar!</h2>
-          <p className="section-desc">Nossa plataforma foi desenvolvida especialmente para estudantes de medicina, com ferramentas que fazem a diferença.</p>
+          <p className="section-desc">Nossa plataforma foi desenvolvida para vestibulandos de todo o Brasil, com ferramentas que fazem a diferença.</p>
         </div>
         <div className="features-grid">
           {features.map((f, i) => (
@@ -189,9 +189,9 @@ const LandingPage = () => {
           </div>
           <div className="about-text">
             <div className="section-tag">Sobre Nós</div>
-            <h2>O cursinho que já aprovou milhares de medicos!</h2>
+            <h2>O cursinho que já aprovou milhares de alunos!</h2>
             <p>
-              O VestWeb nasceu com o objetivo de democratizar o acesso a educação de qualidade para estudantes que desejam ingressar nas melhores faculdades de medicina do Brasil.
+              O VestWeb nasceu com o objetivo de democratizar o acesso à educação de qualidade para estudantes que desejam ingressar nas melhores faculdades do Brasil.
             </p>
             <p>
               Nossa plataforma digital combina metodologia pedagógica comprovada com tecnologia de ponta, oferecendo uma experiência de aprendizado personalizada e eficiente.
@@ -251,7 +251,7 @@ const LandingPage = () => {
         <div className="section-header">
           <div className="section-tag">Depoimentos</div>
           <h2 className="section-title">O que nossos alunos dizem</h2>
-          <p className="section-desc">Histórias reais de estudantes que realizaram o sonho de cursar medicina.</p>
+          <p className="section-desc">Histórias reais de estudantes que realizaram o sonho de entrar na faculdade dos seus sonhos.</p>
         </div>
         <div className="testimonials-grid">
           {testimonials.map(t => (
@@ -349,7 +349,7 @@ const LandingPage = () => {
         <div className="footer-content">
           <div className="footer-brand">
             <h3>VestWeb</h3>
-            <p>A plataforma educacional mais completa para quem quer passar em medicina. Estude com inteligência, conquiste sua aprovação.</p>
+            <p>A plataforma educacional mais completa para quem quer passar no vestibular. Estude com inteligência, conquiste sua aprovação.</p>
           </div>
           <div className="footer-links">
             <h4>Plataforma</h4>

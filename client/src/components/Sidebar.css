@@ -26,25 +26,10 @@
   gap: 10px;
 }
 
-.sidebar-logo-icon {
-  width: 36px;
+.sidebar-logo-img {
   height: 36px;
-  background: var(--primary);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 700;
-  color: white;
-  flex-shrink: 0;
-}
-
-.sidebar-logo-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: white;
-  letter-spacing: -0.5px;
+  width: auto;
+  object-fit: contain;
 }
 
 .sidebar-user {
