@@ -21,7 +21,6 @@ const LandingHeader = () => {
   const navLinks = [
     { href: '#home', label: 'Início' },
     { href: '#colaboradores', label: 'Colaboradores' },
-    { href: '#espaco-aluno', label: 'Espaço Aluno' },
     { href: '#sobre', label: 'Sobre' },
     { href: '#depoimentos', label: 'Depoimentos' },
     { href: '#contato', label: 'Contato' },
