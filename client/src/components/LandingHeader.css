@@ -12,6 +12,12 @@
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
+.landing-header-nav-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .landing-header.scrolled {
   background: rgba(26, 26, 46, 0.97);
   backdrop-filter: blur(8px);
