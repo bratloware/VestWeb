@@ -284,13 +284,13 @@ const LandingPage = () => {
             <h3>Entre em contato</h3>
             <p>Estamos disponivéis para tirar suas dúvidas sobre a plataforma, planos e muito mais. Não deixe para amanhã o que pode resolver hoje!</p>
             <div className="contact-links">
-              <a href="mailto:contato@VestWeb.com.br" className="contact-link">
+              <a href="mailto:contato@bratloware.com" className="contact-link">
                 <div className="contact-link-icon"><Mail size={20} /></div>
-                contato@VestWeb.com.br
+                contato@bratloware.com
               </a>
-              <a href="tel:+5511999999999" className="contact-link">
+              <a href="tel:+5561994319166" className="contact-link">
                 <div className="contact-link-icon"><Phone size={20} /></div>
-                (11) 99999-9999
+                (61) 99431-9166
               </a>
               <div className="contact-link">
                 <div className="contact-link-icon"><MapPin size={20} /></div>

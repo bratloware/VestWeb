@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Brain, Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { RootState } from '../store/store';
 import { toggleTheme } from '../slices/themeSlice';
+import logo from '../assets/images/logo.png';
 import './LandingHeader.css';
 
 const LandingHeader = () => {
@@ -39,10 +40,7 @@ const LandingHeader = () => {
         {/* Bloco 1: Lado Esquerdo (Logo) */}
         <div className="landing-header-left">
           <Link to="/" className="landing-header-logo">
-            <div className="landing-header-logo-icon">
-              <Brain size={22} />
-            </div>
-            <span className="landing-header-logo-text">VestWeb</span>
+            <img src={logo} alt="VestWeb" className="landing-header-logo-img" />
           </Link>
         </div>
 
