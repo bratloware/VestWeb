@@ -39,16 +39,17 @@ const Home = () => {
   const [tip] = useState(tips[Math.floor(Math.random() * tips.length)]);
 
   useEffect(() => {
-    // Load metrics from API
     Promise.allSettled([
-      api.get('/gamification/points'),
       api.get('/gamification/streak'),
       api.get('/gamification/leaderboard'),
-    ]).then(([pointsRes, streakRes, leaderboardRes]) => {
+      api.get('/gamification/stats'),
+    ]).then(([streakRes, leaderboardRes, statsRes]) => {
       const streak = streakRes.status === 'fulfilled' ? streakRes.value.data.data?.current_streak || 0 : 0;
       const leaderboard = leaderboardRes.status === 'fulfilled' ? leaderboardRes.value.data.data || [] : [];
       const rank = leaderboard.findIndex((entry: any) => entry.student_id === student?.id) + 1 || 0;
-      setMetrics(prev => ({ ...prev, streak, rank }));
+      const total_answered = statsRes.status === 'fulfilled' ? statsRes.value.data.data?.total_answered || 0 : 0;
+      const accuracy = statsRes.status === 'fulfilled' ? statsRes.value.data.data?.accuracy || 0 : 0;
+      setMetrics({ streak, rank, total_answered, accuracy });
     });
   }, [student?.id]);
 

@@ -1,4 +1,4 @@
-import { Question, Alternative, Topic, Subject, Answer, QuestionSession } from '../db/models/index.js';
+import { Question, Alternative, Topic, Subject, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
 import { Op } from 'sequelize';
 
 export const getAll = async (req, res) => {
@@ -127,6 +127,7 @@ export const getSubjects = async (req, res) => {
 export const submitAnswer = async (req, res) => {
   try {
     const { session_id, question_id, chosen_alternative_id, response_time_seconds } = req.body;
+    const student_id = req.user.id;
 
     const alternative = await Alternative.findByPk(chosen_alternative_id);
     const is_correct = alternative ? alternative.is_correct : false;
@@ -138,6 +139,20 @@ export const submitAnswer = async (req, res) => {
       is_correct,
       response_time_seconds,
     });
+
+    if (is_correct) {
+      await Points.create({ student_id, amount: 10, reason: 'correct_answer' });
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const streak = await Streak.findOne({ where: { student_id } });
+    if (!streak) {
+      await Streak.create({ student_id, current_streak: 1, longest_streak: 1, last_activity_date: today });
+    } else if (streak.last_activity_date !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const new_streak = streak.last_activity_date === yesterday ? streak.current_streak + 1 : 1;
+      await streak.update({ current_streak: new_streak, longest_streak: Math.max(new_streak, streak.longest_streak), last_activity_date: today });
+    }
 
     return res.json({ message: 'Answer submitted', data: { answer, is_correct } });
   } catch (error) {

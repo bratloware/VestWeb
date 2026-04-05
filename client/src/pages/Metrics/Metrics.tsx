@@ -11,38 +11,32 @@ interface SubjectStats {
   correct: number;
 }
 
-const mockSubjects: SubjectStats[] = [
-  { name: 'Biologia', accuracy: 72, total: 120, correct: 86 },
-  { name: 'Quimica', accuracy: 58, total: 95, correct: 55 },
-  { name: 'Fisica', accuracy: 45, total: 80, correct: 36 },
-  { name: 'Matematica', accuracy: 65, total: 110, correct: 72 },
-  { name: 'Portugues', accuracy: 80, total: 70, correct: 56 },
-  { name: 'Historia', accuracy: 88, total: 50, correct: 44 },
-];
-
-const mockSessions = [
-  { label: 'Seg', score: 75, color: '#10b981' },
-  { label: 'Ter', score: 60, color: '#f59e0b' },
-  { label: 'Qua', score: 82, color: '#10b981' },
-  { label: 'Qui', score: 55, color: '#f59e0b' },
-  { label: 'Sex', score: 90, color: '#10b981' },
-  { label: 'Sab', score: 40, color: '#ef4444' },
-  { label: 'Dom', score: 70, color: '#10b981' },
-];
+interface SessionStat {
+  label: string;
+  score: number;
+}
 
 const Metrics = () => {
   const [totalPoints, setTotalPoints] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [totalAnswered] = useState(525);
-  const [overallAccuracy] = useState(67);
-  const [subjects] = useState<SubjectStats[]>(mockSubjects);
+  const [totalAnswered, setTotalAnswered] = useState(0);
+  const [overallAccuracy, setOverallAccuracy] = useState(0);
+  const [subjects, setSubjects] = useState<SubjectStats[]>([]);
+  const [recentSessions, setRecentSessions] = useState<SessionStat[]>([]);
 
   useEffect(() => {
     api.get('/gamification/points').then(r => setTotalPoints(r.data.data?.total_points || 0)).catch(() => {});
     api.get('/gamification/streak').then(r => setStreak(r.data.data?.current_streak || 0)).catch(() => {});
+    api.get('/gamification/stats').then(r => {
+      setTotalAnswered(r.data.data?.total_answered || 0);
+      setOverallAccuracy(r.data.data?.accuracy || 0);
+    }).catch(() => {});
+    api.get('/gamification/subject-stats').then(r => setSubjects(r.data.data || [])).catch(() => {});
+    api.get('/gamification/recent-sessions').then(r => setRecentSessions(r.data.data || [])).catch(() => {});
   }, []);
 
   const getAccuracyClass = (acc: number) => acc >= 70 ? 'high' : acc >= 50 ? 'medium' : 'low';
+  const getSessionColor = (score: number) => score >= 70 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
 
   return (
     <div className="metrics-page">
@@ -86,78 +80,88 @@ const Metrics = () => {
         <div className="metrics-charts">
           <div className="metrics-chart-card">
             <h2>Desempenho por materia (%)</h2>
-            <div className="bar-chart">
-              {subjects.map(s => (
-                <div key={s.name} className="bar-item">
-                  <div
-                    className="bar-fill"
-                    style={{ height: `${s.accuracy}%` }}
-                    data-value={`${s.accuracy}%`}
-                    title={`${s.name}: ${s.accuracy}%`}
-                  >
-                    <span className="bar-value" style={{ fontSize: '10px', top: '-18px' }}>{s.accuracy}%</span>
+            {subjects.length === 0 ? (
+              <p style={{ color: '#888', padding: '24px 0', textAlign: 'center' }}>Nenhuma questão respondida ainda.</p>
+            ) : (
+              <div className="bar-chart">
+                {subjects.map(s => (
+                  <div key={s.name} className="bar-item">
+                    <div
+                      className="bar-fill"
+                      style={{ height: `${s.accuracy}%` }}
+                      data-value={`${s.accuracy}%`}
+                      title={`${s.name}: ${s.accuracy}%`}
+                    >
+                      <span className="bar-value" style={{ fontSize: '10px', top: '-18px' }}>{s.accuracy}%</span>
+                    </div>
+                    <div className="bar-label">{s.name.slice(0, 3)}</div>
                   </div>
-                  <div className="bar-label">{s.name.slice(0, 3)}</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="metrics-chart-card">
-            <h2>Ultimas 7 sessoes</h2>
-            <div className="sessions-list">
-              {mockSessions.map(s => (
-                <div key={s.label} className="session-row">
-                  <div className="session-row-label">{s.label}</div>
-                  <div className="session-progress-bar">
-                    <div
-                      className="session-progress-fill"
-                      style={{ width: `${s.score}%`, background: s.color }}
-                    />
+            <h2>Ultimas sessoes</h2>
+            {recentSessions.length === 0 ? (
+              <p style={{ color: '#888', padding: '24px 0', textAlign: 'center' }}>Nenhuma sessão concluída ainda.</p>
+            ) : (
+              <div className="sessions-list">
+                {recentSessions.map((s, i) => (
+                  <div key={i} className="session-row">
+                    <div className="session-row-label">{s.label}</div>
+                    <div className="session-progress-bar">
+                      <div
+                        className="session-progress-fill"
+                        style={{ width: `${s.score}%`, background: getSessionColor(s.score) }}
+                      />
+                    </div>
+                    <div className="session-row-value">{s.score}%</div>
                   </div>
-                  <div className="session-row-value">{s.score}%</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Missed topics table */}
-        <div className="metrics-table-card">
-          <h2>Desempenho detalhado por materia</h2>
-          <table className="metrics-table">
-            <thead>
-              <tr>
-                <th>Materia</th>
-                <th>Questoes</th>
-                <th>Acertos</th>
-                <th>Taxa de acerto</th>
-              </tr>
-            </thead>
-            <tbody>
-              {subjects.sort((a, b) => a.accuracy - b.accuracy).map(s => (
-                <tr key={s.name}>
-                  <td style={{ fontWeight: 600 }}>{s.name}</td>
-                  <td>{s.total}</td>
-                  <td>{s.correct}</td>
-                  <td>
-                    <div className="accuracy-bar">
-                      <div className="accuracy-track">
-                        <div
-                          className={`accuracy-fill ${getAccuracyClass(s.accuracy)}`}
-                          style={{ width: `${s.accuracy}%` }}
-                        />
-                      </div>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: s.accuracy >= 70 ? '#10b981' : s.accuracy >= 50 ? '#f59e0b' : '#ef4444', minWidth: '40px' }}>
-                        {s.accuracy}%
-                      </span>
-                    </div>
-                  </td>
+        {/* Detailed table */}
+        {subjects.length > 0 && (
+          <div className="metrics-table-card">
+            <h2>Desempenho detalhado por materia</h2>
+            <table className="metrics-table">
+              <thead>
+                <tr>
+                  <th>Materia</th>
+                  <th>Questoes</th>
+                  <th>Acertos</th>
+                  <th>Taxa de acerto</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {subjects.sort((a, b) => a.accuracy - b.accuracy).map(s => (
+                  <tr key={s.name}>
+                    <td style={{ fontWeight: 600 }}>{s.name}</td>
+                    <td>{s.total}</td>
+                    <td>{s.correct}</td>
+                    <td>
+                      <div className="accuracy-bar">
+                        <div className="accuracy-track">
+                          <div
+                            className={`accuracy-fill ${getAccuracyClass(s.accuracy)}`}
+                            style={{ width: `${s.accuracy}%` }}
+                          />
+                        </div>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: s.accuracy >= 70 ? '#10b981' : s.accuracy >= 50 ? '#f59e0b' : '#ef4444', minWidth: '40px' }}>
+                          {s.accuracy}%
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </main>
     </div>
   );
