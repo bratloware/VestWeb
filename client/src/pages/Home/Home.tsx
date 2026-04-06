@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { HelpCircle, ClipboardList, Play, Calendar, BarChart2, Users, MessageCircle, Zap, Target, Trophy, Flame } from 'lucide-react';
+import { HelpCircle, ClipboardList, Play, Calendar, BarChart2, Users, MessageCircle, Zap, Target, Trophy, Flame, Hand, Lightbulb } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api/api';
 import { RootState } from '../../store/store';
@@ -64,7 +64,7 @@ const Home = () => {
       <Sidebar />
       <main className="page-content">
         <div className="home-header">
-          <h1>{getGreeting()}, <span>{student?.name?.split(' ')[0] || 'Aluno'}</span>! 👋</h1>
+          <h1>{getGreeting()}, <span>{student?.name?.split(' ')[0] || 'Aluno'}</span>!</h1>
           <p>Pronto para mais um dia de estudos? Vamos lá!</p>
         </div>
 
@@ -143,14 +143,14 @@ const Home = () => {
           </div>
 
           <div className="home-tip">
-            <h2>💡 Dica do dia</h2>
+            <h2><Lightbulb size={18} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '6px' }} />Dica do dia</h2>
             <div className="tip-card">
               <div className="tip-subject">{tip.subject}</div>
               <p>{tip.text}</p>
             </div>
 
             <div className="streak-display">
-              <div className="streak-fire">🔥</div>
+              <div className="streak-fire"><Flame size={24} /></div>
               <div className="streak-info">
                 <strong>{metrics.streak} dias</strong>
                 <span>de sequência de estudos</span>
