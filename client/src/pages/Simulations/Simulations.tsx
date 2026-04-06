@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Clock, BookOpen, HelpCircle, RotateCcw } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
-import { fetchSimulations, fetchSimulationById, startSession, finishSession } from '../../slices/simulationsSlice';
+import { fetchSimulations, fetchSimulationById, startSession, finishSession, fetchHistory } from '../../slices/simulationsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Simulations.css';
@@ -22,6 +22,7 @@ const Simulations = () => {
 
   useEffect(() => {
     dispatch(fetchSimulations());
+    dispatch(fetchHistory());
   }, [dispatch]);
 
   const startSim = async (simId: number) => {
@@ -77,6 +78,7 @@ const Simulations = () => {
           correct: res.payload.correct || 0,
           total: res.payload.total || 0,
         });
+        dispatch(fetchHistory());
       }
     }
     setMode('result');
