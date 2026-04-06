@@ -25,7 +25,6 @@ const defaultNavItems: NavItem[] = [
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
   { label: 'VestWebFlix', icon: Play, to: '/VestWebFlix' },
   { label: 'Calendário', icon: Calendar, to: '/classroom/review-calendar' },
-  { label: 'Sala de Estudos', icon: BookOpen, to: '/classroom/study-room' },
   { label: 'Métricas', icon: BarChart2, to: '/classroom/metrics' },
   { label: 'Comunidade', icon: Users, to: '/classroom/community' },
   { label: 'Mentoria', icon: MessageCircle, to: '/classroom/mentoring' },

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { HelpCircle, ClipboardList, Play, Calendar, BarChart2, Users, MessageCircle, BookOpen, Zap, Target, Trophy, Flame } from 'lucide-react';
+import { HelpCircle, ClipboardList, Play, Calendar, BarChart2, Users, MessageCircle, Zap, Target, Trophy, Flame } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api/api';
 import { RootState } from '../../store/store';
@@ -29,7 +29,6 @@ const quickAccess = [
   { label: 'Mentoria', icon: MessageCircle, to: '/classroom/mentoring' },
   { label: 'Métricas', icon: BarChart2, to: '/classroom/metrics' },
   { label: 'Comunidade', icon: Users, to: '/classroom/community' },
-  { label: 'Sala Estudos', icon: BookOpen, to: '/classroom/study-room' },
   { label: 'Configurações', icon: Zap, to: '/classroom/settings' },
 ];
 

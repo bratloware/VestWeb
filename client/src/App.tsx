@@ -18,7 +18,6 @@ import Home from './pages/Home/Home';
 import Questions from './pages/Questions/Questions';
 import Simulations from './pages/Simulations/Simulations';
 import ReviewCalendar from './pages/ReviewCalendar/ReviewCalendar';
-import StudyRoom from './pages/StudyRoom/StudyRoom';
 import Metrics from './pages/Metrics/Metrics';
 import Community from './pages/Community/Community';
 import Mentoring from './pages/Mentoring/Mentoring';
@@ -53,9 +52,6 @@ function App() {
       } />
       <Route path="/classroom/review-calendar" element={
         <ProtectedRoute><ReviewCalendar /></ProtectedRoute>
-      } />
-      <Route path="/classroom/study-room" element={
-        <ProtectedRoute><StudyRoom /></ProtectedRoute>
       } />
       <Route path="/classroom/metrics" element={
         <ProtectedRoute><Metrics /></ProtectedRoute>
