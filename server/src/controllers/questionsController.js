@@ -12,9 +12,33 @@ export const getAll = async (req, res) => {
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
     if (search) {
+      // Questões cujas alternativas contêm a palavra
+      const altMatches = await Alternative.findAll({
+        where: { text: { [Op.iLike]: `%${search}%` } },
+        attributes: ['question_id'],
+      });
+      const altQuestionIds = altMatches.map(a => a.question_id);
+
+      // Tópicos cujo nome contém a palavra
+      const topicMatches = await Topic.findAll({
+        where: { name: { [Op.iLike]: `%${search}%` } },
+        attributes: ['id'],
+      });
+      const topicIds = topicMatches.map(t => t.id);
+
+      // Matérias cujo nome contém a palavra → pega os tópicos dessas matérias
+      const subjectMatches = await Subject.findAll({
+        where: { name: { [Op.iLike]: `%${search}%` } },
+        include: [{ model: Topic, as: 'topics', attributes: ['id'] }],
+      });
+      const subjectTopicIds = subjectMatches.flatMap(s => s.topics.map(t => t.id));
+
+      const allTopicIds = [...new Set([...topicIds, ...subjectTopicIds])];
+
       where[Op.or] = [
         { statement: { [Op.iLike]: `%${search}%` } },
-        { '$alternatives.text$': { [Op.iLike]: `%${search}%` } },
+        { id: { [Op.in]: altQuestionIds } },
+        ...(allTopicIds.length ? [{ topic_id: { [Op.in]: allTopicIds } }] : []),
       ];
     }
 
@@ -139,6 +163,7 @@ export const submitAnswer = async (req, res) => {
     const is_correct = alternative ? alternative.is_correct : false;
 
     const answer = await Answer.create({
+      student_id: req.user.id,
       session_id,
       question_id,
       chosen_alternative_id,

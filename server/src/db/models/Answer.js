@@ -7,6 +7,10 @@ const Answer = sequelize.define('Answer', {
     primaryKey: true,
     autoIncrement: true,
   },
+  student_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   session_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
