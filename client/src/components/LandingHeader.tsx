@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, Menu, X } from 'lucide-react';
+import { Brain, Menu, X, Moon, Sun } from 'lucide-react';
+import { useDarkMode } from '../hooks/useDarkMode';
 import './LandingHeader.css';
 
 const LandingHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { dark, toggle } = useDarkMode();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -60,6 +62,10 @@ const LandingHeader = () => {
               {link.label}
             </Link>
           ))}
+
+          <button className="landing-header-theme-toggle" onClick={toggle} aria-label="Alternar modo escuro">
+            {dark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
 
           <button
             className="landing-header-hamburger"

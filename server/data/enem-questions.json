@@ -1,0 +1,857 @@
+[
+  {
+    "statement": "As mitocôndrias são organelas presentes em células eucarióticas e desempenham papel fundamental no metabolismo celular. Sobre a estrutura e função das mitocôndrias, é correto afirmar que:",
+    "topic": "Citologia",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Possuem membrana simples e são responsáveis pela síntese de proteínas destinadas à exportação.", "is_correct": false },
+      { "letter": "B", "text": "São o local onde ocorre a fotossíntese nas células vegetais.", "is_correct": false },
+      { "letter": "C", "text": "Possuem DNA próprio e são responsáveis pela produção de ATP por meio da respiração aeróbica.", "is_correct": true },
+      { "letter": "D", "text": "Realizam a digestão intracelular de organelas e macromoléculas.", "is_correct": false },
+      { "letter": "E", "text": "São responsáveis pelo transporte de vesículas entre o retículo endoplasmático e a membrana plasmática.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Os ribossomos são estruturas celulares envolvidas diretamente na síntese proteica. Considerando sua estrutura e localização na célula, é correto afirmar que:",
+    "topic": "Citologia",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "São encontrados apenas no núcleo celular, onde leem diretamente o DNA.", "is_correct": false },
+      { "letter": "B", "text": "São compostos exclusivamente de proteínas e não contêm ácidos nucleicos.", "is_correct": false },
+      { "letter": "C", "text": "São organelas membranosas presentes apenas em células eucarióticas.", "is_correct": false },
+      { "letter": "D", "text": "Podem estar livres no citoplasma ou associados ao retículo endoplasmático rugoso.", "is_correct": true },
+      { "letter": "E", "text": "São responsáveis pela digestão intracelular de proteínas desnaturadas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A osmose é um fenômeno de grande importância para as células. Uma célula animal colocada em solução hipertônica irá:",
+    "topic": "Citologia",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Absorver água e sofrer turgescência.", "is_correct": false },
+      { "letter": "B", "text": "Não sofrer alteração, pois o equilíbrio osmótico já está estabelecido.", "is_correct": false },
+      { "letter": "C", "text": "Perder água e sofrer crenação (murchar).", "is_correct": true },
+      { "letter": "D", "text": "Absorver soluto e aumentar de volume.", "is_correct": false },
+      { "letter": "E", "text": "Sofrer plasmólise, com separação da membrana da parede celular.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Durante a meiose, ocorre a separação dos cromossomos homólogos, o que garante a variabilidade genética dos organismos sexuados. A meiose difere da mitose porque:",
+    "topic": "Citologia",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Ocorre apenas em organismos procarióticos.", "is_correct": false },
+      { "letter": "B", "text": "Resulta em células com o dobro do número de cromossomos da célula-mãe.", "is_correct": false },
+      { "letter": "C", "text": "Não envolve duplicação do DNA antes de seu início.", "is_correct": false },
+      { "letter": "D", "text": "Produz células somáticas geneticamente idênticas à célula original.", "is_correct": false },
+      { "letter": "E", "text": "Resulta em quatro células haploides, promovendo a redução do número de cromossomos à metade.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Considerando a Primeira Lei de Mendel, um indivíduo heterozigoto (Aa) para determinado caráter, ao se autofecundar, produz descendentes na proporção fenotípica de:",
+    "topic": "Genética",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "1 dominante : 1 recessivo", "is_correct": false },
+      { "letter": "B", "text": "Todos dominantes", "is_correct": false },
+      { "letter": "C", "text": "3 dominantes : 1 recessivo", "is_correct": true },
+      { "letter": "D", "text": "1 dominante : 2 heterozigotos : 1 recessivo", "is_correct": false },
+      { "letter": "E", "text": "2 dominantes : 1 heterozigoto : 1 recessivo", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O sistema ABO de grupos sanguíneos é determinado por três alelos: I^A, I^B e i. Uma pessoa do grupo sanguíneo AB possui genótipo I^A I^B. Ao se reproduzir com uma pessoa do grupo O (genótipo ii), qual a probabilidade de o filho ser do grupo A?",
+    "topic": "Genética",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "0%", "is_correct": false },
+      { "letter": "B", "text": "25%", "is_correct": false },
+      { "letter": "C", "text": "75%", "is_correct": false },
+      { "letter": "D", "text": "100%", "is_correct": false },
+      { "letter": "E", "text": "50%", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "As mutações são alterações no material genético dos organismos. Sobre as mutações gênicas (puntiformes), é correto afirmar que:",
+    "topic": "Genética",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "São sempre prejudiciais ao organismo e levam à morte celular imediata.", "is_correct": false },
+      { "letter": "B", "text": "Ocorrem apenas em células da linhagem germinal e nunca são transmitidas à prole.", "is_correct": false },
+      { "letter": "C", "text": "Envolvem sempre grandes segmentos cromossômicos, sendo visíveis ao microscópio óptico.", "is_correct": false },
+      { "letter": "D", "text": "Consistem em alterações na sequência de bases nitrogenadas do DNA, podendo ou não alterar a proteína codificada.", "is_correct": true },
+      { "letter": "E", "text": "São sempre causadas por agentes físicos, como a radiação ultravioleta, nunca ocorrendo espontaneamente.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Em uma cadeia alimentar do tipo: Grama → Gafanhoto → Sapo → Cobra → Gavião, a perda de energia entre os níveis tróficos indica que:",
+    "topic": "Ecologia",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "O gavião possui mais biomassa do que a grama.", "is_correct": false },
+      { "letter": "B", "text": "O gafanhoto possui mais energia disponível do que a grama.", "is_correct": false },
+      { "letter": "C", "text": "A energia flui de forma cíclica entre os organismos da cadeia.", "is_correct": false },
+      { "letter": "D", "text": "Apenas 10% da energia de um nível trófico é transferida para o nível seguinte, havendo perda principalmente como calor.", "is_correct": true },
+      { "letter": "E", "text": "Os produtores possuem menos energia que os consumidores primários.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A relação entre o peixe-palhaço e a anêmona-do-mar é um exemplo de associação em que o peixe obtém proteção e a anêmona não é afetada. Essa relação é denominada:",
+    "topic": "Ecologia",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Mutualismo", "is_correct": false },
+      { "letter": "B", "text": "Parasitismo", "is_correct": false },
+      { "letter": "C", "text": "Comensalismo", "is_correct": true },
+      { "letter": "D", "text": "Predatismo", "is_correct": false },
+      { "letter": "E", "text": "Competição", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O ciclo do carbono é fundamental para a manutenção da vida na Terra. O processo pelo qual o CO₂ atmosférico é incorporado à matéria orgânica pelos seres autótrofos é denominado:",
+    "topic": "Ecologia",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Respiração celular", "is_correct": false },
+      { "letter": "B", "text": "Decomposição", "is_correct": false },
+      { "letter": "C", "text": "Quimiossíntese", "is_correct": false },
+      { "letter": "D", "text": "Fotossíntese", "is_correct": true },
+      { "letter": "E", "text": "Fermentação", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A teoria da seleção natural, proposta por Charles Darwin, é um dos pilares da biologia evolutiva. Segundo essa teoria, a evolução das espécies ocorre porque:",
+    "topic": "Evolução",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Os organismos adquirem características novas ao longo da vida e as transmitem aos descendentes.", "is_correct": false },
+      { "letter": "B", "text": "Todos os indivíduos de uma espécie são geneticamente idênticos e respondem igualmente ao ambiente.", "is_correct": false },
+      { "letter": "C", "text": "Indivíduos com variações favoráveis ao ambiente têm maior probabilidade de sobreviver e se reproduzir.", "is_correct": true },
+      { "letter": "D", "text": "As espécies foram criadas de forma imutável e não se modificam com o tempo.", "is_correct": false },
+      { "letter": "E", "text": "A evolução ocorre de forma dirigida, sempre em direção a formas mais complexas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A resistência de bactérias a antibióticos é um fenômeno evolutivo observado em escala de tempo humano. Esse processo exemplifica a seleção natural porque:",
+    "topic": "Evolução",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "O antibiótico induz mutações específicas de resistência nas bactérias.", "is_correct": false },
+      { "letter": "B", "text": "Todas as bactérias desenvolvem resistência ao mesmo tempo após a exposição ao antibiótico.", "is_correct": false },
+      { "letter": "C", "text": "Bactérias que já possuíam resistência por mutação prévia sobrevivem e se reproduzem mais, tornando-se predominantes.", "is_correct": true },
+      { "letter": "D", "text": "Os genes de resistência são adquiridos do ambiente sem necessidade de mutação.", "is_correct": false },
+      { "letter": "E", "text": "A resistência é transmitida entre espécies diferentes de bactérias por herança mendeliana.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Os hidrocarbonetos são compostos orgânicos formados exclusivamente por carbono e hidrogênio. Sobre os alcenos (olefinas), é correto afirmar que:",
+    "topic": "Química Orgânica",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Possuem apenas ligações simples entre os átomos de carbono.", "is_correct": false },
+      { "letter": "B", "text": "São denominados compostos aromáticos por possuírem anel benzênico.", "is_correct": false },
+      { "letter": "C", "text": "Possuem pelo menos uma ligação tripla entre carbonos.", "is_correct": false },
+      { "letter": "D", "text": "Possuem pelo menos uma ligação dupla entre carbonos e sofrem facilmente reações de adição.", "is_correct": true },
+      { "letter": "E", "text": "São insolúveis em solventes orgânicos e solúveis em água.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A saponificação é uma reação de grande importância industrial na fabricação de sabões. Ela consiste na reação de:",
+    "topic": "Química Orgânica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Ácido carboxílico com álcool, formando éster e água.", "is_correct": false },
+      { "letter": "B", "text": "Éter com água, formando dois álcoois.", "is_correct": false },
+      { "letter": "C", "text": "Éster com base forte, formando sal de ácido carboxílico (sabão) e álcool.", "is_correct": true },
+      { "letter": "D", "text": "Alceno com água, formando álcool.", "is_correct": false },
+      { "letter": "E", "text": "Alcano com oxigênio, formando dióxido de carbono e água.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A isomeria é um fenômeno comum na química orgânica. Dois compostos são chamados isômeros quando:",
+    "topic": "Química Orgânica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Possuem a mesma fórmula estrutural e as mesmas propriedades físico-químicas.", "is_correct": false },
+      { "letter": "B", "text": "Possuem fórmulas moleculares diferentes, mas propriedades físicas iguais.", "is_correct": false },
+      { "letter": "C", "text": "Possuem a mesma fórmula molecular, mas diferem na disposição dos átomos ou grupos funcionais.", "is_correct": true },
+      { "letter": "D", "text": "São compostos de diferentes elementos, mas com estrutura espacial semelhante.", "is_correct": false },
+      { "letter": "E", "text": "Possuem o mesmo ponto de ebulição e diferente ponto de fusão.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O princípio de Le Chatelier descreve o comportamento de sistemas em equilíbrio químico quando submetidos a perturbações externas. De acordo com esse princípio, ao aumentar a pressão em um sistema gasoso em equilíbrio, o sistema irá:",
+    "topic": "Físico-Química",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Deslocar o equilíbrio no sentido de aumentar o número de mols de gás.", "is_correct": false },
+      { "letter": "B", "text": "Deslocar o equilíbrio no sentido de diminuir o número de mols de gás.", "is_correct": true },
+      { "letter": "C", "text": "Permanecer inalterado, pois a pressão não afeta equilíbrios químicos.", "is_correct": false },
+      { "letter": "D", "text": "Deslocar o equilíbrio sempre para a direita, independentemente da reação.", "is_correct": false },
+      { "letter": "E", "text": "Aumentar a temperatura do sistema para compensar o aumento de pressão.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A velocidade de uma reação química pode ser aumentada por catalisadores. Os catalisadores atuam:",
+    "topic": "Físico-Química",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Aumentando a energia de ativação da reação.", "is_correct": false },
+      { "letter": "B", "text": "Sendo consumidos irreversivelmente durante a reação.", "is_correct": false },
+      { "letter": "C", "text": "Alterando a entalpia total da reação.", "is_correct": false },
+      { "letter": "D", "text": "Diminuindo a energia de ativação da reação, sem serem consumidos.", "is_correct": true },
+      { "letter": "E", "text": "Aumentando a temperatura do sistema reacional.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Uma reação exotérmica é aquela em que:",
+    "topic": "Termoquímica",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A entalpia dos produtos é maior que a entalpia dos reagentes (ΔH > 0).", "is_correct": false },
+      { "letter": "B", "text": "O sistema absorve calor do ambiente.", "is_correct": false },
+      { "letter": "C", "text": "A entalpia dos produtos é menor que a entalpia dos reagentes (ΔH < 0).", "is_correct": true },
+      { "letter": "D", "text": "Não há variação de entalpia (ΔH = 0).", "is_correct": false },
+      { "letter": "E", "text": "A reação só ocorre na presença de catalisadores.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A Lei de Hess afirma que a variação de entalpia de uma reação é independente do caminho percorrido. Essa lei é uma consequência direta:",
+    "topic": "Termoquímica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Da Segunda Lei da Termodinâmica.", "is_correct": false },
+      { "letter": "B", "text": "Do princípio de Le Chatelier.", "is_correct": false },
+      { "letter": "C", "text": "Da Lei de Avogadro.", "is_correct": false },
+      { "letter": "D", "text": "Do princípio da conservação de energia (Primeira Lei da Termodinâmica).", "is_correct": true },
+      { "letter": "E", "text": "Da teoria cinético-molecular dos gases.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Uma solução aquosa de ácido clorídrico (HCl) com concentração 0,01 mol/L possui pH igual a:",
+    "topic": "Soluções",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "1", "is_correct": false },
+      { "letter": "B", "text": "7", "is_correct": false },
+      { "letter": "C", "text": "12", "is_correct": false },
+      { "letter": "D", "text": "2", "is_correct": true },
+      { "letter": "E", "text": "0,01", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A concentração molar (molaridade) de uma solução é definida como o número de mols de soluto por litro de solução. Para preparar 500 mL de solução de NaCl com concentração 2 mol/L, é necessário dissolver quantos gramas de NaCl? (Massa molar do NaCl = 58,5 g/mol)",
+    "topic": "Soluções",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "29,25 g", "is_correct": false },
+      { "letter": "B", "text": "117 g", "is_correct": false },
+      { "letter": "C", "text": "58,5 g", "is_correct": true },
+      { "letter": "D", "text": "234 g", "is_correct": false },
+      { "letter": "E", "text": "14,625 g", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um objeto é solto do repouso de uma altura de 20 m. Desconsiderando a resistência do ar e adotando g = 10 m/s², o tempo que o objeto leva para atingir o solo é:",
+    "topic": "Mecânica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "1 s", "is_correct": false },
+      { "letter": "B", "text": "4 s", "is_correct": false },
+      { "letter": "C", "text": "10 s", "is_correct": false },
+      { "letter": "D", "text": "2 s", "is_correct": true },
+      { "letter": "E", "text": "√10 s", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um carro de massa 1000 kg se move com velocidade de 20 m/s. Ao frear, para completamente em 5 s. A força média de frenagem aplicada foi:",
+    "topic": "Mecânica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "100 N", "is_correct": false },
+      { "letter": "B", "text": "5000 N", "is_correct": false },
+      { "letter": "C", "text": "20000 N", "is_correct": false },
+      { "letter": "D", "text": "4000 N", "is_correct": true },
+      { "letter": "E", "text": "2000 N", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um automóvel percorre 180 km em 2 horas, em movimento retilíneo uniforme. A velocidade escalar do veículo, em m/s, é:",
+    "topic": "Mecânica",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "90 m/s", "is_correct": false },
+      { "letter": "B", "text": "36 m/s", "is_correct": false },
+      { "letter": "C", "text": "50 m/s", "is_correct": false },
+      { "letter": "D", "text": "25 m/s", "is_correct": true },
+      { "letter": "E", "text": "72 m/s", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um corpo de massa 2 kg, inicialmente em repouso, é submetido a uma força resultante de 6 N por 4 segundos. A variação da quantidade de movimento (impulso) desse corpo é:",
+    "topic": "Mecânica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "3 N·s", "is_correct": false },
+      { "letter": "B", "text": "12 N·s", "is_correct": false },
+      { "letter": "C", "text": "48 N·s", "is_correct": false },
+      { "letter": "D", "text": "24 N·s", "is_correct": true },
+      { "letter": "E", "text": "8 N·s", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A dilatação linear dos sólidos é descrita pela equação ΔL = L₀ · α · ΔT. Um trilho de aço de 10 m de comprimento, com coeficiente de dilatação linear α = 12 × 10⁻⁶ °C⁻¹, sofre aquecimento de 50°C. Sua dilatação será:",
+    "topic": "Termodinâmica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "0,6 cm", "is_correct": true },
+      { "letter": "B", "text": "6 cm", "is_correct": false },
+      { "letter": "C", "text": "0,06 cm", "is_correct": false },
+      { "letter": "D", "text": "12 cm", "is_correct": false },
+      { "letter": "E", "text": "0,12 cm", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Misturando-se 200 g de água a 20°C com 300 g de água a 70°C, a temperatura de equilíbrio térmico da mistura será: (Calor específico da água = 1 cal/g·°C)",
+    "topic": "Termodinâmica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "45°C", "is_correct": false },
+      { "letter": "B", "text": "50°C", "is_correct": false },
+      { "letter": "C", "text": "35°C", "is_correct": false },
+      { "letter": "D", "text": "50°C", "is_correct": false },
+      { "letter": "E", "text": "50°C — a temperatura final é 50°C (Q cedido = Q absorvido)", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Em um circuito elétrico resistivo, a Lei de Ohm estabelece uma relação entre tensão, corrente e resistência. Se a tensão em um resistor é de 12 V e a corrente que o percorre é de 3 A, sua resistência elétrica é:",
+    "topic": "Eletromagnetismo",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "36 Ω", "is_correct": false },
+      { "letter": "B", "text": "0,25 Ω", "is_correct": false },
+      { "letter": "C", "text": "15 Ω", "is_correct": false },
+      { "letter": "D", "text": "4 Ω", "is_correct": true },
+      { "letter": "E", "text": "9 Ω", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Dois resistores de 6 Ω e 12 Ω são ligados em paralelo a uma fonte de 12 V. A corrente total fornecida pela fonte é:",
+    "topic": "Eletromagnetismo",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "1 A", "is_correct": false },
+      { "letter": "B", "text": "2 A", "is_correct": false },
+      { "letter": "C", "text": "6 A", "is_correct": false },
+      { "letter": "D", "text": "3 A", "is_correct": true },
+      { "letter": "E", "text": "0,5 A", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um raio de luz passa do ar para um meio mais denso (vidro), com índice de refração n = 1,5. Esse fenômeno é chamado de refração e implica que a velocidade da luz no vidro é:",
+    "topic": "Óptica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Igual à velocidade da luz no vácuo (3 × 10⁸ m/s).", "is_correct": false },
+      { "letter": "B", "text": "Maior do que no ar.", "is_correct": false },
+      { "letter": "C", "text": "Zero, pois a luz não atravessa meios densos.", "is_correct": false },
+      { "letter": "D", "text": "Igual a 2 × 10⁸ m/s, pois v = c/n.", "is_correct": true },
+      { "letter": "E", "text": "Igual a 4,5 × 10⁸ m/s.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Num espelho plano, a imagem formada é sempre:",
+    "topic": "Óptica",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Real, direita e do mesmo tamanho que o objeto.", "is_correct": false },
+      { "letter": "B", "text": "Virtual, invertida e menor que o objeto.", "is_correct": false },
+      { "letter": "C", "text": "Real, invertida e maior que o objeto.", "is_correct": false },
+      { "letter": "D", "text": "Virtual, direita e do mesmo tamanho que o objeto.", "is_correct": true },
+      { "letter": "E", "text": "Real, direita e maior que o objeto.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A equação 2x² − 5x + 3 = 0 possui raízes reais. As raízes dessa equação são:",
+    "topic": "Álgebra",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "x = 1 e x = 3", "is_correct": false },
+      { "letter": "B", "text": "x = 2 e x = −1/2", "is_correct": false },
+      { "letter": "C", "text": "x = −1 e x = −3/2", "is_correct": false },
+      { "letter": "D", "text": "x = 1 e x = 3/2", "is_correct": true },
+      { "letter": "E", "text": "x = 5 e x = −3", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um sistema linear com duas equações e duas incógnitas possui solução única quando:",
+    "topic": "Álgebra",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "As duas equações são equivalentes (representam a mesma reta).", "is_correct": false },
+      { "letter": "B", "text": "As retas representadas pelas equações são paralelas e distintas.", "is_correct": false },
+      { "letter": "C", "text": "As duas retas são coincidentes.", "is_correct": false },
+      { "letter": "D", "text": "As retas representadas pelas equações se interceptam em um único ponto.", "is_correct": true },
+      { "letter": "E", "text": "O determinante do sistema é igual a zero.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A função f(x) = 2x + 3 é uma função afim. O valor de x para o qual f(x) = 11 é:",
+    "topic": "Funções",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "3", "is_correct": false },
+      { "letter": "B", "text": "7", "is_correct": false },
+      { "letter": "C", "text": "5", "is_correct": false },
+      { "letter": "D", "text": "4", "is_correct": true },
+      { "letter": "E", "text": "6", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A função quadrática f(x) = x² − 6x + 5 tem vértice no ponto:",
+    "topic": "Funções",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "(3, 4)", "is_correct": false },
+      { "letter": "B", "text": "(6, 5)", "is_correct": false },
+      { "letter": "C", "text": "(−3, −4)", "is_correct": false },
+      { "letter": "D", "text": "(3, −4)", "is_correct": true },
+      { "letter": "E", "text": "(−3, 4)", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Uma aplicação financeira rende juros compostos de 10% ao ano. Um capital de R$ 1000,00 aplicado por 2 anos vale, ao final do período:",
+    "topic": "Funções",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "R$ 1200,00", "is_correct": false },
+      { "letter": "B", "text": "R$ 1100,00", "is_correct": false },
+      { "letter": "C", "text": "R$ 1250,00", "is_correct": false },
+      { "letter": "D", "text": "R$ 1210,00", "is_correct": true },
+      { "letter": "E", "text": "R$ 1020,00", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um terreno retangular tem comprimento 40 m e largura 25 m. Uma calçada de 2 m de largura é construída ao redor do terreno, do lado externo. A área total ocupada pela calçada é:",
+    "topic": "Geometria Plana",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "256 m²", "is_correct": false },
+      { "letter": "B", "text": "132 m²", "is_correct": false },
+      { "letter": "C", "text": "576 m²", "is_correct": false },
+      { "letter": "D", "text": "544 m²", "is_correct": false },
+      { "letter": "E", "text": "272 m²", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Um círculo de raio 7 cm tem área igual a (considere π = 22/7):",
+    "topic": "Geometria Plana",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "44 cm²", "is_correct": false },
+      { "letter": "B", "text": "154 cm²", "is_correct": true },
+      { "letter": "C", "text": "98 cm²", "is_correct": false },
+      { "letter": "D", "text": "308 cm²", "is_correct": false },
+      { "letter": "E", "text": "22 cm²", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Uma urna contém 5 bolas vermelhas, 3 azuis e 2 verdes. Retirando-se uma bola ao acaso, a probabilidade de ela ser azul é:",
+    "topic": "Probabilidade",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "1/5", "is_correct": false },
+      { "letter": "B", "text": "1/2", "is_correct": false },
+      { "letter": "C", "text": "2/5", "is_correct": false },
+      { "letter": "D", "text": "3/10", "is_correct": true },
+      { "letter": "E", "text": "3/5", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "De quantas maneiras distintas podem ser formadas comissões de 3 pessoas escolhidas entre 7 candidatos?",
+    "topic": "Probabilidade",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "210", "is_correct": false },
+      { "letter": "B", "text": "21", "is_correct": false },
+      { "letter": "C", "text": "343", "is_correct": false },
+      { "letter": "D", "text": "35", "is_correct": true },
+      { "letter": "E", "text": "42", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Leia o fragmento: 'A tecnologia nos conecta, mas também nos afasta. Passamos horas em frente às telas, enquanto ignoramos as pessoas ao nosso redor.' A principal estratégia argumentativa utilizada no texto é:",
+    "topic": "Interpretação de Texto",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Enumeração de dados estatísticos para comprovar a tese.", "is_correct": false },
+      { "letter": "B", "text": "Uso de ironia para criticar o comportamento humano.", "is_correct": false },
+      { "letter": "C", "text": "Apresentação de um paradoxo para problematizar a relação com a tecnologia.", "is_correct": true },
+      { "letter": "D", "text": "Apelo à autoridade científica para embasar o argumento.", "is_correct": false },
+      { "letter": "E", "text": "Narração de um caso específico para generalização.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "No texto: 'Embora o governo tenha prometido reformas, os resultados concretos ainda estão distantes', o conectivo 'embora' estabelece uma relação de:",
+    "topic": "Interpretação de Texto",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Causalidade", "is_correct": false },
+      { "letter": "B", "text": "Adição", "is_correct": false },
+      { "letter": "C", "text": "Explicação", "is_correct": false },
+      { "letter": "D", "text": "Concessão", "is_correct": true },
+      { "letter": "E", "text": "Finalidade", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Em 'O menino correu rapidamente pela rua estreita', o termo 'rapidamente' é um adjunto adverbial que modifica:",
+    "topic": "Gramática",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "O substantivo 'menino'", "is_correct": false },
+      { "letter": "B", "text": "O adjetivo 'estreita'", "is_correct": false },
+      { "letter": "C", "text": "O verbo 'correu'", "is_correct": true },
+      { "letter": "D", "text": "O substantivo 'rua'", "is_correct": false },
+      { "letter": "E", "text": "A preposição 'pela'", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Assinale a alternativa em que o uso do pronome relativo 'cujo' está CORRETO:",
+    "topic": "Gramática",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "O livro que cujo autor é famoso foi publicado ontem.", "is_correct": false },
+      { "letter": "B", "text": "Conheço o escritor cujo livro ganhou o prêmio.", "is_correct": true },
+      { "letter": "C", "text": "O aluno cujo que tirou nota máxima foi premiado.", "is_correct": false },
+      { "letter": "D", "text": "A cidade o cujo clima é agradável fica no sul.", "is_correct": false },
+      { "letter": "E", "text": "Vi o filme cujo de que você me falou.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O Romantismo brasileiro, iniciado com a publicação de 'Suspiros Poéticos e Saudades' de Gonçalves de Magalhães em 1836, caracterizava-se, entre outros aspectos, por:",
+    "topic": "Literatura",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Valorização da razão e da objetividade científica em detrimento das emoções.", "is_correct": false },
+      { "letter": "B", "text": "Busca pela impessoalidade e pela linguagem culta e erudita.", "is_correct": false },
+      { "letter": "C", "text": "Exaltação do nacionalismo, da natureza brasileira e do índio como herói.", "is_correct": true },
+      { "letter": "D", "text": "Crítica social realista com foco na burguesia urbana.", "is_correct": false },
+      { "letter": "E", "text": "Valorização das formas clássicas gregas e latinas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O livro 'Dom Casmurro', de Machado de Assis, é narrado em primeira pessoa por Bentinho, também conhecido como Capitu. A principal questão deixada em aberto pelo narrador ao longo do romance é:",
+    "topic": "Literatura",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A origem da fortuna da família de Bentinho.", "is_correct": false },
+      { "letter": "B", "text": "O motivo pelo qual Bentinho não se tornou padre.", "is_correct": false },
+      { "letter": "C", "text": "A veracidade da traição de Capitu com Escobar.", "is_correct": true },
+      { "letter": "D", "text": "O desfecho da morte de Escobar afogado.", "is_correct": false },
+      { "letter": "E", "text": "A identidade do pai biológico de Bentinho.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A Revolução Industrial, iniciada na Inglaterra no século XVIII, transformou profundamente as estruturas econômicas e sociais. Um de seus principais impactos foi:",
+    "topic": "História Geral",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A diminuição da urbanização e o retorno da população ao campo.", "is_correct": false },
+      { "letter": "B", "text": "A extinção do trabalho assalariado e o retorno ao sistema feudal.", "is_correct": false },
+      { "letter": "C", "text": "A consolidação do modo de produção capitalista e o surgimento do proletariado urbano.", "is_correct": true },
+      { "letter": "D", "text": "A diminuição da desigualdade social com a redistribuição de renda.", "is_correct": false },
+      { "letter": "E", "text": "O fim do imperialismo europeu sobre os demais continentes.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A Primeira Guerra Mundial (1914-1918) foi desencadeada por um complexo conjunto de fatores. O estopim do conflito foi:",
+    "topic": "História Geral",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A invasão da Polônia pela Alemanha nazista.", "is_correct": false },
+      { "letter": "B", "text": "O ataque japonês à base naval americana de Pearl Harbor.", "is_correct": false },
+      { "letter": "C", "text": "A queda da Bolsa de Valores de Nova York em 1929.", "is_correct": false },
+      { "letter": "D", "text": "O assassinato do Arquiduque Francisco Ferdinando da Áustria em Sarajevo.", "is_correct": true },
+      { "letter": "E", "text": "A revolução comunista na Rússia liderada por Lenin.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O período da História do Brasil conhecido como 'República Velha' (1889-1930) foi marcado pelo domínio político das oligarquias agrárias. A política que caracterizava o revezamento de poder entre São Paulo e Minas Gerais nesse período era denominada:",
+    "topic": "História do Brasil",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Política das Salvações", "is_correct": false },
+      { "letter": "B", "text": "Política do Encilhamento", "is_correct": false },
+      { "letter": "C", "text": "Política do Café com Leite", "is_correct": true },
+      { "letter": "D", "text": "Política das Coroneladas", "is_correct": false },
+      { "letter": "E", "text": "Política da Boa Vizinhança", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A ditadura militar brasileira (1964-1985) endureceu com a edição do Ato Institucional nº 5 (AI-5), em dezembro de 1968. Entre as medidas impostas pelo AI-5, estavam:",
+    "topic": "História do Brasil",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A convocação de eleições diretas para presidente da República.", "is_correct": false },
+      { "letter": "B", "text": "A suspensão dos direitos políticos, cassação de mandatos e fechamento do Congresso Nacional.", "is_correct": true },
+      { "letter": "C", "text": "A criação do Congresso Constituinte para elaborar nova Constituição.", "is_correct": false },
+      { "letter": "D", "text": "A anistia ampla a todos os perseguidos políticos pelo regime.", "is_correct": false },
+      { "letter": "E", "text": "A realização de eleições diretas para governadores estaduais.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A chegada da Família Real portuguesa ao Brasil em 1808 teve grande impacto no desenvolvimento da colônia. Uma das consequências imediatas desse evento foi:",
+    "topic": "História do Brasil",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A declaração imediata da independência do Brasil.", "is_correct": false },
+      { "letter": "B", "text": "A abolição da escravidão no território brasileiro.", "is_correct": false },
+      { "letter": "C", "text": "A abertura dos portos do Brasil às nações amigas.", "is_correct": true },
+      { "letter": "D", "text": "A criação do Parlamento brasileiro e do sistema bicameral.", "is_correct": false },
+      { "letter": "E", "text": "O fim do monopólio comercial exercido por Portugal sobre o Brasil.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O fenômeno El Niño é caracterizado pelo aquecimento anormal das águas superficiais do Oceano Pacífico Equatorial. No Brasil, sua principal consequência é:",
+    "topic": "Climatologia",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Intensificação das chuvas na Região Sul e secas na Região Nordeste.", "is_correct": true },
+      { "letter": "B", "text": "Resfriamento do clima na Região Norte e aumento de neve no Sul.", "is_correct": false },
+      { "letter": "C", "text": "Redução das chuvas em toda a extensão do território nacional.", "is_correct": false },
+      { "letter": "D", "text": "Aquecimento uniforme de todo o território brasileiro.", "is_correct": false },
+      { "letter": "E", "text": "Aumento das precipitações na Região Nordeste e seca no Sul.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O efeito estufa é um fenômeno natural essencial para a manutenção da temperatura terrestre. Contudo, a intensificação desse efeito pela ação humana tem gerado o aquecimento global. O principal gás responsável pelo aumento do efeito estufa antrópico é:",
+    "topic": "Climatologia",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Oxigênio (O₂)", "is_correct": false },
+      { "letter": "B", "text": "Nitrogênio (N₂)", "is_correct": false },
+      { "letter": "C", "text": "Ozônio (O₃)", "is_correct": false },
+      { "letter": "D", "text": "Dióxido de carbono (CO₂)", "is_correct": true },
+      { "letter": "E", "text": "Vapor d'água (H₂O)", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O processo de urbanização acelerada no Brasil, especialmente a partir da segunda metade do século XX, gerou o crescimento desordenado das cidades. Uma das principais consequências desse processo foi:",
+    "topic": "Urbanização",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A diminuição da desigualdade social nas grandes cidades.", "is_correct": false },
+      { "letter": "B", "text": "O esvaziamento completo das zonas rurais brasileiras.", "is_correct": false },
+      { "letter": "C", "text": "O crescimento equilibrado de infraestrutura e serviços públicos.", "is_correct": false },
+      { "letter": "D", "text": "A formação de favelas e periferias com carência de infraestrutura e serviços básicos.", "is_correct": true },
+      { "letter": "E", "text": "A redução do desemprego em função da maior oferta de trabalho nas cidades.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A megalópole é um tipo de aglomeração urbana de grande escala. O eixo urbano formado pela conurbação das cidades de São Paulo e Rio de Janeiro é denominado:",
+    "topic": "Urbanização",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Metrópole nacional", "is_correct": false },
+      { "letter": "B", "text": "Região metropolitana simples", "is_correct": false },
+      { "letter": "C", "text": "Macrocefalismo urbano", "is_correct": false },
+      { "letter": "D", "text": "Megalópole brasileira ou eixo Rio-São Paulo", "is_correct": true },
+      { "letter": "E", "text": "Cidade global exclusiva", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A Guerra Fria (1947-1991) foi um período de tensão geopolítica entre os Estados Unidos e a União Soviética. Esse conflito era essencialmente ideológico porque opunha:",
+    "topic": "História Contemporânea",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Países desenvolvidos contra países em desenvolvimento.", "is_correct": false },
+      { "letter": "B", "text": "O capitalismo democrático liberal americano ao socialismo de Estado soviético.", "is_correct": true },
+      { "letter": "C", "text": "O protestantismo norte-americano ao catolicismo europeu.", "is_correct": false },
+      { "letter": "D", "text": "Regimes democráticos a regimes totalitários fascistas.", "is_correct": false },
+      { "letter": "E", "text": "Países do hemisfério norte a países do hemisfério sul.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O processo de globalização intensificado a partir do final do século XX gerou impactos profundos nas economias nacionais. Uma das críticas mais frequentes a esse processo é:",
+    "topic": "História Contemporânea",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A redução do comércio internacional e o aumento do protecionismo.", "is_correct": false },
+      { "letter": "B", "text": "O fortalecimento das culturas locais e a valorização das identidades nacionais.", "is_correct": false },
+      { "letter": "C", "text": "O aprofundamento das desigualdades entre países ricos e pobres e a homogeneização cultural.", "is_correct": true },
+      { "letter": "D", "text": "A diminuição do fluxo de capitais entre os países.", "is_correct": false },
+      { "letter": "E", "text": "O enfraquecimento das empresas multinacionais.", "is_correct": false }
+    ]
+  }
+]

@@ -1,0 +1,797 @@
+[
+  {
+    "statement": "A produção de ATP depende do gradiente de prótons gerado pela cadeia respiratória. O cianeto se liga ao sítio de Fe³⁺ da citocromo c oxidase, impedindo sua conversão em Fe²⁺ e bloqueando a cadeia respiratória. Esse bloqueio aumenta a concentração celular de qual substância?",
+    "topic": "Citologia",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "ATP", "is_correct": false },
+      { "letter": "B", "text": "Água", "is_correct": false },
+      { "letter": "C", "text": "NADH", "is_correct": true },
+      { "letter": "D", "text": "Dióxido de carbono", "is_correct": false },
+      { "letter": "E", "text": "Citocromo c oxidase", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Lesmas-do-mar guardam cloroplastos funcionais das algas que consomem dentro de suas próprias células. Pesquisadores descobriram que essas lesmas podem ser mais eficientes nesse processo que as próprias algas. Essa adaptação confere capacidade de obter primariamente qual substância?",
+    "topic": "Citologia",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Ácidos nucleicos", "is_correct": false },
+      { "letter": "B", "text": "Carboidratos", "is_correct": true },
+      { "letter": "C", "text": "Proteínas", "is_correct": false },
+      { "letter": "D", "text": "Vitaminas", "is_correct": false },
+      { "letter": "E", "text": "Lipídios", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O ensaio de micronúcleos avalia genotoxicidade associando presença de micronúcleos — pequenos núcleos próximos aos núcleos celulares — com lesões genéticas. Micronúcleos são fragmentos de DNA encapsulados provenientes do fuso mitótico. De qual estrutura se originam?",
+    "topic": "Citologia",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Nucléolos", "is_correct": false },
+      { "letter": "B", "text": "Lisossomos", "is_correct": false },
+      { "letter": "C", "text": "Ribossomos", "is_correct": false },
+      { "letter": "D", "text": "Mitocôndrias", "is_correct": false },
+      { "letter": "E", "text": "Cromossomos", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Ursos acordam da hibernação pela presença de termogenina, proteína mitocondrial que impede chegada de prótons à ATP sintetase, gerando calor para aquecer o organismo. Em qual etapa do metabolismo energético celular a termogenina interfere?",
+    "topic": "Citologia",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Glicólise", "is_correct": false },
+      { "letter": "B", "text": "Fermentação lática", "is_correct": false },
+      { "letter": "C", "text": "Ciclo do ácido cítrico", "is_correct": false },
+      { "letter": "D", "text": "Oxidação do piruvato", "is_correct": false },
+      { "letter": "E", "text": "Fosforilação oxidativa", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "A síndrome de Down é uma alteração genética associada à trissomia do cromossomo 21, ou seja, o indivíduo possui três cromossomos 21. Isso ocorre pela união de um gameta contendo um cromossomo 21 com um gameta possuidor de dois cromossomos 21. Embora normalmente as mulheres com a síndrome sejam estéreis, em 2008 uma delas deu à luz uma menina sem a síndrome de Down. Sabendo disso, um jovem casal, ambos com essa síndrome, procura aconselhamento genético. O médico informa que, com relação ao cromossomo 21, os zigotos formados serão",
+    "topic": "Genética",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "todos normais.", "is_correct": false },
+      { "letter": "B", "text": "todos trissômicos.", "is_correct": false },
+      { "letter": "C", "text": "apenas normais ou tetrassômicos.", "is_correct": false },
+      { "letter": "D", "text": "apenas trissômicos ou tetrassômicos.", "is_correct": false },
+      { "letter": "E", "text": "normais, trissômicos ou tetrassômicos.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "A incapacidade de perceber certas cores é denominada daltonismo. Um tipo raro é classificado de tritanomalia e corresponde a um defeito nos cones sensíveis à cor azul. O gene responsável pela herança situa-se no cromossomo 7, permitindo que homens e mulheres sejam igualmente afetados. Além disso, casais sem tritanomalia podem ter crianças com a herança. O padrão dessa herança rara é",
+    "topic": "Genética",
+    "difficulty": "medium",
+    "source": "ENEM PPL",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "ligado ao X e recessivo.", "is_correct": false },
+      { "letter": "B", "text": "ligado ao Y e recessivo.", "is_correct": false },
+      { "letter": "C", "text": "ligado ao X e dominante.", "is_correct": false },
+      { "letter": "D", "text": "autossômico e recessivo.", "is_correct": true },
+      { "letter": "E", "text": "autossômico e dominante.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A deficiência de lipase ácida lisossômica é uma doença hereditária associada a um gene do cromossomo 10. Os pais dos pacientes podem não saber que são portadores dos genes da doença até o nascimento do primeiro filho afetado. Quando ambos os progenitores são portadores, existe uma chance em quatro de que seu bebê possa nascer com essa doença. Essa é uma doença hereditária de caráter",
+    "topic": "Genética",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "recessivo.", "is_correct": true },
+      { "letter": "B", "text": "dominante.", "is_correct": false },
+      { "letter": "C", "text": "codominante.", "is_correct": false },
+      { "letter": "D", "text": "poligênico.", "is_correct": false },
+      { "letter": "E", "text": "polialélico.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Com base nos experimentos de plantas de Mendel, foram estabelecidos três princípios básicos, que são conhecidos como leis da uniformidade, segregação e distribuição independente. A lei da distribuição independente refere-se ao fato de que \"os membros de pares diferentes de genes segregam-se independentemente, uns dos outros, para a prole.\" Hoje, sabe-se que isso nem sempre é verdade. Por quê?",
+    "topic": "Genética",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "A distribuição depende do caráter de dominância ou recessividade do gene.", "is_correct": false },
+      { "letter": "B", "text": "Os organismos nem sempre herdam cada um dos genes de cada um dos genitores.", "is_correct": false },
+      { "letter": "C", "text": "As alterações cromossômicas podem levar a falhas na segregação durante a meiose.", "is_correct": false },
+      { "letter": "D", "text": "Os genes localizados fisicamente próximos no mesmo cromossomo tendem a ser herdados juntos.", "is_correct": true },
+      { "letter": "E", "text": "O cromossomo que contém dois determinados genes pode não sofrer a disjunção na primeira fase da meiose.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um estudante relatou que o mapeamento do DNA da cevada foi quase todo concluído e seu código genético desvendado. Chamou atenção para o número de genes que compõem esse código genético e que a semente da cevada, apesar de pequena, possui um genoma mais complexo que o humano, sendo boa parte desse código constituída de sequências repetidas. Nesse contexto, o conceito de código genético está abordado de forma equivocada. Cientificamente esse conceito é definido como",
+    "topic": "Genética",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "trincas de nucleotídeos que codificam os aminoácidos.", "is_correct": true },
+      { "letter": "B", "text": "localização de todos os genes encontrados em um genoma.", "is_correct": false },
+      { "letter": "C", "text": "codificação de sequências repetidas presentes em um genoma.", "is_correct": false },
+      { "letter": "D", "text": "conjunto de todos os RNAs mensageiros transcritos em um organismo.", "is_correct": false },
+      { "letter": "E", "text": "todas as sequências de pares de bases presentes em um organismo.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Gregor Mendel, no século XIX, investigou os mecanismos da herança genética observando algumas características de plantas de ervilha, como a produção de sementes lisas (dominante) ou rugosas (recessiva), característica determinada por um par de alelos com dominância completa. Ele acreditava que a herança era transmitida por fatores que, mesmo não percebidos nas características visíveis (fenótipo) de plantas híbridas, estariam presentes e se manifestariam em gerações futuras. A autofecundação que fornece dados para corroborar a ideia da transmissão dos fatores idealizada por Mendel ocorre entre plantas",
+    "topic": "Genética",
+    "difficulty": "medium",
+    "source": "ENEM PPL",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "híbridas, de fenótipo dominante, que produzem apenas sementes lisas.", "is_correct": false },
+      { "letter": "B", "text": "híbridas, de fenótipo dominante, que produzem sementes lisas e rugosas.", "is_correct": true },
+      { "letter": "C", "text": "de linhagem pura, de fenótipo dominante, que produzem apenas sementes lisas.", "is_correct": false },
+      { "letter": "D", "text": "de linhagem pura, de fenótipo recessivo, que produzem sementes lisas e rugosas.", "is_correct": false },
+      { "letter": "E", "text": "de linhagem pura, de fenótipo recessivo, que produzem apenas sementes rugosas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Em pacientes portadores de astrocitoma pilocítico, um tipo de tumor cerebral, o gene BRAF se quebra e parte dele se funde a outro gene, o KIAA1549. Para detectar essa alteração cromossômica, foi desenvolvida uma sonda de DNA com partículas fluorescentes capazes de reagir com os genes BRAF e KIAA1549 fazendo cada um deles emitir uma cor diferente. Em uma célula normal, as duas cores aparecem separadamente. Já quando há a fusão dos dois genes, as cores aparecem sobrepostas. A alteração cromossômica presente nos pacientes com astrocitoma pilocítico é classificada como",
+    "topic": "Genética",
+    "difficulty": "hard",
+    "source": "ENEM PPL",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "estrutural do tipo deleção.", "is_correct": false },
+      { "letter": "B", "text": "numérica do tipo euploidia.", "is_correct": false },
+      { "letter": "C", "text": "estrutural do tipo duplicação.", "is_correct": false },
+      { "letter": "D", "text": "numérica do tipo aneuploidia.", "is_correct": false },
+      { "letter": "E", "text": "estrutural do tipo translocação.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Um geneticista observou que determinada plantação era sensível a um tipo de praga que atacava as flores da lavoura. Ao mesmo tempo, ele percebeu que uma erva daninha que crescia associada às plantas não era destruída. A partir de técnicas de manipulação genética, em laboratório, o gene da resistência à praga foi inserido nas plantas cultivadas, resolvendo o problema. Do ponto de vista da biotecnologia, como essa planta resultante da intervenção é classificada?",
+    "topic": "Evolução",
+    "difficulty": "easy",
+    "source": "ENEM PPL",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Clone.", "is_correct": false },
+      { "letter": "B", "text": "Híbrida.", "is_correct": false },
+      { "letter": "C", "text": "Mutante.", "is_correct": false },
+      { "letter": "D", "text": "Dominante.", "is_correct": false },
+      { "letter": "E", "text": "Transgênica.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "No ar que respiramos existem os chamados \"gases inertes\". Trazem curiosos nomes gregos, que significam \"o Novo\", \"o Oculto\", \"o Inativo\". E de fato são de tal modo inertes, tão satisfeitos em sua condição, que não interferem em nenhuma reação química, não se combinam com nenhum outro elemento e justamente por esse motivo ficaram sem ser observados durante séculos: só em 1962 um químico, depois de longos e engenhosos esforços, conseguiu forçar \"o Estrangeiro\" (o xenônio) a combinar-se fugazmente com o flúor ávido e vivaz, e a façanha pareceu tão extraordinária que lhe foi conferido o Prêmio Nobel. Qual propriedade do flúor justifica sua escolha como reagente para o processo mencionado?",
+    "topic": "Química Inorgânica",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Densidade.", "is_correct": false },
+      { "letter": "B", "text": "Condutância.", "is_correct": false },
+      { "letter": "C", "text": "Eletronegatividade.", "is_correct": true },
+      { "letter": "D", "text": "Estabilidade nuclear.", "is_correct": false },
+      { "letter": "E", "text": "Temperatura de ebulição.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Na mitologia grega, Nióbia era a filha de Tântalo, dois personagens conhecidos pelo sofrimento. O elemento químico de número atômico (Z) igual a 41 tem propriedades químicas e físicas tão parecidas com as do elemento de número atômico 73 que chegaram a ser confundidos. Por isso, em homenagem a esses dois personagens da mitologia grega, foi conferido a esses elementos os nomes de nióbio (Z = 41) e tântalo (Z = 73). Essa semelhança entre os dois elementos é decorrente de",
+    "topic": "Química Inorgânica",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "terem elétrons no subnível f.", "is_correct": false },
+      { "letter": "B", "text": "serem elementos de transição interna.", "is_correct": false },
+      { "letter": "C", "text": "pertencerem ao mesmo grupo na tabela periódica.", "is_correct": true },
+      { "letter": "D", "text": "terem seus elétrons mais externos dos níveis 4 e 5, respectivamente.", "is_correct": false },
+      { "letter": "E", "text": "estarem localizados na família dos alcalinos terrosos e alcalinos, respectivamente.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um fato corriqueiro ao se cozinhar arroz é o derramamento de parte da água de cozimento sobre a chama azul do fogo, mudando-a para uma chama amarela. Essa mudança de cor pode suscitar interpretações diversas, relacionadas às substâncias presentes na água de cozimento. Além do sal de cozinha (NaCl), nela se encontram carboidratos, proteínas e sais minerais. Cientificamente, sabe-se que essa mudança de cor da chama ocorre pela",
+    "topic": "Físico-Química",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "reação do gás de cozinha com o sal, volatilizando gás cloro.", "is_correct": false },
+      { "letter": "B", "text": "emissão de fótons pelo sódio, excitado por causa da chama.", "is_correct": true },
+      { "letter": "C", "text": "produção de derivado amarelo, pela reação com o carboidrato.", "is_correct": false },
+      { "letter": "D", "text": "reação do gás de cozinha com a água, formando gás hidrogênio.", "is_correct": false },
+      { "letter": "E", "text": "excitação das moléculas de proteínas, com formação de luz amarela.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Ao escutar a notícia de que um filme recém-lançado arrecadou, no primeiro mês de lançamento, R$ 1,35 bilhão em bilheteria, um estudante escreveu corretamente o número que representa essa quantia, com todos os seus algarismos. O número escrito pelo estudante foi",
+    "topic": "Álgebra",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2021,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "135.000,00", "is_correct": false },
+      { "letter": "B", "text": "1.350.000,00", "is_correct": false },
+      { "letter": "C", "text": "13.500.000,00", "is_correct": false },
+      { "letter": "D", "text": "135.000.000,00", "is_correct": false },
+      { "letter": "E", "text": "1.350.000.000,00", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Em um país, as infrações de trânsito são classificadas de acordo com sua gravidade. Infrações dos tipos leves e médias acrescentam, respectivamente, 3 e 4 pontos na carteira de habilitação do infrator, além de multas a serem pagas. Um motorista cometeu 5 infrações de trânsito e teve 17 pontos acrescentados em sua carteira de habilitação. Qual é a razão entre o número de infrações do tipo leve e o número de infrações do tipo média cometidas por esse motorista?",
+    "topic": "Álgebra",
+    "difficulty": "medium",
+    "source": "ENEM Digital",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "1/4", "is_correct": false },
+      { "letter": "B", "text": "3/2", "is_correct": true },
+      { "letter": "C", "text": "3/4", "is_correct": false },
+      { "letter": "D", "text": "5/17", "is_correct": false },
+      { "letter": "E", "text": "7/17", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Para concretar a laje de sua residência, uma pessoa contratou uma construtora. A empresa cobra R$ 500,00 de taxa de bombeamento e R$ 250,00 por metro cúbico de concreto utilizado. A expressão que representa o preço y em função do volume x, em metro cúbico, é",
+    "topic": "Funções",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "y = 250x", "is_correct": false },
+      { "letter": "B", "text": "y = 500x", "is_correct": false },
+      { "letter": "C", "text": "y = 750x", "is_correct": false },
+      { "letter": "D", "text": "y = 250x + 500", "is_correct": true },
+      { "letter": "E", "text": "y = 500x + 250", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Um produtor de soja gastava R$ 1.200,00 por hectare plantado e vendia por R$ 50,00 cada saca de 60 kg. Ele plantou 10 hectares de soja em sua propriedade, colheu x sacas de 60 kg e todas as sacas foram vendidas. Qual é a expressão que determinou o lucro L em função de x obtido por esse produtor nesse ano?",
+    "topic": "Funções",
+    "difficulty": "medium",
+    "source": "ENEM Digital",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "L(x) = 50x – 1200", "is_correct": false },
+      { "letter": "B", "text": "L(x) = 50x – 12000", "is_correct": true },
+      { "letter": "C", "text": "L(x) = 50x + 12000", "is_correct": false },
+      { "letter": "D", "text": "L(x) = 500x – 1200", "is_correct": false },
+      { "letter": "E", "text": "L(x) = 1.200x – 500", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Em um laboratório, o número de bactérias após t horas é modelado pela função exponencial N(t) = N₀ · e^(kt), em que N₀ é o número inicial e k é uma constante positiva. Sabe-se que após uma hora, o número de bactérias foi triplicado. Cinco horas após o início da observação, o número de bactérias, em relação ao número inicial dessa cultura, foi de",
+    "topic": "Funções",
+    "difficulty": "hard",
+    "source": "ENEM PPL",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "3N₀", "is_correct": false },
+      { "letter": "B", "text": "15N₀", "is_correct": false },
+      { "letter": "C", "text": "243N₀", "is_correct": true },
+      { "letter": "D", "text": "360N₀", "is_correct": false },
+      { "letter": "E", "text": "729N₀", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A conta de telefone de uma loja foi, nesse mês, de R$ 200,00. O valor da assinatura mensal, já incluso na conta, é de R$ 40,00, o qual dá direito a realizar uma quantidade ilimitada de ligações locais para telefones fixos. As ligações para celulares são tarifadas separadamente. Nessa loja, são feitas somente ligações locais, tanto para telefones fixos quanto para celulares. Para reduzir os custos, o gerente planeja, para o próximo mês, uma conta de telefone com valor de R$ 80,00. Para que esse planejamento se cumpra, a redução percentual com gastos em ligações para celulares nessa loja deverá ser de",
+    "topic": "Probabilidade",
+    "difficulty": "medium",
+    "source": "ENEM PPL",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "25%", "is_correct": false },
+      { "letter": "B", "text": "40%", "is_correct": false },
+      { "letter": "C", "text": "50%", "is_correct": false },
+      { "letter": "D", "text": "60%", "is_correct": false },
+      { "letter": "E", "text": "75%", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Uma das principais provas de velocidade do atletismo é a prova dos 400 metros rasos. No Campeonato Mundial de Sevilha, em 1999, o atleta Michael Johnson venceu essa prova com a marca de 43,18 segundos. Esse tempo, em segundo, escrito em notação científica é",
+    "topic": "Álgebra",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "0,4318 × 10²", "is_correct": false },
+      { "letter": "B", "text": "4,318 × 10¹", "is_correct": false },
+      { "letter": "C", "text": "43,18 × 10⁰", "is_correct": false },
+      { "letter": "D", "text": "431,8 × 10⁻¹", "is_correct": true },
+      { "letter": "E", "text": "4.318 × 10⁻²", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O fenômeno histórico conhecido como \"tráfico de coolies\" esteve associado diretamente ao período que vai do final da década de 1840 até o ano de 1874, quando milhares de chineses foram encaminhados principalmente para Cuba e Peru e muitos abusos no recrutamento de mão de obra foram identificados. O tráfico de coolies, ou seja, o transporte por meios coativos de mão de obra de um lugar para outro, foi comparado ao tráfico africano de escravos por muitos periodistas e analistas do século XIX. A comparação mencionada no texto foi possível em razão da seguinte característica:",
+    "topic": "História Contemporânea",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Oferta de contrato formal.", "is_correct": false },
+      { "letter": "B", "text": "Origem étnica dos grupos de trabalhadores.", "is_correct": false },
+      { "letter": "C", "text": "Conhecimento das tarefas desenvolvidas.", "is_correct": false },
+      { "letter": "D", "text": "Controle opressivo das vidas dos indivíduos.", "is_correct": true },
+      { "letter": "E", "text": "Investimento requerido dos empregadores.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Na primeira bica abasteciam os negros, forros e cativos, os mulatos e os índios; na segunda, os moiros das galés; a terceira e quarta estavam reservadas aos homens e moços brancos; na quinta enchiam as mulheres pretas e na sexta, as mulheres e moças brancas. A quem infringisse esta ordem eram aplicados severos castigos — açoitamento com baraço e pregão, sendo de cor; 2 000 réis de multa e três dias de cadeia, sendo branco o prevaricador. A organização dos consumidores nos chafarizes públicos de Lisboa no século XVI, descrita no texto, expressava a",
+    "topic": "História Contemporânea",
+    "difficulty": "medium",
+    "source": "ENEM Digital",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "escassez de recursos hídricos.", "is_correct": false },
+      { "letter": "B", "text": "reprodução de distinções sociais.", "is_correct": true },
+      { "letter": "C", "text": "prevenção da transmissão de doenças.", "is_correct": false },
+      { "letter": "D", "text": "obsolescência das técnicas de fornecimento.", "is_correct": false },
+      { "letter": "E", "text": "ineficiência da cobertura de serviços estatais.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A década que se segue ao fim da guerra constitui praticamente uma continuação desta com a acomodação difícil de seus resultados. A ruptura do sistema internacional com a Revolução Soviética, a ascensão dos Estados Unidos, o recuo da Europa e o início da contestação anticolonial marcam uma década que para muitos foi de pessimismo e para alguns de ilusão, que bruscamente se encerra com a quebra da bolsa de Nova Iorque. Com a crise de 1929 terá início a preparação de uma nova guerra mundial. Os eventos mencionados no texto contribuíram fortemente para a ascensão de regimes propensos a um novo conflito armado, pois",
+    "topic": "História Contemporânea",
+    "difficulty": "hard",
+    "source": "ENEM Digital",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "perturbaram a dinâmica de equilíbrio demográfico.", "is_correct": false },
+      { "letter": "B", "text": "dificultaram a adesão a ideologias de viés socialista.", "is_correct": false },
+      { "letter": "C", "text": "favoreceram a ascensão de grupos anarquistas ao poder.", "is_correct": false },
+      { "letter": "D", "text": "corroeram a crença na legitimidade das democracias liberais.", "is_correct": true },
+      { "letter": "E", "text": "deterioraram a confiança no salvacionismo dos exércitos nacionais.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A Declaração Universal dos Direitos Humanos, adotada e proclamada pela Assembleia Geral da ONU na Resolução 217-A, de 10 de dezembro de 1948, foi um acontecimento histórico de grande relevância. Ao afirmar, pela primeira vez em escala planetária, o papel dos direitos humanos na convivência coletiva, pode ser considerada um evento inaugural de uma nova concepção de vida internacional. A declaração citada no texto introduziu uma nova concepção nas relações internacionais ao possibilitar a",
+    "topic": "História Contemporânea",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "superação da soberania estatal.", "is_correct": false },
+      { "letter": "B", "text": "defesa dos grupos vulneráveis.", "is_correct": true },
+      { "letter": "C", "text": "redução da truculência belicista.", "is_correct": false },
+      { "letter": "D", "text": "impunidade dos atos criminosos.", "is_correct": false },
+      { "letter": "E", "text": "inibição dos choques civilizacionais.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Dificilmente passa-se uma noite sem que algum sitiante tenha seu celeiro ou sua pilha de cereais destruídos pelo fogo. Vários trabalhadores não diretamente envolvidos nos ataques pareciam apoiá-los, como se vê neste depoimento ao The Times: \"deixa queimar, pena que não foi a casa\", \"podemos nos aquecer agora\"; \"nós só queríamos algumas batatas; há um fogo ótimo para cozinhá-las\". A revolta descrita no texto, ocorrida na Inglaterra no século XIX, foi uma reação ao seguinte processo socioespacial:",
+    "topic": "História Contemporânea",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Restrição da propriedade privada.", "is_correct": false },
+      { "letter": "B", "text": "Expropriação das terras comunais.", "is_correct": true },
+      { "letter": "C", "text": "Imposição da estatização fundiária.", "is_correct": false },
+      { "letter": "D", "text": "Redução da produção monocultora.", "is_correct": false },
+      { "letter": "E", "text": "Proibição das atividades artesanais.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A ocasião fez o ladrão: Francis Drake travava sua guerra de pirataria contra a Espanha papista quando roubou as tropas de mulas que levavam o ouro do Peru para o Panamá. Graças à cumplicidade da rainha Elizabeth I, ele reincide e saqueia as costas do Chile e do Peru antes de regressar pelo Oceano Pacífico, e depois pelo Índico. Ora, em Ternate ele oferece sua proteção a um sultão revoltado com os portugueses, assim nasce o primeiro entreposto inglês ultramarino. A tática adotada pela Inglaterra do século XVI, conforme citada no texto, foi o meio encontrado para",
+    "topic": "História Geral",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2019,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "restabelecer o crescimento da economia mercantil.", "is_correct": false },
+      { "letter": "B", "text": "conquistar as riquezas dos territórios americanos.", "is_correct": true },
+      { "letter": "C", "text": "legalizar a ocupação de possessões ibéricas.", "is_correct": false },
+      { "letter": "D", "text": "ganhar a adesão das potências europeias.", "is_correct": false },
+      { "letter": "E", "text": "fortalecer as rotas do comércio marítimo.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Os soviéticos tinham chegado a Cuba muito cedo na década de 1960, esgueirando-se pela fresta aberta pela imediata hostilidade norte-americana em relação ao processo social revolucionário. Durante três décadas os soviéticos mantiveram sua presença em Cuba com bases e ajuda militar, mas, sobretudo, com todo o apoio econômico que, como saberíamos anos mais tarde, mantinha o país à tona, embora nos deixasse em dívida com os irmãos soviéticos — e depois com seus herdeiros russos — por cifras que chegavam a US$ 32 bilhões. Ou seja, o que era oferecido em nome da solidariedade socialista tinha um preço definido. O texto indica que durante a Guerra Fria as relações internas em um mesmo bloco foram marcadas pelo(a)",
+    "topic": "História Contemporânea",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "busca da neutralidade política.", "is_correct": false },
+      { "letter": "B", "text": "estímulo à competição comercial.", "is_correct": false },
+      { "letter": "C", "text": "subordinação à potência hegemônica.", "is_correct": true },
+      { "letter": "D", "text": "elasticidade das fronteiras geográficas.", "is_correct": false },
+      { "letter": "E", "text": "compartilhamento de pesquisas científicas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O século XVIII é, por diversas razões, um século diferenciado. Razão e experimentação se aliavam no que se acreditava ser o verdadeiro caminho para o estabelecimento do conhecimento científico, por tanto tempo almejado. O fato, a análise e a indução passavam a ser parceiros fundamentais da razão. É ainda no século XVIII que o homem começa a tomar consciência de sua situação na história. No ambiente cultural do Antigo Regime, a discussão filosófica mencionada no texto tinha como uma de suas características a",
+    "topic": "História Geral",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "aproximação entre inovação e saberes antigos.", "is_correct": false },
+      { "letter": "B", "text": "conciliação entre revelação e metafísica platônica.", "is_correct": false },
+      { "letter": "C", "text": "vinculação entre escolástica e práticas de pesquisa.", "is_correct": false },
+      { "letter": "D", "text": "separação entre teologia e fundamentalismo religioso.", "is_correct": false },
+      { "letter": "E", "text": "contraposição entre clericalismo e liberdade de pensamento.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "A partir da segunda metade do século XVIII, com a primeira Revolução Industrial e o nascimento do proletariado, cresceram as pressões por uma maior participação política, e a urbanização intensificou-se, recriando uma paisagem social muito distinta da que antes existia. As mudanças citadas foram conduzidas principalmente pelos seguintes atores sociais:",
+    "topic": "História Geral",
+    "difficulty": "easy",
+    "source": "ENEM PPL",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Burguesia e trabalhadores assalariados.", "is_correct": true },
+      { "letter": "B", "text": "Igreja e corporações de ofício.", "is_correct": false },
+      { "letter": "C", "text": "Realeza e comerciantes.", "is_correct": false },
+      { "letter": "D", "text": "Campesinato e artesãos.", "is_correct": false },
+      { "letter": "E", "text": "Nobreza e artífices.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Em Utopia, tudo é comum a todos. A distribuição dos bens lá não é um problema, não se vê nem pobre nem mendigo e, embora ninguém tenha nada de seu, todos são ricos. Haverá maior riqueza do que levar uma existência alegre e pacífica, livre de ansiedades e sem precisar se preocupar com a subsistência? Retirado da obra de Thomas Morus, escrita no século XVI, esse trecho influenciou movimentos sociais do século XIX que lutaram para",
+    "topic": "História Geral",
+    "difficulty": "medium",
+    "source": "ENEM PPL",
+    "year": 2018,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "inibir a ascensão da burguesia.", "is_correct": false },
+      { "letter": "B", "text": "evitar a destruição da natureza.", "is_correct": false },
+      { "letter": "C", "text": "combater o domínio do capital.", "is_correct": true },
+      { "letter": "D", "text": "eliminar a intolerância religiosa.", "is_correct": false },
+      { "letter": "E", "text": "superar o atraso tecnológico.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O New Deal visa restabelecer o equilíbrio entre o custo de produção e o preço, entre a cidade e o campo, entre os preços agrícolas e os preços industriais, reativar o mercado interno — o único que é importante —, pelo controle de preços e da produção, pela revalorização dos salários e do poder aquisitivo das massas, isto é, dos lavradores e operários, e pela regulamentação das condições de emprego. Tendo como referência os condicionantes históricos do entreguerras, as medidas governamentais descritas objetivavam",
+    "topic": "História Contemporânea",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "flexibilizar as regras do mercado financeiro.", "is_correct": false },
+      { "letter": "B", "text": "fortalecer o sistema de tributação regressiva.", "is_correct": false },
+      { "letter": "C", "text": "introduzir os dispositivos de contenção creditícia.", "is_correct": false },
+      { "letter": "D", "text": "racionalizar os custos da automação industrial mediante negociação sindical.", "is_correct": false },
+      { "letter": "E", "text": "recompor os mecanismos de acumulação econômica por meio da intervenção estatal.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Após a Declaração Universal dos Direitos Humanos pela ONU, em 1948, a Unesco publicou estudos de cientistas de todo o mundo que desqualificaram as doutrinas racistas e demonstraram a unidade do gênero humano. Desde então, a maioria dos próprios cientistas europeus passou a reconhecer o caráter discriminatório da pretensa superioridade racial do homem branco e a condenar as aberrações cometidas em seu nome. A posição assumida pela Unesco, a partir de 1948, foi motivada por acontecimentos então recentes, dentre os quais se destacava o(a)",
+    "topic": "História Contemporânea",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "ataque feito pelos japoneses à base militar americana de Pearl Harbor.", "is_correct": false },
+      { "letter": "B", "text": "desencadeamento da Guerra Fria e de novas rivalidades entre nações.", "is_correct": false },
+      { "letter": "C", "text": "morte de milhões de soldados nos combates da Segunda Guerra Mundial.", "is_correct": false },
+      { "letter": "D", "text": "execução de judeus e eslavos presos em guetos e campos de concentração nazistas.", "is_correct": true },
+      { "letter": "E", "text": "lançamento de bombas atômicas em Hiroshima e Nagasaki pelas forças norte-americanas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Sendo função social antes que direito, o voto era concedido àqueles a quem a sociedade julgava poder confiar sua preservação. No Império, como na República, foram excluídos os pobres (seja pela renda, seja pela exigência de alfabetização), os mendigos, as mulheres, os menores de idade, os praças de pré, os membros de ordens religiosas. A restrição à participação eleitoral mencionada no texto visava assegurar o poder político aos(às)",
+    "topic": "História do Brasil",
+    "difficulty": "medium",
+    "source": "ENEM PPL",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "assalariados urbanos", "is_correct": false },
+      { "letter": "B", "text": "oligarquias regionais", "is_correct": true },
+      { "letter": "C", "text": "empresários industriais", "is_correct": false },
+      { "letter": "D", "text": "profissionais liberais", "is_correct": false },
+      { "letter": "E", "text": "círculos militares", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O tenentismo veio preencher um espaço: o vazio deixado pela falta de lideranças civis aptas a conduzirem o processo revolucionário brasileiro que começava a sacudir as já caducas instituições políticas da República Velha. Um dos objetivos do movimento político abordado no texto era",
+    "topic": "História do Brasil",
+    "difficulty": "medium",
+    "source": "ENEM Digital",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "unificar as Forças Armadas pelo comando do Exército nacional", "is_correct": false },
+      { "letter": "B", "text": "combater a corrupção eleitoral perpetrada pelas oligarquias regionais", "is_correct": true },
+      { "letter": "C", "text": "restaurar a segurança das fronteiras negligenciadas pelo governo central", "is_correct": false },
+      { "letter": "D", "text": "organizar as frentes camponesas envolvidas na luta pela reforma agrária", "is_correct": false },
+      { "letter": "E", "text": "pacificar os movimentos operários radicalizados pelo anarco-sindicalismo", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Mesmo com a instalação da quarta emissora no Rio de Janeiro, a Rádio Educadora, em janeiro de 1927, a música popular ainda não desfrutava desse meio de comunicação para se tornar mais conhecida. As emissoras veiculavam apenas \"um certo tipo de cultura\". A situação descrita no texto alterou-se durante o regime do Estado Novo, porque o meio de comunicação foi instrumentalizado para",
+    "topic": "História do Brasil",
+    "difficulty": "medium",
+    "source": "ENEM Digital",
+    "year": 2020,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "exportar as manifestações folclóricas nacionais", "is_correct": false },
+      { "letter": "B", "text": "ampliar o alcance da propaganda político-ideológica", "is_correct": true },
+      { "letter": "C", "text": "substituir as comemorações cívicas espontâneas", "is_correct": false },
+      { "letter": "D", "text": "atender às demandas das elites oligárquicas", "is_correct": false },
+      { "letter": "E", "text": "favorecer o espaço de mobilização social", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "As camadas dirigentes paulistas na segunda metade do século XIX recorriam à história e à figura dos bandeirantes para representá-los como fundadores da unidade nacional. No período da história nacional analisado, a estratégia descrita tinha como objetivo",
+    "topic": "História do Brasil",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2016,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "promover o pioneirismo industrial pela substituição de importações", "is_correct": false },
+      { "letter": "B", "text": "questionar o governo regencial após a descentralização administrativa", "is_correct": false },
+      { "letter": "C", "text": "recuperar a hegemonia perdida com o fim da política do café com leite", "is_correct": false },
+      { "letter": "D", "text": "aumentar a participação política em função da expansão cafeeira", "is_correct": true },
+      { "letter": "E", "text": "legitimar o movimento abolicionista durante a crise do escravismo", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "O problema central a ser resolvido pelo Novo Regime era a organização de outro pacto de poder. O próprio presidente Campos Sales resumiu: \"É de lá, dos estados, que se governa a República\". Nessa citação, o presidente do Brasil no período expressa uma estratégia política no sentido de:",
+    "topic": "História do Brasil",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2014,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "governar com a adesão popular", "is_correct": false },
+      { "letter": "B", "text": "atrair o apoio das oligarquias regionais", "is_correct": true },
+      { "letter": "C", "text": "conferir maior autonomia às prefeituras", "is_correct": false },
+      { "letter": "D", "text": "democratizar o poder do governo central", "is_correct": false },
+      { "letter": "E", "text": "ampliar a influência da capital no cenário nacional", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "No alvorecer do século XX, o Rio de Janeiro sofreu uma intervenção que alterou profundamente sua fisionomia e estrutura. O texto refere-se à reforma urbanística ocorrida na capital da República, na qual a ação governamental e seu resultado social encontram-se na:",
+    "topic": "História do Brasil",
+    "difficulty": "medium",
+    "source": "ENEM PPL",
+    "year": 2013,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Cobrança de impostos — ocupação da periferia", "is_correct": false },
+      { "letter": "B", "text": "Destruição de cortiços — revolta da população pobre", "is_correct": true },
+      { "letter": "C", "text": "Criação do transporte de massa — ampliação das favelas", "is_correct": false },
+      { "letter": "D", "text": "Construção de hospitais públicos — insatisfação da elite urbana", "is_correct": false },
+      { "letter": "E", "text": "Edificação de novas moradias — concentração de trabalhadores", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Poema escrito em 2001 sobre Antônio Conselheiro: \"sou Antônio... deste chão / Que vai ser mar e o mar vai ser sertão\". O poema contribui para a construção de uma determinada memória sobre o movimento de Canudos, ao retratar seu líder como",
+    "topic": "História do Brasil",
+    "difficulty": "hard",
+    "source": "ENEM PPL",
+    "year": 2013,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "crítico do regime político recém-proclamado", "is_correct": true },
+      { "letter": "B", "text": "partidário da abolição da escravidão", "is_correct": false },
+      { "letter": "C", "text": "contrário à distribuição da terra para os humildes", "is_correct": false },
+      { "letter": "D", "text": "defensor da autonomia política dos municípios", "is_correct": false },
+      { "letter": "E", "text": "porta-voz do catolicismo ortodoxo romano", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Na história brasileira, a chamada Revolta da Chibata, liderada por João Cândido, foi",
+    "topic": "História do Brasil",
+    "difficulty": "easy",
+    "source": "ENEM PPL",
+    "year": 2010,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "rebelião de escravos contra castigos físicos, ocorrida na Bahia em 1848", "is_correct": false },
+      { "letter": "B", "text": "revolta no porto de Salvador em 1860 de marinheiros dos navios negreiros", "is_correct": false },
+      { "letter": "C", "text": "protesto no Exército em 1865 contra castigo de chibatadas em desertores", "is_correct": false },
+      { "letter": "D", "text": "rebelião dos marinheiros, negros e mulatos, em 1910, contra castigos na Marinha de Guerra", "is_correct": true },
+      { "letter": "E", "text": "protesto popular contra aumento do custo de vida no Rio de Janeiro em 1917", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "\"Completamente analfabeto, ou quase, sem assistência médica, não lendo jornais, o trabalhador rural tem o patrão na conta de benfeitor. No plano político, ele luta com o coronel.\" O coronelismo, fenômeno político da Primeira República (1889–1930), tinha como uma de suas principais características o controle do voto, limitando o exercício da cidadania. Nesse período, esta prática estava vinculada a uma estrutura social:",
+    "topic": "História do Brasil",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2011,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "igualitária, com distribuição satisfatória da renda", "is_correct": false },
+      { "letter": "B", "text": "estagnada, com relativa harmonia entre as classes", "is_correct": false },
+      { "letter": "C", "text": "tradicional, com manutenção da escravidão nos engenhos", "is_correct": false },
+      { "letter": "D", "text": "ditatorial, perturbada por constante clima de opressão", "is_correct": false },
+      { "letter": "E", "text": "agrária, marcada pela concentração da terra e do poder político local", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Textos retratam São Paulo no início do século XVII: \"era bem insignificante e quase miserável a Vila de São Paulo de Piratininga\", com cerca de 200 habitantes. Enquanto isso, Olinda era \"a capital e a cidade mais rica de Pernambuco\". São Paulo atualmente é a maior metrópole brasileira. Essa mudança deveu-se, essencialmente, ao seguinte fator econômico:",
+    "topic": "História do Brasil",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2006,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "maior desenvolvimento do cultivo da cana-de-açúcar no planalto de Piratininga", "is_correct": false },
+      { "letter": "B", "text": "atraso econômico de Olinda e Recife, associado à escravidão inexistente em São Paulo", "is_correct": false },
+      { "letter": "C", "text": "avanço da construção naval em São Paulo, favorecido pelo comércio com Índias", "is_correct": false },
+      { "letter": "D", "text": "desenvolvimento sucessivo da economia mineradora, cafeicultora e industrial no Sudeste", "is_correct": true },
+      { "letter": "E", "text": "destruição do sistema produtivo de algodão em Pernambuco na ocupação holandesa", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "De quem é esta língua? Uma pequena editora brasileira, a Urutau, acaba de lançar em Lisboa uma coletânea de poesia brasileira contemporânea. Para tal, como parte da divulgação do livro, foi necessário \"traduzir\" os poemas para o português de Portugal. A situação descrita remete ao",
+    "topic": "Interpretação de Texto",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "à dificuldade de consolidação da literatura brasileira em outros países.", "is_correct": false },
+      { "letter": "B", "text": "aos diferentes graus de instrução formal entre os falantes de língua portuguesa.", "is_correct": false },
+      { "letter": "C", "text": "à existência de uma língua ideal que alguns falantes lusitanos creem ser a falada em Portugal.", "is_correct": true },
+      { "letter": "D", "text": "ao intercâmbio cultural que ocorre entre os povos dos diferentes países de língua portuguesa.", "is_correct": false },
+      { "letter": "E", "text": "à distância territorial entre os falantes do português que vivem em Portugal e no Brasil.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Na Idade Média, as notícias se propagavam com surpreendente eficácia. Quando ocorriam grandes batalhas ou catástrofes naturais, as informações chegavam logo a todos, mesmo nas aldeias mais remotas. Ainda que a maioria da população fosse iletrada, os rumores chegavam de todos os lados por meio dos viajantes, comerciantes e peregrinos. A eficácia na propagação de notícias na Idade Média, segundo o texto, devia-se à",
+    "topic": "Interpretação de Texto",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "velocidade de circulação das notícias.", "is_correct": false },
+      { "letter": "B", "text": "nível de letramento da população marginalizada.", "is_correct": false },
+      { "letter": "C", "text": "poder de censura por parte dos serviços públicos.", "is_correct": false },
+      { "letter": "D", "text": "legitimidade da voz dos representantes da nobreza.", "is_correct": false },
+      { "letter": "E", "text": "diversidade dos meios disponíveis em uma época histórica.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Mandioca, macaxeira, aipim e castelinha são nomes diferentes da mesma planta, usados em diferentes regiões do Brasil. De modo semelhante, a Língua Brasileira de Sinais (Libras) também apresenta variações regionais. Com base nisso, é correto afirmar que a Libras",
+    "topic": "Gramática",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2023,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "passa por fenômenos de variação linguística como qualquer outra língua.", "is_correct": true },
+      { "letter": "B", "text": "apresenta variações regionais, assumindo novo sentido para algumas palavras.", "is_correct": false },
+      { "letter": "C", "text": "sofre mudança estrutural motivada pelo uso de sinais diferentes para algumas palavras.", "is_correct": false },
+      { "letter": "D", "text": "diferencia-se em todo o Brasil, desenvolvendo cada região a sua própria língua de sinais.", "is_correct": false },
+      { "letter": "E", "text": "é ininteligível para parte dos usuários em razão das mudanças de sinais motivadas geograficamente.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "Adoniran Barbosa utilizava expressões como \"nóis vai\", \"nóis fumo\" em suas composições. Ele defendia: \"Falar errado é uma arte, Arnesto!\". O \"falar errado\" a que o texto se refere constitui um preconceito em relação ao uso que Adoniran Barbosa fazia da língua porque esse uso",
+    "topic": "Gramática",
+    "difficulty": "easy",
+    "source": "ENEM",
+    "year": 2024,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "marcava a linguagem dos comediantes no mesmo período.", "is_correct": false },
+      { "letter": "B", "text": "prejudicava a compreensão das canções pelo público.", "is_correct": false },
+      { "letter": "C", "text": "denunciava a ausência de estilo nas letras de canção.", "is_correct": false },
+      { "letter": "D", "text": "restringia a criação poética nas letras do compositor.", "is_correct": false },
+      { "letter": "E", "text": "transgredia a norma-padrão vigente à época.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "Garcia tinha-se chegado ao cadáver, levantara o lenço e contemplara por alguns instantes as feições do Vilela. Depois, não podendo mais, abrira os olhos, fitara o teto e ficara assim. Ao lado, a viúva, debruçada sobre o marido morto, não chora, não fala, não se move; Eugênia estava petrificada de dor. A postura de Garcia ao contemplar o cadáver do amigo revela um sentimento de",
+    "topic": "Literatura",
+    "difficulty": "hard",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "indignação face à suspeita do adultério da esposa.", "is_correct": false },
+      { "letter": "B", "text": "tristeza compartilhada pela perda da mulher amada.", "is_correct": false },
+      { "letter": "C", "text": "espanto diante da demonstração de afeto de Garcia.", "is_correct": false },
+      { "letter": "D", "text": "prazer da personagem em relação ao sofrimento alheio.", "is_correct": true },
+      { "letter": "E", "text": "superação do ciúme pela comoção decorrente da morte.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A língua tupi no Brasil — Há 300 anos, morar na vila de São Paulo de Piratininga era viver num mundo em que o tupi e o português conviviam. Os indígenas falavam tupi, os colonizadores falavam português e muitos dos habitantes, entre eles os mamelucos, falavam as duas línguas. O tupi, no contato com o português,",
+    "topic": "Literatura",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "contribuiu efetivamente para o léxico, com nomes relativos aos traços característicos dos lugares designados.", "is_correct": true },
+      { "letter": "B", "text": "originou o português falado em São Paulo no século XVII, em cuja base gramatical também está a fala de variadas etnias indígenas.", "is_correct": false },
+      { "letter": "C", "text": "desenvolveu-se sob influência dos trabalhos de catequese dos padres portugueses, vindos de Lisboa.", "is_correct": false },
+      { "letter": "D", "text": "misturou-se aos falares africanos, em razão das interações entre portugueses e negros nas investidas contra o Quilombo dos Palmares.", "is_correct": false },
+      { "letter": "E", "text": "expandiu-se paralelamente ao português falado pelo colonizador, e juntos originaram a língua dos bandeirantes paulistas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A ascensão social por meio do esporte mexe com o imaginário das pessoas, sendo cada vez mais comum jovens que o utilizam como estratégia de mobilidade social. O texto critica a",
+    "topic": "Interpretação de Texto",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2017,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "despreparo dos jogadores de futebol para ajudarem suas famílias a superar a miséria.", "is_correct": false },
+      { "letter": "B", "text": "garantia de ascensão social dos jovens pela carreira de jogador de futebol.", "is_correct": false },
+      { "letter": "C", "text": "falta de investimento dos clubes para que os atletas possam atuar profissionalmente.", "is_correct": false },
+      { "letter": "D", "text": "investimento reduzido dos atletas profissionais em sua formação escolar.", "is_correct": false },
+      { "letter": "E", "text": "despreocupação dos sujeitos com uma formação paralela à esportiva.", "is_correct": true }
+    ]
+  },
+  {
+    "statement": "São vários os fatores, internos e externos, que influenciam os hábitos das pessoas em relação ao uso da internet. Aspectos socioeconômicos e culturais interferem no acesso à rede. Os textos apresentados",
+    "topic": "Interpretação de Texto",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2022,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "apontam o desenvolvimento econômico como solução para ampliar o uso da rede.", "is_correct": false },
+      { "letter": "B", "text": "questionam a crença de que o acesso à informação é igualitário e democrático.", "is_correct": true },
+      { "letter": "C", "text": "afirmam que o uso comercial da rede é a causa da exclusão de minorias.", "is_correct": false },
+      { "letter": "D", "text": "refutam o vínculo entre níveis de escolaridade e dificuldade de acesso.", "is_correct": false },
+      { "letter": "E", "text": "condicionam a expansão da rede à elaboração de políticas inclusivas.", "is_correct": false }
+    ]
+  },
+  {
+    "statement": "A Língua da Tabatinga foi estigmatizada por sua origem e pela classe social dos falantes. Era conhecida como \"língua dos engraxates\" e usada por escravizados como código secreto. Atualmente, falantes reconhecem sua relação com a descendência africana e a importância de sua preservação. A Língua da Tabatinga tem sido preservada porque o(a)",
+    "topic": "Gramática",
+    "difficulty": "medium",
+    "source": "ENEM",
+    "year": 2024,
+    "bank": "INEP",
+    "alternatives": [
+      { "letter": "A", "text": "Seu registro passou da forma oral para a escrita.", "is_correct": false },
+      { "letter": "B", "text": "Classe social de seus usuários ganhou prestígio.", "is_correct": false },
+      { "letter": "C", "text": "Sua função inicial se manteve ao longo dos anos.", "is_correct": false },
+      { "letter": "D", "text": "Sentimento de identidade linguística tem se consolidado.", "is_correct": true },
+      { "letter": "E", "text": "Perfil etário de seus falantes tem se tornado homogêneo.", "is_correct": false }
+    ]
+  }
+]

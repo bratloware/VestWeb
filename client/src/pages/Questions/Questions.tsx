@@ -1,19 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, Clock, ChevronRight, RotateCcw } from 'lucide-react';
+import { Filter, Clock, ChevronRight, RotateCcw, Search } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchQuestions, fetchSubjects, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Questions.css';
 
-const QUESTION_TIME = 120; // seconds per question
+const QUESTION_TIME = 120;
 
 const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { questions, subjects, loading } = useSelector((state: RootState) => state.questions);
 
-  const [filters, setFilters] = useState({ subject_id: '', topic_id: '', difficulty: '', bank: '' });
+  const [filters, setFilters] = useState({ subject_id: '', topic_id: '', difficulty: '', bank: '', search: '' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAlt, setSelectedAlt] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -118,6 +118,22 @@ const Questions = () => {
         <div className="questions-layout">
           <div className="questions-filters">
             <h2><Filter size={16} /> Filtros</h2>
+
+            <div className="form-group">
+              <label>Buscar por palavra</label>
+              <div style={{ position: 'relative' }}>
+                <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  className="form-control"
+                  style={{ paddingLeft: '30px' }}
+                  type="text"
+                  placeholder="Ex: Geopolítica, fotossíntese..."
+                  value={filters.search}
+                  onChange={e => setFilters({ ...filters, search: e.target.value })}
+                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                />
+              </div>
+            </div>
 
             <div className="form-group">
               <label>Materia</label>

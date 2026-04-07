@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:projetoagathaedu.com.br)",
+      "WebFetch(domain:estudeprisma.com)",
+      "WebFetch(domain:aprendendobio.com.br)",
+      "Bash(node src/db/importQuestions.js data/enem-real-questions.json)"
+    ]
+  }
+}

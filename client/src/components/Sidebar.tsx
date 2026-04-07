@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BookOpen, BarChart2, Users, MessageCircle,
-  Settings, LogOut, Menu, X, Brain, LucideIcon,
+  Settings, LogOut, Menu, X, Brain, Moon, Sun, LucideIcon,
 } from 'lucide-react';
+import { useDarkMode } from '../hooks/useDarkMode';
 import { AppDispatch, RootState } from '../store/store';
 import { logoutThunk } from '../slices/authSlice';
 import { getInitials } from '../utils/stringUtils';
@@ -37,6 +38,7 @@ interface SidebarProps {
 
 const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
   const [open, setOpen] = useState(false);
+  const { dark, toggle } = useDarkMode();
   const { student } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -62,6 +64,9 @@ const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
             </div>
             <span className="sidebar-logo-text">VestWeb</span>
           </Link>
+          <button className="sidebar-theme-toggle" onClick={toggle} aria-label="Alternar modo escuro">
+            {dark ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
         </div>
 
         {student && (

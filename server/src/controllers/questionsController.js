@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, topic_id, difficulty, bank, limit = 10, offset = 0 } = req.query;
+    const { subject_id, topic_id, difficulty, bank, search, limit = 10, offset = 0 } = req.query;
     const where = {};
     const topicWhere = {};
 
@@ -11,6 +11,12 @@ export const getAll = async (req, res) => {
     if (difficulty) where.difficulty = difficulty;
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
+    if (search) {
+      where[Op.or] = [
+        { statement: { [Op.iLike]: `%${search}%` } },
+        { '$alternatives.text$': { [Op.iLike]: `%${search}%` } },
+      ];
+    }
 
     const questions = await Question.findAndCountAll({
       where,
@@ -26,6 +32,7 @@ export const getAll = async (req, res) => {
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: [['id', 'DESC']],
+      subQuery: false,
     });
 
     return res.json({ message: 'Questions fetched', data: questions });
