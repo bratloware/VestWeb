@@ -249,12 +249,6 @@
   text-align: center;
 }
 
-.feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
-}
-
 .feature-icon {
   width: 64px;
   height: 64px;
@@ -266,11 +260,6 @@
   margin: 0 auto 20px;
   color: var(--primary);
   transition: var(--transition);
-}
-
-.feature-card:hover .feature-icon {
-  background: var(--primary);
-  color: white;
 }
 
 .feature-card h3 {

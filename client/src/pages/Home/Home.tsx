@@ -102,7 +102,7 @@ const Home = () => {
             </div>
             <div className="metric-info">
               <h3>{metrics.streak}</h3>
-              <p>Streak de dias</p>
+              <p>Dias seguidos</p>
             </div>
           </div>
         </div>
