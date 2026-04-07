@@ -1,9 +1,10 @@
 import { Question, Alternative, Topic, Subject, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
 import { Op } from 'sequelize';
+import sequelize from '../db/index.js';
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, topic_id, difficulty, bank, limit = 10, offset = 0 } = req.query;
+    const { subject_id, topic_id, difficulty, bank, search, limit = 10, offset = 0 } = req.query;
     const where = {};
     const topicWhere = {};
 
@@ -11,6 +12,13 @@ export const getAll = async (req, res) => {
     if (difficulty) where.difficulty = difficulty;
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
+    if (search) {
+      const escaped = sequelize.escape(`%${search}%`);
+      where[Op.or] = [
+        { statement: { [Op.iLike]: `%${search}%` } },
+        { id: { [Op.in]: sequelize.literal(`(SELECT question_id FROM alternatives WHERE text ILIKE ${escaped})`) } },
+      ];
+    }
 
     const questions = await Question.findAndCountAll({
       where,
@@ -25,7 +33,7 @@ export const getAll = async (req, res) => {
       ],
       limit: parseInt(limit),
       offset: parseInt(offset),
-      order: [['id', 'DESC']],
+      order: [['id', 'DESC'], [{ model: Alternative, as: 'alternatives' }, 'letter', 'ASC']],
     });
 
     return res.json({ message: 'Questions fetched', data: questions });
@@ -43,6 +51,7 @@ export const getById = async (req, res) => {
         { model: Alternative, as: 'alternatives' },
         { model: Topic, as: 'topic', include: [{ model: Subject, as: 'subject' }] },
       ],
+      order: [[{ model: Alternative, as: 'alternatives' }, 'letter', 'ASC']],
     });
     if (!question) return res.status(404).json({ message: 'Question not found' });
     return res.json({ message: 'Question fetched', data: question });

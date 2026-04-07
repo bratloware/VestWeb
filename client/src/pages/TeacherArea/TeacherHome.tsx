@@ -48,7 +48,7 @@ const TeacherHome = () => {
     return 'Boa noite';
   };
 
-  const firstName = student?.name.split(' ')[0] ?? '';
+  const firstName = (student?.name ?? '').replace(/^PROF\.\s*/i, '').split(' ').slice(0, 2).join(' ');
 
   return (
     <div className="teacher-layout">
@@ -56,7 +56,7 @@ const TeacherHome = () => {
       <main className="teacher-main">
         <div className="teacher-home">
           <div className="teacher-home-greeting">
-            <h1>{getGreeting()},{firstName}!</h1>
+            <h1>{getGreeting()}, {firstName}!</h1>
             <p>Aqui está um resumo da sua área.</p>
           </div>
 
