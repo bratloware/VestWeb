@@ -88,6 +88,7 @@ const ReviewCalendar = () => {
   };
 
   const handleSave = async () => {
+    if (!form.title.trim() || !form.date) return alert('Titulo e data são obrigatórios');
     try {
       if (editEvent) {
         await api.put(`/calendar/events/${editEvent.id}`, form);
@@ -96,7 +97,9 @@ const ReviewCalendar = () => {
       }
       setShowModal(false);
       loadEvents();
-    } catch { /* ignore */ }
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Erro ao salvar evento');
+    }
   };
 
   const handleDelete = async () => {

@@ -30,7 +30,13 @@ export const createEvent = async (req, res) => {
     if (!title || !date) return res.status(400).json({ message: 'title and date are required' });
 
     const event = await StudyEvent.create({
-      student_id: req.user.id, title, topic_id, date, start_time, end_time, type,
+      student_id: req.user.id,
+      title,
+      topic_id: topic_id || null,
+      date,
+      start_time: start_time || null,
+      end_time: end_time || null,
+      type,
     });
 
     return res.status(201).json({ message: 'Event created', data: event });
