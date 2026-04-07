@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Heart, MessageSquare, Flag, Trophy, Send } from 'lucide-react';
+import { Heart, MessageSquare, Flag, Trophy, Send, Award } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchPosts, createPost, likePost, fetchComments, addComment, fetchRanking, Post } from '../../slices/communitySlice';
 import { AppDispatch, RootState } from '../../store/store';
@@ -206,7 +206,7 @@ const Community = () => {
                 ranking.slice(0, 10).map((entry: any, i: number) => (
                   <div key={entry.student_id} className="ranking-item">
                     <div className={`ranking-position${i < 3 ? ` top-${i + 1}` : ''}`}>
-                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
+                      {i < 3 ? <Award size={16} color={i === 0 ? '#f59e0b' : i === 1 ? '#94a3b8' : '#b45309'} /> : `${i + 1}`}
                     </div>
                     <div className="ranking-avatar">
                       {getInitials(entry.student?.name || 'A')}
