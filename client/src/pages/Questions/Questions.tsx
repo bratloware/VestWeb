@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, Clock, ChevronRight, RotateCcw, Search, PenLine, Trash2 } from 'lucide-react';
+import { Filter, Clock, ChevronRight, RotateCcw, PenLine, Trash2 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
@@ -13,7 +13,7 @@ const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { questions, subjects, vestibulares, loading } = useSelector((state: RootState) => state.questions);
 
-  const [filters, setFilters] = useState({ subject_id: '', difficulty: '', vestibular_id: '', search: '' });
+  const [filters, setFilters] = useState({ subject_id: '', difficulty: '', vestibular_id: '' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAlt, setSelectedAlt] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -176,21 +176,6 @@ const Questions = () => {
             <h2><Filter size={16} /> Filtros</h2>
 
             <div className="form-group">
-              <label>Buscar no enunciado</label>
-              <div className="search-input-wrapper">
-                <Search size={15} className="search-input-icon" />
-                <input
-                  type="text"
-                  className="form-control search-input"
-                  placeholder="Palavras-chave..."
-                  value={filters.search}
-                  onChange={e => setFilters({ ...filters, search: e.target.value })}
-                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
               <label>Matéria</label>
               <select
                 className="form-control"
@@ -238,7 +223,7 @@ const Questions = () => {
             {Object.values(filters).some(v => v !== '') && (
               <button
                 className="filter-clear-btn"
-                onClick={() => setFilters({ subject_id: '', difficulty: '', vestibular_id: '', search: '' })}
+                onClick={() => setFilters({ subject_id: '', difficulty: '', vestibular_id: '' })}
               >
                 Limpar filtros
               </button>

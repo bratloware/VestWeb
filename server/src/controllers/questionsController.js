@@ -1,10 +1,9 @@
 import { Question, Alternative, Topic, Subtopic, Subject, Vestibular, QuestionVestibular, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
-import { Op } from 'sequelize';
 import sequelize from '../db/index.js';
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, topic_id, subtopic_id, difficulty, bank, vestibular_id, search, limit = 100, offset = 0 } = req.query;
+    const { subject_id, topic_id, subtopic_id, difficulty, bank, vestibular_id, limit = 100, offset = 0 } = req.query;
     const where = {};
     const topicWhere = {};
 
@@ -13,13 +12,6 @@ export const getAll = async (req, res) => {
     if (difficulty) where.difficulty = difficulty;
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
-    if (search) {
-      where[Op.or] = [
-        { statement: { [Op.iLike]: `%${search}%` } },
-        { '$topic.name$': { [Op.iLike]: `%${search}%` } },
-      ];
-    }
-
     // Se vestibular_id for passado, filtra questões daquele vestibular
     const vestibularInclude = vestibular_id
       ? { model: Vestibular, as: 'vestibulares', through: { attributes: [] }, where: { id: vestibular_id }, required: true }
