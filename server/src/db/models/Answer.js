@@ -34,6 +34,11 @@ const Answer = sequelize.define('Answer', {
 }, {
   tableName: 'answers',
   timestamps: false,
+  indexes: [
+    { fields: ['question_id'] },
+    { fields: ['session_id'] },
+    { fields: ['student_id'] },
+  ],
 });
 
 export default Answer;

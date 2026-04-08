@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, Clock, ChevronRight, RotateCcw, Search } from 'lucide-react';
+import { Filter, Clock, ChevronRight, RotateCcw, Search, PenLine, Trash2 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
@@ -13,7 +13,7 @@ const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { questions, subjects, vestibulares, loading } = useSelector((state: RootState) => state.questions);
 
-  const [filters, setFilters] = useState({ subject_id: '', topic_id: '', subtopic_id: '', difficulty: '', vestibular_id: '' });
+  const [filters, setFilters] = useState({ subject_id: '', difficulty: '', vestibular_id: '', search: '' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAlt, setSelectedAlt] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -22,6 +22,9 @@ const Questions = () => {
   const [timer, setTimer] = useState(QUESTION_TIME);
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [finished, setFinished] = useState(false);
+  const [highlightMode, setHighlightMode] = useState(false);
+  const [highlights, setHighlights] = useState<{ start: number; end: number }[]>([]);
+  const statementRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     dispatch(fetchSubjects());
@@ -45,7 +48,7 @@ const Questions = () => {
   }, [currentIndex, answered, questions.length, finished]);
 
   const handleSearch = async () => {
-    dispatch(fetchQuestions(filters));
+    dispatch(fetchQuestions({ ...filters, limit: 200 }));
     setCurrentIndex(0);
     setSelectedAlt(null);
     setAnswered(false);
@@ -103,8 +106,60 @@ const Questions = () => {
     setScore({ correct: 0, total: 0 });
   };
 
-  const topicsForSubject = subjects.find(s => s.id === parseInt(filters.subject_id))?.topics || [];
-  const subtopicsForTopic = topicsForSubject.find(t => t.id === parseInt(filters.topic_id))?.subtopics || [];
+  // Clear highlights when question changes
+  useEffect(() => { setHighlights([]); }, [currentIndex]);
+
+  const getTextOffset = (container: HTMLElement, node: Node, offset: number): number => {
+    let total = 0;
+    const walk = (n: Node): boolean => {
+      if (n === node) { total += offset; return true; }
+      if (n.nodeType === Node.TEXT_NODE) { total += n.textContent?.length ?? 0; }
+      else { for (const child of Array.from(n.childNodes)) { if (walk(child)) return true; } }
+      return false;
+    };
+    walk(container);
+    return total;
+  };
+
+  const mergeRanges = (ranges: { start: number; end: number }[]) => {
+    if (!ranges.length) return [];
+    const sorted = [...ranges].sort((a, b) => a.start - b.start);
+    const merged = [{ ...sorted[0] }];
+    for (let i = 1; i < sorted.length; i++) {
+      const last = merged[merged.length - 1];
+      if (sorted[i].start <= last.end) last.end = Math.max(last.end, sorted[i].end);
+      else merged.push({ ...sorted[i] });
+    }
+    return merged;
+  };
+
+  const handleMouseUp = () => {
+    if (!highlightMode || !statementRef.current) return;
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    const container = statementRef.current;
+    if (!container.contains(range.startContainer) || !container.contains(range.endContainer)) return;
+    const start = getTextOffset(container, range.startContainer, range.startOffset);
+    const end = getTextOffset(container, range.endContainer, range.endOffset);
+    if (start === end) return;
+    setHighlights(prev => mergeRanges([...prev, { start: Math.min(start, end), end: Math.max(start, end) }]));
+    sel.removeAllRanges();
+  };
+
+  const renderWithHighlights = (text: string) => {
+    if (!highlights.length) return text;
+    const parts: React.ReactNode[] = [];
+    let pos = 0;
+    for (const { start, end } of highlights) {
+      if (pos < start) parts.push(text.slice(pos, start));
+      parts.push(<mark key={start} className="question-highlight">{text.slice(start, end)}</mark>);
+      pos = end;
+    }
+    if (pos < text.length) parts.push(text.slice(pos));
+    return parts;
+  };
+
   const question: Question | undefined = questions[currentIndex];
   const progress = questions.length > 0 ? ((currentIndex) / questions.length) * 100 : 0;
 
@@ -121,53 +176,33 @@ const Questions = () => {
             <h2><Filter size={16} /> Filtros</h2>
 
             <div className="form-group">
+              <label>Buscar no enunciado</label>
+              <div className="search-input-wrapper">
+                <Search size={15} className="search-input-icon" />
+                <input
+                  type="text"
+                  className="form-control search-input"
+                  placeholder="Palavras-chave..."
+                  value={filters.search}
+                  onChange={e => setFilters({ ...filters, search: e.target.value })}
+                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                />
+              </div>
             </div>
 
             <div className="form-group">
-              <label>Materia</label>
+              <label>Matéria</label>
               <select
                 className="form-control"
                 value={filters.subject_id}
-                onChange={e => setFilters({ ...filters, subject_id: e.target.value, topic_id: '', subtopic_id: '' })}
+                onChange={e => setFilters({ ...filters, subject_id: e.target.value })}
               >
-                <option value="">Todas as materias</option>
+                <option value="">Todas as matérias</option>
                 {subjects.map(s => (
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
               </select>
             </div>
-
-            {filters.subject_id && (
-              <div className="form-group">
-                <label>Tópico</label>
-                <select
-                  className="form-control"
-                  value={filters.topic_id}
-                  onChange={e => setFilters({ ...filters, topic_id: e.target.value, subtopic_id: '' })}
-                >
-                  <option value="">Todos os tópicos</option>
-                  {topicsForSubject.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {filters.topic_id && (
-              <div className="form-group">
-                <label>Subtópico</label>
-                <select
-                  className="form-control"
-                  value={filters.subtopic_id}
-                  onChange={e => setFilters({ ...filters, subtopic_id: e.target.value })}
-                >
-                  <option value="">Todos os subtópicos</option>
-                  {subtopicsForTopic.map(st => (
-                    <option key={st.id} value={st.id}>{st.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
 
             <div className="form-group">
               <label>Vestibular</label>
@@ -198,8 +233,16 @@ const Questions = () => {
             </div>
 
             <button className="filter-btn" onClick={handleSearch} disabled={loading}>
-              {loading ? 'Buscando...' : 'Buscar questoes'}
+              {loading ? 'Buscando...' : 'Buscar questões'}
             </button>
+            {Object.values(filters).some(v => v !== '') && (
+              <button
+                className="filter-clear-btn"
+                onClick={() => setFilters({ subject_id: '', difficulty: '', vestibular_id: '', search: '' })}
+              >
+                Limpar filtros
+              </button>
+            )}
           </div>
 
           <div>
@@ -256,7 +299,29 @@ const Questions = () => {
                   </span>
                 </div>
 
-                <p className="question-statement">{question.statement}</p>
+                <div className="highlight-toolbar">
+                  <button
+                    className={`highlight-toggle${highlightMode ? ' active' : ''}`}
+                    onClick={() => setHighlightMode(m => !m)}
+                    title="Grifar enunciado"
+                  >
+                    <PenLine size={14} />
+                    Grifar
+                  </button>
+                  {highlights.length > 0 && (
+                    <button className="highlight-clear" onClick={() => setHighlights([])} title="Limpar grifos">
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
+
+                <p
+                  ref={statementRef}
+                  className={`question-statement${highlightMode ? ' highlight-active' : ''}`}
+                  onMouseUp={handleMouseUp}
+                >
+                  {renderWithHighlights(question.statement)}
+                </p>
 
                 {answered && (
                   <div className={`question-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>

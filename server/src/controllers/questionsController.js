@@ -4,7 +4,7 @@ import sequelize from '../db/index.js';
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, topic_id, subtopic_id, difficulty, bank, vestibular_id, limit = 10, offset = 0 } = req.query;
+    const { subject_id, topic_id, subtopic_id, difficulty, bank, vestibular_id, search, limit = 100, offset = 0 } = req.query;
     const where = {};
     const topicWhere = {};
 
@@ -14,10 +14,9 @@ export const getAll = async (req, res) => {
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
     if (search) {
-      const escaped = sequelize.escape(`%${search}%`);
       where[Op.or] = [
         { statement: { [Op.iLike]: `%${search}%` } },
-        { id: { [Op.in]: sequelize.literal(`(SELECT question_id FROM alternatives WHERE text ILIKE ${escaped})`) } },
+        { '$topic.name$': { [Op.iLike]: `%${search}%` } },
       ];
     }
 
@@ -155,10 +154,16 @@ export const remove = async (req, res) => {
 
 export const getSubjects = async (req, res) => {
   try {
+    // Retorna apenas matérias que possuem ao menos uma questão
     const subjects = await Subject.findAll({
       include: [{
-        model: Topic, as: 'topics',
+        model: Topic,
+        as: 'topics',
+        required: true,
         include: [{ model: Subtopic, as: 'subtopics' }],
+        where: sequelize.literal(
+          `EXISTS (SELECT 1 FROM questions q WHERE q.topic_id = "topics"."id")`
+        ),
       }],
       order: [['name', 'ASC']],
     });
@@ -202,6 +207,11 @@ export const submitAnswer = async (req, res) => {
       is_correct,
       response_time_seconds,
     });
+
+    await Question.increment(
+      is_correct ? { attempt_count: 1, correct_count: 1 } : { attempt_count: 1 },
+      { where: { id: question_id } }
+    );
 
     if (is_correct) {
       await Points.create({ student_id, amount: 10, reason: 'correct_answer' });
