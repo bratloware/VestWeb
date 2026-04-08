@@ -22,6 +22,7 @@ import Metrics from './pages/Metrics/Metrics';
 import Community from './pages/Community/Community';
 import Mentoring from './pages/Mentoring/Mentoring';
 import Settings from './pages/Settings/Settings';
+import Flashcards from './pages/Flashcards/Flashcards';
 
 function App() {
   const { mode } = useSelector((state: RootState) => state.theme);
@@ -64,6 +65,9 @@ function App() {
       } />
       <Route path="/classroom/settings" element={
         <ProtectedRoute><Settings /></ProtectedRoute>
+      } />
+      <Route path="/classroom/flashcards" element={
+        <ProtectedRoute><Flashcards /></ProtectedRoute>
       } />
 
       <Route path="/teacher/home" element={

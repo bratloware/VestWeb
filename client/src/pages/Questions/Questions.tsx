@@ -53,12 +53,11 @@ const Questions = () => {
     setFinished(false);
     setScore({ correct: 0, total: 0 });
 
-    // Create a practice session
     try {
       const res = await api.post('/simulations/1/start'); // practice mode
       setSessionId(res.data.data.id);
     } catch {
-      setSessionId(1); // fallback
+      setSessionId(1);
     }
   };
 
