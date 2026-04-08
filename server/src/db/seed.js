@@ -5,7 +5,7 @@ import sequelize from './index.js';
 // Import all models (triggers associations)
 import {
   Student, Banner, Testimonial, InstitutionalVideo,
-  Subject, Topic, Question, Alternative,
+  Subject, Topic, Subtopic, Vestibular, Question, QuestionVestibular, Alternative,
   Simulation, SimulationQuestion, QuestionSession, Answer,
   Video, VideoProgress, FavoriteVideo,
   Mentor, MentoringSession,
@@ -98,70 +98,299 @@ async function seed() {
     title: 'Conheça o VestWeb — A plataforma que transforma sua preparação',
   });
 
-  // ── 5. SUBJECTS & TOPICS ───────────────────────────────────────────────────
-  console.log('🌱  Criando matérias e tópicos...');
+  // ── 5. VESTIBULARES ────────────────────────────────────────────────────────
+  console.log('🌱  Criando vestibulares...');
+
+  const vestibularesData = [
+    // ── Principais vestibulares (featured) ──────────────────────────────────
+    {
+      name: 'ENEM',
+      full_name: 'Exame Nacional do Ensino Médio',
+      institution: 'INEP / MEC',
+      state: null,
+      description: 'O mais usado do Brasil — abre mais portas. Porta de entrada para universidades federais via SISU, bolsas pelo PROUNI e financiamento pelo FIES. Cobrado por quase todas as faculdades públicas e privadas do país.',
+      priority: 1,
+      is_featured: true,
+    },
+    {
+      name: 'FUVEST',
+      full_name: 'Fundação Universitária para o Vestibular',
+      institution: 'Universidade de São Paulo (USP)',
+      state: 'SP',
+      description: 'Um dos mais difíceis e tradicionais do Brasil. Principal porta de entrada para a USP, a universidade mais bem ranqueada da América Latina. Exige domínio aprofundado de conteúdo e excelente capacidade de redação.',
+      priority: 2,
+      is_featured: true,
+    },
+    {
+      name: 'UNICAMP',
+      full_name: 'Vestibular da Universidade Estadual de Campinas',
+      institution: 'UNICAMP',
+      state: 'SP',
+      description: 'Difícil e tradicional, reconhecido por questões interdisciplinares e criativas que exigem raciocínio além da memorização. A UNICAMP é referência em pesquisa e inovação no Brasil.',
+      priority: 3,
+      is_featured: true,
+    },
+    {
+      name: 'UNESP',
+      full_name: 'Vestibular da Universidade Estadual Paulista',
+      institution: 'UNESP / VUNESP',
+      state: 'SP',
+      description: 'Nível intermediário — equilibrado em dificuldade e abrangência de conteúdo. Boa opção para quem busca uma universidade estadual de qualidade sem o nível extremo de FUVEST e UNICAMP.',
+      priority: 4,
+      is_featured: true,
+    },
+    {
+      name: 'UNB',
+      full_name: 'Processo Seletivo da Universidade de Brasília',
+      institution: 'Universidade de Brasília (UnB)',
+      state: 'DF',
+      description: 'Estilo único com questões do tipo "pegadinha" — exige atenção redobrada aos enunciados e à interpretação. Principal universidade do Centro-Oeste, aceita ENEM/SISU e tem processo seletivo próprio.',
+      priority: 5,
+      is_featured: true,
+    },
+    {
+      name: 'PUC-SP',
+      full_name: 'Vestibular da PUC de São Paulo',
+      institution: 'Pontifícia Universidade Católica de São Paulo',
+      state: 'SP',
+      description: 'Privada, mais acessível em termos de dificuldade. Aceita ENEM e tem processo seletivo próprio. Boa opção para quem busca ensino de qualidade na rede privada paulista.',
+      priority: 6,
+      is_featured: true,
+    },
+    {
+      name: 'PUC-RIO',
+      full_name: 'Vestibular da PUC do Rio de Janeiro',
+      institution: 'Pontifícia Universidade Católica do Rio de Janeiro',
+      state: 'RJ',
+      description: 'Privada, mais acessível em termos de dificuldade. Referência em ensino privado no Rio de Janeiro, aceita ENEM e tem processo seletivo próprio com questões objetivas e discursivas.',
+      priority: 7,
+      is_featured: true,
+    },
+    // ── Demais vestibulares ──────────────────────────────────────────────────
+    { name: 'UFMG',      full_name: 'Vestibular da Universidade Federal de Minas Gerais',       institution: 'UFMG',   state: 'MG', description: 'Uma das maiores universidades federais do Brasil, com vestibular próprio e SISU.',                        priority: null, is_featured: false },
+    { name: 'UFRJ',      full_name: 'Vestibular da Universidade Federal do Rio de Janeiro',     institution: 'UFRJ',   state: 'RJ', description: 'Maior universidade federal do Brasil, aceita ENEM/SISU e tem processo seletivo próprio.',               priority: null, is_featured: false },
+    { name: 'UFRGS',     full_name: 'Vestibular da Universidade Federal do Rio Grande do Sul',  institution: 'UFRGS',  state: 'RS', description: 'Principal universidade do Sul do Brasil, com vestibular próprio e ENEM/SISU.',                          priority: null, is_featured: false },
+    { name: 'UERJ',      full_name: 'Exame de Qualificação da Universidade do Estado do Rio de Janeiro', institution: 'UERJ', state: 'RJ', description: 'Vestibular próprio da UERJ, tradicional no Rio de Janeiro.',                              priority: null, is_featured: false },
+    { name: 'MACKENZIE', full_name: 'Vestibular da Universidade Presbiteriana Mackenzie',       institution: 'Universidade Presbiteriana Mackenzie', state: 'SP', description: 'Uma das maiores universidades privadas de São Paulo, aceita ENEM.', priority: null, is_featured: false },
+    { name: 'UFSC',      full_name: 'Vestibular da Universidade Federal de Santa Catarina',     institution: 'UFSC',   state: 'SC', description: 'Principal universidade federal de Santa Catarina.',                                                   priority: null, is_featured: false },
+    { name: 'UEL',       full_name: 'Vestibular da Universidade Estadual de Londrina',          institution: 'UEL / COPS', state: 'PR', description: 'Uma das maiores universidades estaduais do Paraná.',                                         priority: null, is_featured: false },
+  ];
+
+  const vestibulares = await Vestibular.bulkCreate(vestibularesData);
+  const vestibularMap = Object.fromEntries(vestibulares.map(v => [v.name, v]));
+  console.log(`   → ${vestibulares.length} vestibulares criados`);
+
+  // ── 6. SUBJECTS, TOPICS & SUBTOPICS ───────────────────────────────────────
+  console.log('🌱  Criando matérias, tópicos e subtópicos...');
 
   const subjectsData = [
-    { name: 'Biologia', topics: ['Citologia', 'Genética', 'Ecologia', 'Evolução', 'Embriologia', 'Histologia', 'Fisiologia Animal', 'Botânica'] },
-    { name: 'Química',  topics: ['Química Orgânica', 'Química Inorgânica', 'Físico-Química', 'Eletroquímica', 'Termoquímica', 'Soluções'] },
-    { name: 'Física',   topics: ['Mecânica', 'Termodinâmica', 'Óptica', 'Eletromagnetismo', 'Ondulatória', 'Gravitação'] },
-    { name: 'Matemática', topics: ['Álgebra', 'Geometria Plana', 'Geometria Espacial', 'Trigonometria', 'Probabilidade', 'Funções'] },
-    { name: 'Português',  topics: ['Interpretação de Texto', 'Gramática', 'Redação', 'Literatura', 'Figuras de Linguagem'] },
-    { name: 'História',   topics: ['História do Brasil', 'História Geral', 'História Contemporânea', 'Geopolítica'] },
-    { name: 'Geografia',  topics: ['Climatologia', 'Geopolítica', 'Urbanização', 'Geomorfologia', 'Cartografia'] },
+    {
+      name: 'Biologia',
+      topics: [
+        { name: 'Citologia', subtopics: ['Membrana Plasmática', 'Organelas Celulares', 'Mitose', 'Meiose', 'Ciclo Celular', 'Transporte Celular'] },
+        { name: 'Genética', subtopics: ['Leis de Mendel', 'Herança Ligada ao Sexo', 'Mutações', 'Biotecnologia', 'Engenharia Genética', 'Heranças Não Mendelianas'] },
+        { name: 'Ecologia', subtopics: ['Cadeias Alimentares', 'Ciclos Biogeoquímicos', 'Sucessão Ecológica', 'Relações Ecológicas', 'Biomas Brasileiros', 'Impactos Ambientais'] },
+        { name: 'Evolução', subtopics: ['Darwinismo', 'Neodarwinismo', 'Especiação', 'Evidências da Evolução', 'Origem da Vida'] },
+        { name: 'Embriologia', subtopics: ['Fecundação', 'Segmentação', 'Gastrulação', 'Anexos Embrionários', 'Organogênese'] },
+        { name: 'Histologia', subtopics: ['Tecido Epitelial', 'Tecido Conjuntivo', 'Tecido Muscular', 'Tecido Nervoso'] },
+        { name: 'Fisiologia Humana', subtopics: ['Sistema Digestório', 'Sistema Circulatório', 'Sistema Respiratório', 'Sistema Nervoso', 'Sistema Endócrino', 'Sistema Imunológico'] },
+        { name: 'Botânica', subtopics: ['Morfologia Vegetal', 'Fisiologia Vegetal', 'Fotossíntese', 'Reprodução Vegetal', 'Classificação das Plantas'] },
+        { name: 'Microbiologia', subtopics: ['Vírus', 'Bactérias', 'Fungos', 'Protozoários'] },
+      ],
+    },
+    {
+      name: 'Química',
+      topics: [
+        { name: 'Química Orgânica', subtopics: ['Funções Oxigenadas', 'Funções Nitrogenadas', 'Hidrocarbonetos', 'Isomeria', 'Reações Orgânicas', 'Polímeros', 'Bioquímica'] },
+        { name: 'Química Inorgânica', subtopics: ['Ácidos e Bases', 'Sais', 'Óxidos', 'Reações Inorgânicas', 'Nomenclatura Inorgânica'] },
+        { name: 'Físico-Química', subtopics: ['Estequiometria', 'Gases', 'Termoquímica', 'Cinética Química', 'Equilíbrio Químico'] },
+        { name: 'Eletroquímica', subtopics: ['Oxidação e Redução', 'Pilhas e Baterias', 'Eletrólise', 'Potencial de Eletrodo'] },
+        { name: 'Soluções', subtopics: ['Concentração de Soluções', 'Propriedades Coligativas', 'pH e pOH', 'Diluição e Mistura'] },
+        { name: 'Radioatividade', subtopics: ['Tipos de Radiação', 'Decaimento Radioativo', 'Fissão e Fusão Nuclear', 'Aplicações da Radioatividade'] },
+      ],
+    },
+    {
+      name: 'Física',
+      topics: [
+        { name: 'Mecânica', subtopics: ['Cinemática', 'Dinâmica', 'Trabalho e Energia', 'Quantidade de Movimento', 'Gravitação Universal', 'Hidrostática'] },
+        { name: 'Termodinâmica', subtopics: ['Temperatura e Calor', 'Dilatação Térmica', 'Calorimetria', 'Leis da Termodinâmica', 'Máquinas Térmicas'] },
+        { name: 'Óptica', subtopics: ['Reflexão', 'Refração', 'Lentes e Espelhos', 'Óptica Geométrica', 'Cor e Luz'] },
+        { name: 'Eletromagnetismo', subtopics: ['Eletrostática', 'Eletrodinâmica', 'Circuitos Elétricos', 'Magnetismo', 'Indução Eletromagnética'] },
+        { name: 'Ondulatória', subtopics: ['Natureza das Ondas', 'Som', 'Efeito Doppler', 'Ondas Estacionárias', 'Ondas Eletromagnéticas'] },
+        { name: 'Física Moderna', subtopics: ['Relatividade', 'Efeito Fotoelétrico', 'Dualidade Onda-Partícula', 'Física Nuclear', 'Modelos Atômicos'] },
+      ],
+    },
+    {
+      name: 'Matemática',
+      topics: [
+        { name: 'Álgebra', subtopics: ['Equações do 1º Grau', 'Equações do 2º Grau', 'Sistemas Lineares', 'Progressões Aritméticas', 'Progressões Geométricas', 'Polinômios', 'Matrizes e Determinantes'] },
+        { name: 'Funções', subtopics: ['Função do 1º Grau', 'Função do 2º Grau', 'Função Exponencial', 'Função Logarítmica', 'Função Modular', 'Função Trigonométrica'] },
+        { name: 'Trigonometria', subtopics: ['Razões Trigonométricas', 'Lei dos Senos e Cossenos', 'Identidades Trigonométricas', 'Equações Trigonométricas'] },
+        { name: 'Geometria Plana', subtopics: ['Triângulos', 'Quadriláteros', 'Circunferência', 'Polígonos', 'Áreas e Perímetros'] },
+        { name: 'Geometria Espacial', subtopics: ['Prismas', 'Pirâmides', 'Cilindros', 'Cones', 'Esferas', 'Poliedros de Platão'] },
+        { name: 'Geometria Analítica', subtopics: ['Ponto e Reta no Plano', 'Circunferência Analítica', 'Cônicas', 'Vetores'] },
+        { name: 'Combinatória e Probabilidade', subtopics: ['Princípio Fundamental da Contagem', 'Permutação', 'Combinação', 'Arranjo', 'Probabilidade Simples', 'Probabilidade Condicional'] },
+        { name: 'Estatística', subtopics: ['Média, Mediana e Moda', 'Desvio Padrão', 'Gráficos e Tabelas', 'Frequência e Distribuição'] },
+      ],
+    },
+    {
+      name: 'Língua Portuguesa',
+      topics: [
+        { name: 'Interpretação de Texto', subtopics: ['Ideia Principal', 'Inferência', 'Coerência Textual', 'Tipos de Texto', 'Argumentação'] },
+        { name: 'Gramática', subtopics: ['Morfologia', 'Sintaxe', 'Regência e Crase', 'Concordância Verbal e Nominal', 'Pontuação', 'Ortografia'] },
+        { name: 'Figuras de Linguagem', subtopics: ['Metáfora e Metonímia', 'Personificação', 'Hipérbole e Eufemismo', 'Ironia e Antítese', 'Comparação e Aliteração'] },
+        { name: 'Variação Linguística', subtopics: ['Variedades Regionais', 'Variedades Sociais', 'Linguagem Formal e Informal', 'Língua Culta e Popular'] },
+        { name: 'Semântica', subtopics: ['Sinonímia e Antonímia', 'Polissemia e Ambiguidade', 'Denotação e Conotação', 'Campo Semântico'] },
+      ],
+    },
+    {
+      name: 'Literatura',
+      topics: [
+        { name: 'Trovadorismo e Humanismo', subtopics: ['Cantigas', 'Prosa Medieval', 'Gil Vicente'] },
+        { name: 'Classicismo', subtopics: ['Camões', 'Lírica e Épica', 'Os Lusíadas'] },
+        { name: 'Barroco e Arcadismo', subtopics: ['Gregório de Matos', 'Padre Antônio Vieira', 'Tomás António Gonzaga', 'Cláudio Manuel da Costa'] },
+        { name: 'Romantismo', subtopics: ['Prosa Romântica', 'Poesia Romântica', 'José de Alencar', 'Machado de Assis (fase)'] },
+        { name: 'Realismo e Naturalismo', subtopics: ['Machado de Assis', 'Eça de Queirós', 'Aluísio de Azevedo'] },
+        { name: 'Parnasianismo e Simbolismo', subtopics: ['Olavo Bilac', 'Cruz e Sousa', 'Alphonsus de Guimaraens'] },
+        { name: 'Modernismo', subtopics: ['Semana de 22', 'Primeira Geração Modernista', 'Segunda Geração', 'Terceira Geração', 'Concretismo'] },
+        { name: 'Literatura Contemporânea', subtopics: ['Clarice Lispector', 'João Guimarães Rosa', 'Drummond', 'Literatura Marginal'] },
+      ],
+    },
+    {
+      name: 'Redação',
+      topics: [
+        { name: 'Dissertação Argumentativa', subtopics: ['Introdução e Tese', 'Desenvolvimento e Argumentação', 'Conclusão e Proposta de Intervenção'] },
+        { name: 'Coesão e Coerência', subtopics: ['Conectivos', 'Progressão Temática', 'Coerência Lógica'] },
+        { name: 'Repertório Cultural', subtopics: ['Como Usar Referências', 'Dados e Estatísticas', 'Citações e Autores'] },
+      ],
+    },
+    {
+      name: 'História',
+      topics: [
+        { name: 'Brasil Colonial', subtopics: ['Pré-Colonial', 'Ciclo do Pau-Brasil', 'Capitanias Hereditárias', 'Invasões Estrangeiras', 'Período Holandês', 'Entradas e Bandeiras'] },
+        { name: 'Brasil Imperial', subtopics: ['Independência do Brasil', 'Primeiro Reinado', 'Período Regencial', 'Segundo Reinado', 'Abolição da Escravatura'] },
+        { name: 'Brasil República', subtopics: ['República Velha', 'Era Vargas', 'República Populista', 'Ditadura Militar', 'Redemocratização', 'Brasil Contemporâneo'] },
+        { name: 'Antiguidade', subtopics: ['Grécia Antiga', 'Roma Antiga', 'Egito Antigo', 'Mesopotâmia', 'Persas e Fenícios'] },
+        { name: 'Idade Média', subtopics: ['Feudalismo', 'Igreja Medieval', 'Cruzadas', 'Formação dos Estados Nacionais', 'Bizâncio e Islã'] },
+        { name: 'Idade Moderna', subtopics: ['Renascimento', 'Reforma Protestante', 'Absolutismo', 'Expansão Marítima e Colonial', 'Iluminismo'] },
+        { name: 'Revoluções Burguesas', subtopics: ['Revolução Inglesa', 'Revolução Americana', 'Revolução Francesa', 'Independências Latino-Americanas'] },
+        { name: 'Imperialismo e Guerras Mundiais', subtopics: ['Imperialismo Europeu', 'Primeira Guerra Mundial', 'Entreguerras', 'Segunda Guerra Mundial', 'Holocausto'] },
+        { name: 'Guerra Fria e Mundo Contemporâneo', subtopics: ['Bipolaridade EUA-URSS', 'Descolonização', 'Conflitos Regionais', 'Fim da Guerra Fria', 'Globalização e Terrorismo'] },
+        { name: 'História Indígena e Africana', subtopics: ['Povos Indígenas no Brasil', 'África Pré-Colonial', 'Escravidão Africana', 'Diáspora Africana'] },
+      ],
+    },
+    {
+      name: 'Geografia',
+      topics: [
+        { name: 'Cartografia', subtopics: ['Projeções Cartográficas', 'Escalas', 'Coordenadas Geográficas', 'Fusos Horários', 'Sensoriamento Remoto'] },
+        { name: 'Geopolítica', subtopics: ['Territórios e Fronteiras', 'Conflitos Internacionais', 'Organismos Internacionais', 'Blocos Econômicos'] },
+        { name: 'Climatologia', subtopics: ['Elementos do Clima', 'Tipos Climáticos', 'Climas do Brasil', 'Mudanças Climáticas', 'El Niño e La Niña'] },
+        { name: 'Geomorfologia', subtopics: ['Relevo Brasileiro', 'Agentes Externos', 'Solos', 'Rochas e Minerais'] },
+        { name: 'Hidrografia', subtopics: ['Bacias Hidrográficas', 'Rios Brasileiros', 'Aquíferos', 'Oceanos e Mares'] },
+        { name: 'Urbanização', subtopics: ['Crescimento Urbano', 'Megalópoles', 'Urbanização Brasileira', 'Problemas Urbanos', 'Redes Urbanas'] },
+        { name: 'Agropecuária e Industrialização', subtopics: ['Revolução Verde', 'Agronegócio', 'Industrialização Brasileira', 'Desindustrialização'] },
+        { name: 'Questões Ambientais', subtopics: ['Desmatamento', 'Desertificação', 'Biodiversidade', 'Recursos Hídricos', 'Energia Renovável'] },
+        { name: 'População', subtopics: ['Crescimento Populacional', 'Migrações', 'IDH e Desigualdade', 'Pirâmides Etárias', 'Questões Étnico-Raciais'] },
+      ],
+    },
+    {
+      name: 'Filosofia',
+      topics: [
+        { name: 'Filosofia Antiga', subtopics: ['Pré-Socráticos', 'Sócrates e Método Socrático', 'Platão e o Idealismo', 'Aristóteles e o Empirismo'] },
+        { name: 'Filosofia Medieval', subtopics: ['Patrística', 'Escolástica', 'Santo Agostinho', 'São Tomás de Aquino'] },
+        { name: 'Filosofia Moderna', subtopics: ['Bacon e Descartes', 'Empirismo Inglês', 'Kant', 'Iluminismo Filosófico'] },
+        { name: 'Filosofia Contemporânea', subtopics: ['Marx e o Materialismo', 'Nietzsche', 'Existencialismo', 'Filosofia Analítica', 'Pós-Modernidade'] },
+        { name: 'Ética e Política', subtopics: ['Ética Clássica', 'Contrato Social', 'Direitos Humanos', 'Democracia e Cidadania', 'Ética Ambiental'] },
+        { name: 'Epistemologia e Lógica', subtopics: ['Teoria do Conhecimento', 'Lógica Formal', 'Falácias', 'Argumento e Verdade'] },
+      ],
+    },
+    {
+      name: 'Sociologia',
+      topics: [
+        { name: 'Fundamentos da Sociologia', subtopics: ['Durkheim', 'Weber', 'Marx', 'Método Sociológico', 'Fato Social'] },
+        { name: 'Trabalho e Sociedade', subtopics: ['Capitalismo', 'Alienação', 'Mercado de Trabalho', 'Desemprego', 'Sindicalismo'] },
+        { name: 'Estratificação Social', subtopics: ['Classes Sociais', 'Mobilidade Social', 'Castas e Estamentos', 'Desigualdade Social no Brasil'] },
+        { name: 'Cultura e Identidade', subtopics: ['Cultura Material e Imaterial', 'Indústria Cultural', 'Etnocentrismo e Relativismo', 'Identidade Nacional', 'Multiculturalismo'] },
+        { name: 'Movimentos Sociais', subtopics: ['Movimentos Trabalhistas', 'Movimentos Feministas', 'Movimento Negro', 'Movimentos Indígenas', 'Movimentos LGBTQIA+'] },
+        { name: 'Democracia e Cidadania', subtopics: ['Estado e Poder', 'Constituição Brasileira', 'Partidos Políticos', 'Participação Popular'] },
+      ],
+    },
+    {
+      name: 'Inglês',
+      topics: [
+        { name: 'Interpretação de Texto em Inglês', subtopics: ['Inferência e Vocabulário em Contexto', 'Texto Publicitário', 'Texto de Opinião', 'Texto Científico'] },
+        { name: 'Gramática Inglesa', subtopics: ['Tempos Verbais', 'Voz Passiva', 'Orações Relativas', 'Conectivos', 'Modais'] },
+        { name: 'Falsos Cognatos', subtopics: ['Principais False Friends', 'Vocabulário Enganoso'] },
+      ],
+    },
+    {
+      name: 'Espanhol',
+      topics: [
+        { name: 'Interpretação de Texto em Espanhol', subtopics: ['Vocabulário em Contexto', 'Texto Literário', 'Texto Jornalístico'] },
+        { name: 'Gramática Espanhola', subtopics: ['Verbos Irregulares', 'Ser vs Estar', 'Por vs Para', 'Subjuntivo'] },
+      ],
+    },
   ];
 
   const subjects = [];
   const topicsAll = [];
+  const subtopicsAll = [];
 
   for (const sd of subjectsData) {
     const subj = await Subject.create({ name: sd.name });
     subjects.push(subj);
-    for (const tName of sd.topics) {
-      const t = await Topic.create({ name: tName, subject_id: subj.id });
+    for (const topicData of sd.topics) {
+      const t = await Topic.create({ name: topicData.name, subject_id: subj.id });
       topicsAll.push(t);
+      for (const stName of (topicData.subtopics || [])) {
+        const st = await Subtopic.create({ name: stName, topic_id: t.id });
+        subtopicsAll.push(st);
+      }
     }
   }
-  console.log(`   → ${subjects.length} matérias, ${topicsAll.length} tópicos criados`);
+  console.log(`   → ${subjects.length} matérias, ${topicsAll.length} tópicos, ${subtopicsAll.length} subtópicos criados`);
 
   // ── 6. QUESTIONS & ALTERNATIVES ────────────────────────────────────────────
   console.log('🌱  Criando questões...');
 
   const questionData = [
     // Biologia — Citologia
-    { statement: 'A membrana plasmática é constituída principalmente por uma bicamada de fosfolipídeos. Qual das alternativas abaixo descreve corretamente uma função desta membrana?', topic: 'Citologia', difficulty: 'easy', source: 'FUVEST', year: 2022, bank: 'FUVEST', correct: 'B', alts: ['Produção de energia celular pela oxidação de glicose', 'Controle da entrada e saída de substâncias na célula', 'Síntese de proteínas a partir de aminoácidos', 'Digestão intracelular de organelas danificadas', 'Armazenamento de material genético'] },
-    { statement: 'Em relação à mitose, é CORRETO afirmar que:', topic: 'Citologia', difficulty: 'medium', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'C', alts: ['Ocorre apenas em células sexuais', 'Resulta em células com metade do número de cromossomos', 'Garante a manutenção do número cromossômico nas células-filhas', 'É o processo responsável pela formação de gametas', 'Ocorre em duas etapas, ambas com divisão do núcleo'] },
-    { statement: 'O retículo endoplasmático rugoso (RER) difere do retículo endoplasmático liso (REL) principalmente por:', topic: 'Citologia', difficulty: 'medium', source: 'UNICAMP', year: 2023, bank: 'UNICAMP', correct: 'A', alts: ['Possuir ribossomos aderidos à sua membrana', 'Ser responsável pelo armazenamento de cálcio', 'Sintetizar lipídeos e esteroides', 'Estar ausente em células animais', 'Estar ligado diretamente à membrana plasmática'] },
+    { statement: 'A membrana plasmática é constituída principalmente por uma bicamada de fosfolipídeos. Qual das alternativas abaixo descreve corretamente uma função desta membrana?', topic: 'Citologia', subtopic: 'Membrana Plasmática', difficulty: 'easy', source: 'FUVEST', year: 2022, bank: 'FUVEST', correct: 'B', alts: ['Produção de energia celular pela oxidação de glicose', 'Controle da entrada e saída de substâncias na célula', 'Síntese de proteínas a partir de aminoácidos', 'Digestão intracelular de organelas danificadas', 'Armazenamento de material genético'] },
+    { statement: 'Em relação à mitose, é CORRETO afirmar que:', topic: 'Citologia', subtopic: 'Mitose', difficulty: 'medium', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'C', alts: ['Ocorre apenas em células sexuais', 'Resulta em células com metade do número de cromossomos', 'Garante a manutenção do número cromossômico nas células-filhas', 'É o processo responsável pela formação de gametas', 'Ocorre em duas etapas, ambas com divisão do núcleo'] },
+    { statement: 'O retículo endoplasmático rugoso (RER) difere do retículo endoplasmático liso (REL) principalmente por:', topic: 'Citologia', subtopic: 'Organelas Celulares', difficulty: 'medium', source: 'UNICAMP', year: 2023, bank: 'UNICAMP', correct: 'A', alts: ['Possuir ribossomos aderidos à sua membrana', 'Ser responsável pelo armazenamento de cálcio', 'Sintetizar lipídeos e esteroides', 'Estar ausente em células animais', 'Estar ligado diretamente à membrana plasmática'] },
     // Genética
-    { statement: 'Uma mulher portadora de daltonismo (gene recessivo ligado ao X) se casa com um homem daltônico. Qual a probabilidade de seus filhos homens serem daltônicos?', topic: 'Genética', difficulty: 'hard', source: 'FUVEST', year: 2020, bank: 'FUVEST', correct: 'D', alts: ['25%', '0%', '75%', '50%', '100%'] },
-    { statement: 'O fenômeno de dominância incompleta difere da codominância porque:', topic: 'Genética', difficulty: 'medium', source: 'ENEM', year: 2022, bank: 'ENEM', correct: 'E', alts: ['Ocorre apenas em plantas', 'Envolve genes ligados ao sexo', 'Produz um fenótipo idêntico ao parental dominante', 'Resulta em segregação 3:1 na F2', 'Gera um fenótipo intermediário entre os parentais'] },
+    { statement: 'Uma mulher portadora de daltonismo (gene recessivo ligado ao X) se casa com um homem daltônico. Qual a probabilidade de seus filhos homens serem daltônicos?', topic: 'Genética', subtopic: 'Herança Ligada ao Sexo', difficulty: 'hard', source: 'FUVEST', year: 2020, bank: 'FUVEST', correct: 'D', alts: ['25%', '0%', '75%', '50%', '100%'] },
+    { statement: 'O fenômeno de dominância incompleta difere da codominância porque:', topic: 'Genética', subtopic: 'Heranças Não Mendelianas', difficulty: 'medium', source: 'ENEM', year: 2022, bank: 'ENEM', correct: 'E', alts: ['Ocorre apenas em plantas', 'Envolve genes ligados ao sexo', 'Produz um fenótipo idêntico ao parental dominante', 'Resulta em segregação 3:1 na F2', 'Gera um fenótipo intermediário entre os parentais'] },
     // Química — Orgânica
-    { statement: 'A fermentação alcoólica, realizada por leveduras, transforma glicose em etanol e gás carbônico. Este processo é um exemplo de:', topic: 'Química Orgânica', difficulty: 'easy', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'A', alts: ['Reação de oxidação incompleta de açúcares', 'Reação de combustão completa', 'Reação de polimerização da glicose', 'Oxidação aeróbica de carboidratos', 'Redução de dióxido de carbono a etanol'] },
-    { statement: 'Qual das alternativas abaixo representa corretamente a fórmula geral de um éster?', topic: 'Química Orgânica', difficulty: 'easy', source: 'FUVEST', year: 2019, bank: 'FUVEST', correct: 'C', alts: ['R–CO–R\'', 'R–COOH', 'R–COO–R\'', 'R–OH', 'R–CO–NH2'] },
+    { statement: 'A fermentação alcoólica, realizada por leveduras, transforma glicose em etanol e gás carbônico. Este processo é um exemplo de:', topic: 'Química Orgânica', subtopic: 'Reações Orgânicas', difficulty: 'easy', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'A', alts: ['Reação de oxidação incompleta de açúcares', 'Reação de combustão completa', 'Reação de polimerização da glicose', 'Oxidação aeróbica de carboidratos', 'Redução de dióxido de carbono a etanol'] },
+    { statement: 'Qual das alternativas abaixo representa corretamente a fórmula geral de um éster?', topic: 'Química Orgânica', subtopic: 'Funções Oxigenadas', difficulty: 'easy', source: 'FUVEST', year: 2019, bank: 'FUVEST', correct: 'C', alts: ['R–CO–R\'', 'R–COOH', 'R–COO–R\'', 'R–OH', 'R–CO–NH2'] },
     // Física — Mecânica
-    { statement: 'Um objeto é lançado horizontalmente de uma altura de 80 m com velocidade inicial de 20 m/s. Considerando g = 10 m/s², o alcance horizontal do objeto é:', topic: 'Mecânica', difficulty: 'medium', source: 'FUVEST', year: 2022, bank: 'FUVEST', correct: 'B', alts: ['40 m', '80 m', '60 m', '100 m', '120 m'] },
-    { statement: 'De acordo com a 2ª Lei de Newton, a aceleração de um corpo:', topic: 'Mecânica', difficulty: 'easy', source: 'ENEM', year: 2020, bank: 'ENEM', correct: 'A', alts: ['É diretamente proporcional à força resultante e inversamente proporcional à sua massa', 'É inversamente proporcional à força resultante e diretamente proporcional à sua massa', 'Independe da massa do corpo', 'É igual à força aplicada sobre o corpo', 'É sempre constante independente das forças'] },
+    { statement: 'Um objeto é lançado horizontalmente de uma altura de 80 m com velocidade inicial de 20 m/s. Considerando g = 10 m/s², o alcance horizontal do objeto é:', topic: 'Mecânica', subtopic: 'Cinemática', difficulty: 'medium', source: 'FUVEST', year: 2022, bank: 'FUVEST', correct: 'B', alts: ['40 m', '80 m', '60 m', '100 m', '120 m'] },
+    { statement: 'De acordo com a 2ª Lei de Newton, a aceleração de um corpo:', topic: 'Mecânica', subtopic: 'Dinâmica', difficulty: 'easy', source: 'ENEM', year: 2020, bank: 'ENEM', correct: 'A', alts: ['É diretamente proporcional à força resultante e inversamente proporcional à sua massa', 'É inversamente proporcional à força resultante e diretamente proporcional à sua massa', 'Independe da massa do corpo', 'É igual à força aplicada sobre o corpo', 'É sempre constante independente das forças'] },
     // Matemática
-    { statement: 'A soma dos termos de uma progressão aritmética com 10 termos, primeiro termo a₁ = 3 e razão r = 2, é igual a:', topic: 'Álgebra', difficulty: 'medium', source: 'ENEM', year: 2023, bank: 'ENEM', correct: 'C', alts: ['100', '110', '120', '130', '140'] },
-    { statement: 'Em um triângulo retângulo, a hipotenusa mede 10 cm e um cateto mede 6 cm. O outro cateto mede:', topic: 'Geometria Plana', difficulty: 'easy', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'D', alts: ['4 cm', '5 cm', '7 cm', '8 cm', '9 cm'] },
+    { statement: 'A soma dos termos de uma progressão aritmética com 10 termos, primeiro termo a₁ = 3 e razão r = 2, é igual a:', topic: 'Álgebra', subtopic: 'Progressões Aritméticas', difficulty: 'medium', source: 'ENEM', year: 2023, bank: 'ENEM', correct: 'C', alts: ['100', '110', '120', '130', '140'] },
+    { statement: 'Em um triângulo retângulo, a hipotenusa mede 10 cm e um cateto mede 6 cm. O outro cateto mede:', topic: 'Geometria Plana', subtopic: 'Triângulos', difficulty: 'easy', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'D', alts: ['4 cm', '5 cm', '7 cm', '8 cm', '9 cm'] },
     // Português
-    { statement: 'A figura de linguagem presente no verso "O cravo brigou com a rosa" é:', topic: 'Figuras de Linguagem', difficulty: 'easy', source: 'ENEM', year: 2022, bank: 'ENEM', correct: 'A', alts: ['Personificação (prosopopeia)', 'Metáfora', 'Metonímia', 'Hipérbole', 'Antítese'] },
-    { statement: 'Leia o trecho: "A vida é uma peça de teatro que não permite ensaios." A figura de linguagem predominante é:', topic: 'Figuras de Linguagem', difficulty: 'easy', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'B', alts: ['Hipérbole', 'Metáfora', 'Metonímia', 'Ironia', 'Eufemismo'] },
-    // História
-    { statement: 'A Proclamação da República no Brasil, em 1889, foi resultado principalmente:', topic: 'História do Brasil', difficulty: 'medium', source: 'ENEM', year: 2020, bank: 'ENEM', correct: 'C', alts: ['De uma revolução popular liderada por operários urbanos', 'Da pressão do movimento abolicionista após a Lei Áurea', 'Do enfraquecimento da monarquia e da insatisfação militar e das elites agrárias', 'De uma invasão estrangeira que derrubou o governo imperial', 'De um golpe liderado exclusivamente pela Igreja Católica'] },
+    { statement: 'A figura de linguagem presente no verso "O cravo brigou com a rosa" é:', topic: 'Figuras de Linguagem', subtopic: 'Personificação', difficulty: 'easy', source: 'ENEM', year: 2022, bank: 'ENEM', correct: 'A', alts: ['Personificação (prosopopeia)', 'Metáfora', 'Metonímia', 'Hipérbole', 'Antítese'] },
+    { statement: 'Leia o trecho: "A vida é uma peça de teatro que não permite ensaios." A figura de linguagem predominante é:', topic: 'Figuras de Linguagem', subtopic: 'Metáfora e Metonímia', difficulty: 'easy', source: 'ENEM', year: 2021, bank: 'ENEM', correct: 'B', alts: ['Hipérbole', 'Metáfora', 'Metonímia', 'Ironia', 'Eufemismo'] },
+    // História — corrigido: 'História do Brasil' → 'Brasil República'
+    { statement: 'A Proclamação da República no Brasil, em 1889, foi resultado principalmente:', topic: 'Brasil República', subtopic: 'República Velha', difficulty: 'medium', source: 'ENEM', year: 2020, bank: 'ENEM', correct: 'C', alts: ['De uma revolução popular liderada por operários urbanos', 'Da pressão do movimento abolicionista após a Lei Áurea', 'Do enfraquecimento da monarquia e da insatisfação militar e das elites agrárias', 'De uma invasão estrangeira que derrubou o governo imperial', 'De um golpe liderado exclusivamente pela Igreja Católica'] },
   ];
 
-  // helper: find topic by name
+  // helpers: find topic/subtopic by name
   const findTopic = (name) => topicsAll.find(t => t.name === name);
+  const findSubtopic = (name, topicId) => subtopicsAll.find(st => st.name === name && st.topic_id === topicId);
   const letters = ['A', 'B', 'C', 'D', 'E'];
 
   const questions = [];
   for (const qd of questionData) {
     const topic = findTopic(qd.topic);
-    if (!topic) continue;
+    if (!topic) { console.warn(`   ⚠ Tópico não encontrado: "${qd.topic}"`); continue; }
+    const subtopic = qd.subtopic ? findSubtopic(qd.subtopic, topic.id) : null;
     const q = await Question.create({
       statement: qd.statement,
       topic_id: topic.id,
+      subtopic_id: subtopic ? subtopic.id : null,
       difficulty: qd.difficulty,
       source: qd.source,
       year: qd.year,
@@ -179,6 +408,22 @@ async function seed() {
     questions.push(q);
   }
   console.log(`   → ${questions.length} questões criadas com alternativas`);
+
+  // Vincular questões aos vestibulares conforme banco de origem
+  const bankToVestibular = {
+    'ENEM':    ['ENEM'],
+    'FUVEST':  ['FUVEST'],
+    'UNICAMP': ['UNICAMP'],
+    'UNESP':   ['UNESP'],
+  };
+  for (const q of questions) {
+    const vestNames = bankToVestibular[q.bank] || [];
+    for (const vName of vestNames) {
+      const v = vestibularMap[vName];
+      if (v) await QuestionVestibular.create({ question_id: q.id, vestibular_id: v.id });
+    }
+  }
+  console.log('   → Questões vinculadas aos vestibulares');
 
   // ── 7. SIMULATIONS ─────────────────────────────────────────────────────────
   console.log('🌱  Criando simulados...');

@@ -5,7 +5,10 @@ import Testimonial from './Testimonial.js';
 import InstitutionalVideo from './InstitutionalVideo.js';
 import Subject from './Subject.js';
 import Topic from './Topic.js';
+import Subtopic from './Subtopic.js';
+import Vestibular from './Vestibular.js';
 import Question from './Question.js';
+import QuestionVestibular from './QuestionVestibular.js';
 import Alternative from './Alternative.js';
 import Simulation from './Simulation.js';
 import SimulationQuestion from './SimulationQuestion.js';
@@ -72,13 +75,26 @@ Mentor.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 Mentor.hasMany(MentoringSession, { foreignKey: 'mentor_id', as: 'sessions' });
 MentoringSession.belongsTo(Mentor, { foreignKey: 'mentor_id', as: 'mentor' });
 
-// Subject / Topic
+// Subject / Topic / Subtopic
 Subject.hasMany(Topic, { foreignKey: 'subject_id', as: 'topics' });
 Topic.belongsTo(Subject, { foreignKey: 'subject_id', as: 'subject' });
+
+Topic.hasMany(Subtopic, { foreignKey: 'topic_id', as: 'subtopics' });
+Subtopic.belongsTo(Topic, { foreignKey: 'topic_id', as: 'topic' });
 
 // Topic / Question / Video / StudyEvent
 Topic.hasMany(Question, { foreignKey: 'topic_id', as: 'questions' });
 Question.belongsTo(Topic, { foreignKey: 'topic_id', as: 'topic' });
+
+Subtopic.hasMany(Question, { foreignKey: 'subtopic_id', as: 'questions' });
+Question.belongsTo(Subtopic, { foreignKey: 'subtopic_id', as: 'subtopic' });
+
+// Vestibular
+Question.belongsToMany(Vestibular, { through: QuestionVestibular, foreignKey: 'question_id', as: 'vestibulares' });
+Vestibular.belongsToMany(Question, { through: QuestionVestibular, foreignKey: 'vestibular_id', as: 'questions' });
+
+Student.belongsTo(Vestibular, { foreignKey: 'target_vestibular_id', as: 'targetVestibular' });
+Vestibular.hasMany(Student, { foreignKey: 'target_vestibular_id', as: 'students' });
 
 Topic.hasMany(Video, { foreignKey: 'topic_id', as: 'videos' });
 Video.belongsTo(Topic, { foreignKey: 'topic_id', as: 'topic' });
@@ -145,7 +161,10 @@ export {
   InstitutionalVideo,
   Subject,
   Topic,
+  Subtopic,
+  Vestibular,
   Question,
+  QuestionVestibular,
   Alternative,
   Simulation,
   SimulationQuestion,

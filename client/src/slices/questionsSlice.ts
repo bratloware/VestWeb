@@ -9,27 +9,45 @@ export interface Alternative {
   is_correct: boolean;
 }
 
+export interface Vestibular {
+  id: number;
+  name: string;
+  full_name?: string;
+  institution?: string;
+  state?: string;
+}
+
+export interface Subtopic {
+  id: number;
+  name: string;
+  topic_id: number;
+}
+
 export interface Question {
   id: number;
   statement: string;
   topic_id: number;
+  subtopic_id?: number;
   difficulty: 'easy' | 'medium' | 'hard';
   source?: string;
   year?: number;
   bank?: string;
   alternatives: Alternative[];
   topic?: { id: number; name: string; subject?: { id: number; name: string } };
+  subtopic?: Subtopic;
+  vestibulares?: Vestibular[];
 }
 
 export interface Subject {
   id: number;
   name: string;
-  topics: { id: number; name: string; subject_id: number }[];
+  topics: { id: number; name: string; subject_id: number; subtopics: Subtopic[] }[];
 }
 
 interface QuestionsState {
   questions: Question[];
   subjects: Subject[];
+  vestibulares: Vestibular[];
   currentQuestion: Question | null;
   session: any | null;
   loading: boolean;
@@ -40,6 +58,7 @@ interface QuestionsState {
 const initialState: QuestionsState = {
   questions: [],
   subjects: [],
+  vestibulares: [],
   currentQuestion: null,
   session: null,
   loading: false,
@@ -69,6 +88,30 @@ export const fetchSubjects = createAsyncThunk(
       return res.data.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Erro ao buscar matérias');
+    }
+  }
+);
+
+export const fetchVestibulares = createAsyncThunk(
+  'questions/fetchVestibulares',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get('/questions/vestibulares');
+      return res.data.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Erro ao buscar vestibulares');
+    }
+  }
+);
+
+export const setTargetVestibular = createAsyncThunk(
+  'questions/setTargetVestibular',
+  async (vestibular_id: number | null, { rejectWithValue }) => {
+    try {
+      const res = await api.post('/questions/target-vestibular', { vestibular_id });
+      return res.data.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Erro ao definir vestibular alvo');
     }
   }
 );
@@ -113,6 +156,9 @@ const questionsSlice = createSlice({
       })
       .addCase(fetchSubjects.fulfilled, (state, action) => {
         state.subjects = action.payload;
+      })
+      .addCase(fetchVestibulares.fulfilled, (state, action) => {
+        state.vestibulares = action.payload;
       });
   },
 });

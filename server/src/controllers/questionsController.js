@@ -1,16 +1,22 @@
-import { Question, Alternative, Topic, Subject, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
+import { Question, Alternative, Topic, Subtopic, Subject, Vestibular, QuestionVestibular, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
 import { Op } from 'sequelize';
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, topic_id, difficulty, bank, limit = 10, offset = 0 } = req.query;
+    const { subject_id, topic_id, subtopic_id, difficulty, bank, vestibular_id, limit = 10, offset = 0 } = req.query;
     const where = {};
     const topicWhere = {};
 
     if (topic_id) where.topic_id = topic_id;
+    if (subtopic_id) where.subtopic_id = subtopic_id;
     if (difficulty) where.difficulty = difficulty;
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
+
+    // Se vestibular_id for passado, filtra questões daquele vestibular
+    const vestibularInclude = vestibular_id
+      ? { model: Vestibular, as: 'vestibulares', through: { attributes: [] }, where: { id: vestibular_id }, required: true }
+      : { model: Vestibular, as: 'vestibulares', through: { attributes: [] }, required: false };
 
     const questions = await Question.findAndCountAll({
       where,
@@ -22,10 +28,13 @@ export const getAll = async (req, res) => {
           where: Object.keys(topicWhere).length ? topicWhere : undefined,
           include: [{ model: Subject, as: 'subject' }],
         },
+        { model: Subtopic, as: 'subtopic', required: false },
+        vestibularInclude,
       ],
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: [['id', 'DESC']],
+      distinct: true,
     });
 
     return res.json({ message: 'Questions fetched', data: questions });
@@ -41,7 +50,12 @@ export const getById = async (req, res) => {
     const question = await Question.findByPk(id, {
       include: [
         { model: Alternative, as: 'alternatives' },
-        { model: Topic, as: 'topic', include: [{ model: Subject, as: 'subject' }] },
+        {
+          model: Topic, as: 'topic',
+          include: [{ model: Subject, as: 'subject' }],
+        },
+        { model: Subtopic, as: 'subtopic', required: false },
+        { model: Vestibular, as: 'vestibulares', through: { attributes: [] } },
       ],
     });
     if (!question) return res.status(404).json({ message: 'Question not found' });
@@ -58,9 +72,9 @@ export const create = async (req, res) => {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    const { statement, topic_id, difficulty, source, year, bank, alternatives } = req.body;
+    const { statement, topic_id, subtopic_id, difficulty, source, year, bank, alternatives, vestibular_ids } = req.body;
     const question = await Question.create({
-      statement, topic_id, difficulty, source, year, bank, created_by: req.user.id,
+      statement, topic_id, subtopic_id, difficulty, source, year, bank, created_by: req.user.id,
     });
 
     if (alternatives && Array.isArray(alternatives)) {
@@ -69,8 +83,17 @@ export const create = async (req, res) => {
       }
     }
 
+    if (vestibular_ids && Array.isArray(vestibular_ids)) {
+      for (const vestibular_id of vestibular_ids) {
+        await QuestionVestibular.create({ question_id: question.id, vestibular_id });
+      }
+    }
+
     const full = await Question.findByPk(question.id, {
-      include: [{ model: Alternative, as: 'alternatives' }],
+      include: [
+        { model: Alternative, as: 'alternatives' },
+        { model: Vestibular, as: 'vestibulares', through: { attributes: [] } },
+      ],
     });
 
     return res.status(201).json({ message: 'Question created', data: full });
@@ -89,7 +112,16 @@ export const update = async (req, res) => {
     const question = await Question.findByPk(id);
     if (!question) return res.status(404).json({ message: 'Question not found' });
 
-    await question.update(req.body);
+    const { vestibular_ids, ...fields } = req.body;
+    await question.update(fields);
+
+    if (vestibular_ids && Array.isArray(vestibular_ids)) {
+      await QuestionVestibular.destroy({ where: { question_id: id } });
+      for (const vestibular_id of vestibular_ids) {
+        await QuestionVestibular.create({ question_id: id, vestibular_id });
+      }
+    }
+
     return res.json({ message: 'Question updated', data: question });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -115,10 +147,32 @@ export const remove = async (req, res) => {
 export const getSubjects = async (req, res) => {
   try {
     const subjects = await Subject.findAll({
-      include: [{ model: Topic, as: 'topics' }],
+      include: [{
+        model: Topic, as: 'topics',
+        include: [{ model: Subtopic, as: 'subtopics' }],
+      }],
       order: [['name', 'ASC']],
     });
     return res.json({ message: 'Subjects fetched', data: subjects });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const getVestibulares = async (req, res) => {
+  try {
+    const vestibulares = await Vestibular.findAll({ order: [['name', 'ASC']] });
+    return res.json({ message: 'Vestibulares fetched', data: vestibulares });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const setTargetVestibular = async (req, res) => {
+  try {
+    const { vestibular_id } = req.body;
+    await req.user.update({ target_vestibular_id: vestibular_id || null });
+    return res.json({ message: 'Target vestibular updated', data: { target_vestibular_id: vestibular_id } });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }

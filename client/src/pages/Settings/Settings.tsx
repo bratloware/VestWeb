@@ -1,15 +1,24 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { User, Lock, Bell, Shield } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api/api';
-import { RootState } from '../../store/store';
+import { AppDispatch, RootState } from '../../store/store';
 import { getInitials } from '../../utils/stringUtils';
+import { fetchVestibulares, setTargetVestibular } from '../../slices/questionsSlice';
 import './Settings.css';
 
 const Settings = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { student } = useSelector((s: RootState) => s.auth);
+  const { vestibulares } = useSelector((s: RootState) => s.questions);
   const [activeSection, setActiveSection] = useState<'profile' | 'password' | 'notifications' | 'privacy'>('profile');
+  const [targetVestibularId, setTargetVestibularId] = useState<string>(String(student?.target_vestibular_id || ''));
+  const [vestibularMsg, setVestibularMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchVestibulares());
+  }, [dispatch]);
 
   const [profileForm, setProfileForm] = useState({
     name: student?.name || '',
@@ -28,6 +37,17 @@ const Settings = () => {
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
 
+
+  const handleSaveVestibular = async (id: string) => {
+    setTargetVestibularId(id);
+    try {
+      await dispatch(setTargetVestibular(id ? parseInt(id) : null));
+      setVestibularMsg({ type: 'success', text: 'Vestibular alvo atualizado!' });
+    } catch {
+      setVestibularMsg({ type: 'error', text: 'Erro ao salvar vestibular alvo.' });
+    }
+    setTimeout(() => setVestibularMsg(null), 3000);
+  };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -157,6 +177,29 @@ const Settings = () => {
                     </div>
                   )}
                 </form>
+
+                <div className="settings-vestibular">
+                  <h3>Vestibular alvo</h3>
+                  <p className="settings-desc">Defina para qual vestibular você está se preparando. As questões serão priorizadas de acordo com sua escolha.</p>
+                  <select
+                    className="form-control"
+                    value={targetVestibularId}
+                    onChange={e => handleSaveVestibular(e.target.value)}
+                    style={{ maxWidth: '320px' }}
+                  >
+                    <option value="">Sem preferência</option>
+                    {vestibulares.map(v => (
+                      <option key={v.id} value={v.id}>
+                        {v.name}{v.institution ? ` — ${v.institution}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  {vestibularMsg && (
+                    <div className={vestibularMsg.type === 'success' ? 'settings-success' : 'settings-error'} style={{ marginTop: '8px' }}>
+                      {vestibularMsg.text}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 

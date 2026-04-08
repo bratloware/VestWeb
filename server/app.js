@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import router from './src/routes/index.js';
+import sequelize from './src/db/index.js';
+import './src/db/models/index.js'; // registra todos os models e associations
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -33,8 +35,15 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message, error: process.env.NODE_ENV === 'development' ? err.stack : undefined });
 });
 
-app.listen(PORT, () => {
-  console.log(`VestWeb server running on port ${PORT}`);
-});
+sequelize.sync({ alter: true })
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`VestWeb server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Erro ao sincronizar banco de dados:', err);
+    process.exit(1);
+  });
 
 export default app;
