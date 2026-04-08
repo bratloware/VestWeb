@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Play, X, Heart, Check, Search } from 'lucide-react';
+import { Play, X, Heart, Check, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchVideos, toggleFavorite, updateProgress, Video } from '../../slices/videosSlice';
 import { AppDispatch, RootState } from '../../store/store';
@@ -12,10 +12,16 @@ const VestWebFlix = () => {
   const [search, setSearch] = useState('');
   const [activeSubject, setActiveSubject] = useState<string>('all');
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const scrollRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
     dispatch(fetchVideos({}));
   }, [dispatch]);
+
+  const scrollRow = (subject: string, dir: 'left' | 'right') => {
+    const el = scrollRefs.current[subject];
+    if (el) el.scrollBy({ left: dir === 'right' ? 320 : -320, behavior: 'smooth' });
+  };
 
   const getYoutubeEmbedUrl = (url: string) => {
     if (!url) return '';
@@ -28,7 +34,6 @@ const VestWebFlix = () => {
     return match ? `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg` : '';
   };
 
-  // Group by subject
   const subjects = Array.from(new Set(videos.map(v => v.topic?.subject?.name).filter(Boolean)));
 
   const filtered = videos.filter(v => {
@@ -61,13 +66,13 @@ const VestWebFlix = () => {
         <div className="VestWebFlix-header">
           <h1>VestWebFlix</h1>
           <div className="VestWebFlix-search">
+            <Search size={16} className="VestWebFlix-search-icon" />
             <input
               type="text"
               placeholder="Buscar videoaulas..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
-            <Search size={16} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', pointerEvents: 'none' }} />
           </div>
         </div>
 
@@ -103,17 +108,61 @@ const VestWebFlix = () => {
           ) : (
             Object.entries(groupedBySubject).map(([subject, vids]) => (
               <div key={subject} className="VestWebFlix-row">
-                <div className="VestWebFlix-row-title">{subject}</div>
-                <div className="VestWebFlix-videos-scroll">
+                <div className="VestWebFlix-row-header">
+                  <div className="VestWebFlix-row-title">{subject}</div>
+                  <div className="VestWebFlix-row-nav">
+                    <button
+                      className="VestWebFlix-row-nav-btn"
+                      onClick={() => scrollRow(subject, 'left')}
+                      aria-label="Rolar para esquerda"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      className="VestWebFlix-row-nav-btn"
+                      onClick={() => scrollRow(subject, 'right')}
+                      aria-label="Rolar para direita"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+                <div
+                  className="VestWebFlix-videos-scroll"
+                  ref={el => { scrollRefs.current[subject] = el; }}
+                >
                   {vids.map(video => {
                     const thumb = video.thumbnail_url || getYoutubeThumbnail(video.youtube_url);
+                    const isWatched = video.progress?.watched;
+                    const hasProgress = (video.progress?.progress_seconds ?? 0) > 0;
                     return (
                       <div key={video.id} className="VestWebFlix-video-card" onClick={() => setSelectedVideo(video)}>
                         <div className="VestWebFlix-video-thumb">
                           {thumb && <img src={thumb} alt={video.title} />}
+                          <div className="VestWebFlix-video-thumb-overlay" />
                           <div className="VestWebFlix-video-thumb-icon">
                             <Play size={20} style={{ marginLeft: '2px' }} />
                           </div>
+                          {isWatched && (
+                            <div className="VestWebFlix-watched-badge">
+                              <Check size={10} />
+                            </div>
+                          )}
+                          <button
+                            className={`VestWebFlix-card-fav${video.isFavorite ? ' is-fav' : ''}`}
+                            onClick={e => handleToggleFavorite(e, video.id)}
+                            aria-label={video.isFavorite ? 'Remover favorito' : 'Favoritar'}
+                          >
+                            <Heart size={13} />
+                          </button>
+                          {(isWatched || hasProgress) && (
+                            <div className="VestWebFlix-progress-bar">
+                              <div
+                                className={`VestWebFlix-progress-fill${isWatched ? ' watched' : ''}`}
+                                style={{ width: isWatched ? '100%' : '35%' }}
+                              />
+                            </div>
+                          )}
                         </div>
                         <div className="VestWebFlix-video-info">
                           <div className="VestWebFlix-video-title">{video.title}</div>
