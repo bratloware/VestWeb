@@ -21,9 +21,9 @@ const LandingHeader = () => {
 
   const navLinks = [
     { href: '#home', label: 'Início' },
-    { href: '#colaboradores', label: 'Colaboradores' },
+    { href: '#planos', label: 'Planos' },
     { href: '#sobre', label: 'Sobre' },
-    { href: '#depoimentos', label: 'Depoimentos' },
+    { href: '#metodologia', label: 'Metodologia' },
     { href: '#contato', label: 'Contato' },
   ];
 

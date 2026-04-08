@@ -2,18 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Filter, Clock, ChevronRight, RotateCcw } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
-import { fetchQuestions, fetchSubjects, Question, Alternative } from '../../slices/questionsSlice';
+import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Questions.css';
 
-const QUESTION_TIME = 120; // seconds per question
+const QUESTION_TIME = 120;
 
 const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { questions, subjects, loading } = useSelector((state: RootState) => state.questions);
+  const { questions, subjects, vestibulares, loading } = useSelector((state: RootState) => state.questions);
 
-  const [filters, setFilters] = useState({ subject_id: '', topic_id: '', difficulty: '', bank: '' });
+  const [filters, setFilters] = useState({ subject_id: '', topic_id: '', subtopic_id: '', difficulty: '', vestibular_id: '' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAlt, setSelectedAlt] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -25,6 +25,7 @@ const Questions = () => {
 
   useEffect(() => {
     dispatch(fetchSubjects());
+    dispatch(fetchVestibulares());
   }, [dispatch]);
 
   useEffect(() => {
@@ -104,6 +105,7 @@ const Questions = () => {
   };
 
   const topicsForSubject = subjects.find(s => s.id === parseInt(filters.subject_id))?.topics || [];
+  const subtopicsForTopic = topicsForSubject.find(t => t.id === parseInt(filters.topic_id))?.subtopics || [];
   const question: Question | undefined = questions[currentIndex];
   const progress = questions.length > 0 ? ((currentIndex) / questions.length) * 100 : 0;
 
@@ -124,7 +126,7 @@ const Questions = () => {
               <select
                 className="form-control"
                 value={filters.subject_id}
-                onChange={e => setFilters({ ...filters, subject_id: e.target.value, topic_id: '' })}
+                onChange={e => setFilters({ ...filters, subject_id: e.target.value, topic_id: '', subtopic_id: '' })}
               >
                 <option value="">Todas as materias</option>
                 {subjects.map(s => (
@@ -133,17 +135,48 @@ const Questions = () => {
               </select>
             </div>
 
+            {filters.subject_id && (
+              <div className="form-group">
+                <label>Tópico</label>
+                <select
+                  className="form-control"
+                  value={filters.topic_id}
+                  onChange={e => setFilters({ ...filters, topic_id: e.target.value, subtopic_id: '' })}
+                >
+                  <option value="">Todos os tópicos</option>
+                  {topicsForSubject.map(t => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {filters.topic_id && (
+              <div className="form-group">
+                <label>Subtópico</label>
+                <select
+                  className="form-control"
+                  value={filters.subtopic_id}
+                  onChange={e => setFilters({ ...filters, subtopic_id: e.target.value })}
+                >
+                  <option value="">Todos os subtópicos</option>
+                  {subtopicsForTopic.map(st => (
+                    <option key={st.id} value={st.id}>{st.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="form-group">
-              <label>Topico</label>
+              <label>Vestibular</label>
               <select
                 className="form-control"
-                value={filters.topic_id}
-                onChange={e => setFilters({ ...filters, topic_id: e.target.value })}
-                disabled={!filters.subject_id}
+                value={filters.vestibular_id}
+                onChange={e => setFilters({ ...filters, vestibular_id: e.target.value })}
               >
-                <option value="">Todos os topicos</option>
-                {topicsForSubject.map(t => (
-                  <option key={t.id} value={t.id}>{t.name}</option>
+                <option value="">Todos os vestibulares</option>
+                {vestibulares.map(v => (
+                  <option key={v.id} value={v.id}>{v.name}</option>
                 ))}
               </select>
             </div>
@@ -159,26 +192,6 @@ const Questions = () => {
                 <option value="easy">Fácil</option>
                 <option value="medium">Média</option>
                 <option value="hard">Difícil</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Banca</label>
-              <select
-                className="form-control"
-                value={filters.bank}
-                onChange={e => setFilters({ ...filters, bank: e.target.value })}
-              >
-                <option value="">Todas as bancas</option>
-                <option value="INEP">ENEM / INEP</option>
-                <option value="CESPE/CEBRASPE">CESPE / CEBRASPE</option>
-                <option value="CESGRANRIO">CESGRANRIO</option>
-                <option value="FCC">FCC</option>
-                <option value="FGV">FGV</option>
-                <option value="USP">FUVEST / USP</option>
-                <option value="UNICAMP">UNICAMP</option>
-                <option value="UNESP">UNESP</option>
-                <option value="ITA">ITA</option>
               </select>
             </div>
 
@@ -221,17 +234,23 @@ const Questions = () => {
                 </div>
 
                 <div className="question-meta">
+                  {question.topic?.subject && (
+                    <span className="question-meta-tag question-meta-tag-subject">{question.topic.subject.name}</span>
+                  )}
                   {question.topic && (
                     <span className="question-meta-tag question-meta-tag-topic">{question.topic.name}</span>
                   )}
+                  {question.subtopic && (
+                    <span className="question-meta-tag question-meta-tag-subtopic">{question.subtopic.name}</span>
+                  )}
+                  {question.vestibulares && question.vestibulares.length > 0 && question.vestibulares.map(v => (
+                    <span key={v.id} className="question-meta-tag question-meta-tag-vestibular">{v.name}</span>
+                  ))}
                   {question.year && (
                     <span className="question-meta-tag question-meta-tag-year">{question.year}</span>
                   )}
-                  {question.bank && (
-                    <span className="question-meta-tag question-meta-tag-bank">{question.bank}</span>
-                  )}
                   <span className={`badge badge-${question.difficulty}`}>
-                    {question.difficulty === 'easy' ? 'Facil' : question.difficulty === 'medium' ? 'Media' : 'Dificil'}
+                    {question.difficulty === 'easy' ? 'Fácil' : question.difficulty === 'medium' ? 'Média' : 'Difícil'}
                   </span>
                 </div>
 

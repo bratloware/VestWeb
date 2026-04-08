@@ -7,6 +7,7 @@
     "dev": "nodemon app.js",
     "start": "node app.js",
     "seed": "node src/db/seed.js",
+    "seed:vestibulares": "node src/db/seedVestibulares.js",
     "import:questions": "node src/db/importQuestions.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",

@@ -8,6 +8,7 @@ export interface Student {
   enrollment: string;
   avatar_url: string | null;
   role: 'student' | 'teacher' | 'admin';
+  target_vestibular_id: number | null;
   created_at: string;
 }
 

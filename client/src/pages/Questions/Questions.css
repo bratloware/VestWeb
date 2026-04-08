@@ -117,9 +117,11 @@
   font-weight: 600;
 }
 
-.question-meta-tag-topic { background: var(--primary-light); color: var(--primary); }
-.question-meta-tag-year { background: #f3f4f6; color: var(--text-secondary); }
-.question-meta-tag-bank { background: #fef3c7; color: #92400e; }
+.question-meta-tag-subject    { background: #ede9fe; color: #5b21b6; }
+.question-meta-tag-topic      { background: var(--primary-light); color: var(--primary); }
+.question-meta-tag-subtopic   { background: #e0f2fe; color: #0369a1; }
+.question-meta-tag-vestibular { background: #fef3c7; color: #92400e; font-weight: 700; }
+.question-meta-tag-year       { background: #f3f4f6; color: var(--text-secondary); }
 
 .question-statement {
   font-size: 16px;

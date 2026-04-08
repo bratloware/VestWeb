@@ -15,6 +15,10 @@ const Question = sequelize.define('Question', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  subtopic_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   difficulty: {
     type: DataTypes.ENUM('easy', 'medium', 'hard'),
     allowNull: false,

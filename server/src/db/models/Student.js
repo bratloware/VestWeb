@@ -47,6 +47,10 @@ const Student = sequelize.define('Student', {
     defaultValue: 'student',
     allowNull: false,
   },
+  target_vestibular_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
