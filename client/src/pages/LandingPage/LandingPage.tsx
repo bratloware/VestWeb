@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   HelpCircle, ClipboardList, Play, MessageCircle,
@@ -20,6 +20,59 @@ const features = [
   { icon: Users, title: 'Comunidade', desc: 'Conecte-se com outros estudantes, compartilhe dúvidas e conquiste pontos no ranking.' },
 ];
 
+const heroStats = [
+  { target: 20, suffix: 'k+', label: 'Questões' },
+  { target: 100, suffix: '+', label: 'Vídeoaulas' },
+  { target: 100, suffix: '+', label: 'Alunos' },
+  { target: 95, suffix: '%', label: 'Aprovados' },
+];
+
+function useCountUp(target: number, duration = 1600) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
+
+  const animate = useCallback(() => {
+    const start = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+      else setCount(target);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          animate();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [animate]);
+
+  return { count, ref };
+}
+
+function AnimatedStat({ target, suffix, label }: { target: number; suffix: string; label: string }) {
+  const { count, ref } = useCountUp(target);
+  return (
+    <div className="hero-stat" ref={ref}>
+      <span className="hero-stat-number">{count}{suffix}</span>
+      <span className="hero-stat-label">{label}</span>
+    </div>
+  );
+}
+
 const companyPlans = [
   { name: 'Starter', limit: 'Até 20 alunos', price: 39.90, highlight: false },
   { name: 'Básico', limit: 'Até 50 alunos', price: 32.90, highlight: false },
@@ -30,6 +83,7 @@ const companyPlans = [
 const LandingPage = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [planTab, setPlanTab] = useState<'individual' | 'empresa'>('individual');
+  const [billingPeriod, setBillingPeriod] = useState<'mensal' | 'trimestral' | 'anual'>('anual');
 const [currentSlide, setCurrentSlide] = useState(0);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [contactSuccess, setContactSuccess] = useState(false);
@@ -87,36 +141,20 @@ const handleContact = async (e: React.FormEvent) => {
         <div className="hero-content">
           <div className="hero-badge">Pré-vestibular</div>
           <h1 className="hero-title">
-            Sua <span>aprovação</span> começa aqui!
+            A plataforma completa para quem <span>busca a Federal</span>
           </h1>
           <p className="hero-subtitle">
-            A plataforma completa para vestibulandos. Questões, simulados, videoaulas, mentorias e muito mais — tudo integrado para maximizar seu aprendizado.
+            Questões, simulados, videoaulas, mentorias e muito mais — tudo integrado para maximizar seu aprendizado e conquistar sua aprovação.
           </p>
           <div className="hero-actions">
-            <Link to="/login" className="hero-cta-primary">
-              Acessar Espaco Aluno
-            </Link>
-            <a href="#espaco-aluno" className="hero-cta-secondary">
-              Conhecer plataforma
+            <a href="#planos" className="hero-cta-primary">
+              Começar agora
             </a>
           </div>
           <div className="hero-stats">
-            <div className="hero-stat">
-              <span className="hero-stat-number">20k+</span>
-              <span className="hero-stat-label">Questões</span>
-            </div>
-            <div className="hero-stat">
-              <span className="hero-stat-number">100+</span>
-              <span className="hero-stat-label">Vídeoaulas</span>
-            </div>
-            <div className="hero-stat">
-              <span className="hero-stat-number">100+</span>
-              <span className="hero-stat-label">Alunos</span>
-            </div>
-            <div className="hero-stat">
-              <span className="hero-stat-number">95%</span>
-              <span className="hero-stat-label">Aprovados</span>
-            </div>
+            {heroStats.map((s) => (
+              <AnimatedStat key={s.label} target={s.target} suffix={s.suffix} label={s.label} />
+            ))}
           </div>
         </div>
 
@@ -238,6 +276,19 @@ const handleContact = async (e: React.FormEvent) => {
           </button>
         </div>
 
+        <div className="plans-tabs plans-billing-toggle">
+            {(['mensal', 'trimestral', 'anual'] as const).map((p) => (
+              <button
+                key={p}
+                className={`plans-tab${billingPeriod === p ? ' active' : ''}`}
+                onClick={() => setBillingPeriod(p)}
+              >
+                {p.charAt(0).toUpperCase() + p.slice(1)}
+                {p === 'anual' && <span className="billing-save-pill">–33%</span>}
+              </button>
+            ))}
+        </div>
+
         {planTab === 'individual' ? (
           <div className="plans-individual-wrapper">
             <div className="plan-card plan-card-highlight">
@@ -246,9 +297,16 @@ const handleContact = async (e: React.FormEvent) => {
               <p className="plan-desc">Tudo que você precisa para passar no vestibular em um só lugar.</p>
               <div className="plan-price">
                 <span className="plan-currency">R$</span>
-                <span className="plan-amount">19,90</span>
+                <span className="plan-amount">
+                  {billingPeriod === 'mensal' ? '19,90' : billingPeriod === 'trimestral' ? '17,90' : '13,27'}
+                </span>
                 <span className="plan-period">/mês</span>
               </div>
+              <p className="plan-billing-note">
+                {billingPeriod === 'mensal' && 'Cobrado mensalmente'}
+                {billingPeriod === 'trimestral' && 'Cobrado R$53,70 a cada 3 meses'}
+                {billingPeriod === 'anual' && 'Cobrado R$159,00 por ano'}
+              </p>
               <ul className="plan-benefits">
                 {[
                   'Banco completo de questões',
@@ -266,7 +324,7 @@ const handleContact = async (e: React.FormEvent) => {
                   </li>
                 ))}
               </ul>
-              <Link to="/register" className="plan-cta">Começar agora — grátis por 7 dias</Link>
+              <Link to="/register" className="plan-cta plan-cta-hero">Começar agora — grátis por 7 dias</Link>
               <p className="plan-cta-note">Cancele quando quiser. Sem fidelidade.</p>
             </div>
           </div>
@@ -274,7 +332,7 @@ const handleContact = async (e: React.FormEvent) => {
           <div className="plans-company-grid">
             {companyPlans.map((plan, i) => (
               <div key={i} className={`plan-card${plan.highlight ? ' plan-card-highlight' : ''}`}>
-                {plan.highlight && <div className="plan-popular-badge">Mais popular</div>}
+                <div className={`plan-popular-badge${plan.highlight ? '' : ' plan-popular-badge--hidden'}`}>Mais popular</div>
                 <div className="plan-name">{plan.name}</div>
                 <p className="plan-limit">{plan.limit}</p>
                 <div className="plan-price">
