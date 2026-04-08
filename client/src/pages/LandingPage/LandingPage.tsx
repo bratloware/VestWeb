@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   HelpCircle, ClipboardList, Play, MessageCircle,
-  Calendar, Users, Brain, Mail, Phone, MapPin, ChevronRight
+  Calendar, Users, Mail, Phone, MapPin
 } from 'lucide-react';
+import logo from '../../assets/images/logo.png';
 import LandingHeader from '../../components/LandingHeader';
 import api from '../../api/api';
 import './LandingPage.css';
@@ -11,7 +12,6 @@ import './LandingPage.css';
 interface Banner { id: number; image_url: string; title?: string; subtitle?: string; }
 interface Testimonial { id: number; name: string; photo_url?: string; course?: string; university?: string; text: string; }
 interface Collaborator { id: number; name: string; avatar_url?: string; email?: string; specialty?: string; bio?: string; experience_years?: number; }
-interface InstVideo { youtube_url: string; title: string; }
 
 const features = [
   { icon: HelpCircle, title: 'Banco de Questões', desc: 'Milhares de questões de vestibulares anteriores organizadas por matéria e dificuldade.' },
@@ -32,8 +32,7 @@ const LandingPage = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(staticTestimonials);
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
-  const [instVideo, setInstVideo] = useState<InstVideo | null>(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
+const [currentSlide, setCurrentSlide] = useState(0);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [contactSuccess, setContactSuccess] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
@@ -42,7 +41,6 @@ const LandingPage = () => {
     api.get('/landing/banners').then(r => { if (r.data.data?.length) setBanners(r.data.data); }).catch(() => {});
     api.get('/landing/testimonials').then(r => { if (r.data.data?.length) setTestimonials(r.data.data); }).catch(() => {});
     api.get('/landing/collaborators').then(r => setCollaborators(r.data.data || [])).catch(() => {});
-    api.get('/landing/video').then(r => setInstVideo(r.data.data)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -52,12 +50,6 @@ const LandingPage = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, [banners.length]);
-
-  const getYoutubeEmbedUrl = (url: string) => {
-    if (!url) return '';
-    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^&\n?#]+)/);
-    return match ? `https://www.youtube.com/embed/${match[1]}` : '';
-  };
 
   const getInitials = (name: string) => name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
 
@@ -170,22 +162,13 @@ const LandingPage = () => {
       {/* Sobre */}
       <section id="sobre" className="section section-alt">
         <div className="about-content">
-          <div className="about-video-wrapper">
-            {instVideo && getYoutubeEmbedUrl(instVideo.youtube_url) ? (
-              <iframe
-                src="https://www.youtube.com/embed/hYaL1JUd_Zg"
-                title={instVideo.title}
-                allowFullScreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              />
-            ) : (
-              <div className="about-video-placeholder">
-                <div style={{ textAlign: 'center' }}>
-                  <Play size={48} style={{ margin: '0 auto 12px', color: 'rgba(255,255,255,0.3)' }} />
-                  <p>Video institucional</p>
-                </div>
-              </div>
-            )}
+          <div className="about-stats-card">
+            <div className="about-stats-logo">
+              <img src={logo} alt="VestWeb" />
+            </div>
+            <p className="about-card-tagline">
+              A plataforma educacional que vai transformar a forma como você estuda para o vestibular.
+            </p>
           </div>
           <div className="about-text">
             <div className="section-tag">Sobre Nós</div>
