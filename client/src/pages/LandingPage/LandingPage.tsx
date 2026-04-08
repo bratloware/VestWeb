@@ -87,7 +87,7 @@ const handleContact = async (e: React.FormEvent) => {
         <div className="hero-content">
           <div className="hero-badge">Pré-vestibular</div>
           <h1 className="hero-title">
-            Sua <span>aprovação</span> comeca aqui!
+            Sua <span>aprovação</span> começa aqui!
           </h1>
           <p className="hero-subtitle">
             A plataforma completa para vestibulandos. Questões, simulados, videoaulas, mentorias e muito mais — tudo integrado para maximizar seu aprendizado.

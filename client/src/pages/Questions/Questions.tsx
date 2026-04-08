@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, Clock, ChevronRight, RotateCcw } from 'lucide-react';
+import { Filter, Clock, ChevronRight, RotateCcw, Search } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
@@ -120,6 +120,9 @@ const Questions = () => {
         <div className="questions-layout">
           <div className="questions-filters">
             <h2><Filter size={16} /> Filtros</h2>
+
+            <div className="form-group">
+            </div>
 
             <div className="form-group">
               <label>Materia</label>

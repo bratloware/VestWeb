@@ -74,7 +74,7 @@ const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
             </div>
             <div className="sidebar-user-info">
               <div className="sidebar-user-name">{student.name}</div>
-              <div className="sidebar-user-role">{roleLabel ?? student.role}</div>
+              <div className="sidebar-user-role">{roleLabel ?? ({ student: 'Estudante', teacher: 'Professor', admin: 'Administrador' }[student.role] ?? 'Estudante')}</div>
             </div>
           </div>
         )}

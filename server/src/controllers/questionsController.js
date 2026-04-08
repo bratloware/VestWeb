@@ -1,5 +1,6 @@
 import { Question, Alternative, Topic, Subtopic, Subject, Vestibular, QuestionVestibular, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
 import { Op } from 'sequelize';
+import sequelize from '../db/index.js';
 
 export const getAll = async (req, res) => {
   try {
@@ -12,6 +13,13 @@ export const getAll = async (req, res) => {
     if (difficulty) where.difficulty = difficulty;
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
+    if (search) {
+      const escaped = sequelize.escape(`%${search}%`);
+      where[Op.or] = [
+        { statement: { [Op.iLike]: `%${search}%` } },
+        { id: { [Op.in]: sequelize.literal(`(SELECT question_id FROM alternatives WHERE text ILIKE ${escaped})`) } },
+      ];
+    }
 
     // Se vestibular_id for passado, filtra questões daquele vestibular
     const vestibularInclude = vestibular_id
@@ -57,6 +65,7 @@ export const getById = async (req, res) => {
         { model: Subtopic, as: 'subtopic', required: false },
         { model: Vestibular, as: 'vestibulares', through: { attributes: [] } },
       ],
+      order: [[{ model: Alternative, as: 'alternatives' }, 'letter', 'ASC']],
     });
     if (!question) return res.status(404).json({ message: 'Question not found' });
     return res.json({ message: 'Question fetched', data: question });
