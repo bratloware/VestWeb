@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Questions.css';
 
-const QUESTION_TIME = 120; // seconds per question
+const QUESTION_TIME = 120;
 
 const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -126,7 +126,7 @@ const Questions = () => {
               <select
                 className="form-control"
                 value={filters.subject_id}
-                onChange={e => setFilters({ ...filters, subject_id: e.target.value, topic_id: '' })}
+                onChange={e => setFilters({ ...filters, subject_id: e.target.value, topic_id: '', subtopic_id: '' })}
               >
                 <option value="">Todas as materias</option>
                 {subjects.map(s => (
@@ -135,35 +135,37 @@ const Questions = () => {
               </select>
             </div>
 
-            <div className="form-group">
-              <label>Tópico</label>
-              <select
-                className="form-control"
-                value={filters.topic_id}
-                onChange={e => setFilters({ ...filters, topic_id: e.target.value, subtopic_id: '' })}
-                disabled={!filters.subject_id}
-              >
-                <option value="">Todos os tópicos</option>
-                {topicsForSubject.map(t => (
-                  <option key={t.id} value={t.id}>{t.name}</option>
-                ))}
-              </select>
-            </div>
+            {filters.subject_id && (
+              <div className="form-group">
+                <label>Tópico</label>
+                <select
+                  className="form-control"
+                  value={filters.topic_id}
+                  onChange={e => setFilters({ ...filters, topic_id: e.target.value, subtopic_id: '' })}
+                >
+                  <option value="">Todos os tópicos</option>
+                  {topicsForSubject.map(t => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-            <div className="form-group">
-              <label>Subtópico</label>
-              <select
-                className="form-control"
-                value={filters.subtopic_id}
-                onChange={e => setFilters({ ...filters, subtopic_id: e.target.value })}
-                disabled={!filters.topic_id}
-              >
-                <option value="">Todos os subtópicos</option>
-                {subtopicsForTopic.map(st => (
-                  <option key={st.id} value={st.id}>{st.name}</option>
-                ))}
-              </select>
-            </div>
+            {filters.topic_id && (
+              <div className="form-group">
+                <label>Subtópico</label>
+                <select
+                  className="form-control"
+                  value={filters.subtopic_id}
+                  onChange={e => setFilters({ ...filters, subtopic_id: e.target.value })}
+                >
+                  <option value="">Todos os subtópicos</option>
+                  {subtopicsForTopic.map(st => (
+                    <option key={st.id} value={st.id}>{st.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="form-group">
               <label>Vestibular</label>
