@@ -172,7 +172,7 @@ export const createCheckoutSession = async (req, res) => {
       unitAmount = price.amount;
       recurring = { interval: price.interval, interval_count: price.interval_count };
       productName = `VestWeb Individual — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
-      trialDays = 7;
+      trialDays = 0;
 
     } else if (planType === 'empresa') {
       const students = parseInt(numStudents) || 1;
