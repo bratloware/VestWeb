@@ -22,6 +22,8 @@ import MentoringSession from './MentoringSession.js';
 import StudyEvent from './StudyEvent.js';
 import Post from './Post.js';
 import Comment from './Comment.js';
+import StudentDoubt from './StudentDoubt.js';
+import Announcement from './Announcement.js';
 import Like from './Like.js';
 import Report from './Report.js';
 import Points from './Points.js';
@@ -74,6 +76,15 @@ Mentor.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 
 Mentor.hasMany(MentoringSession, { foreignKey: 'mentor_id', as: 'sessions' });
 MentoringSession.belongsTo(Mentor, { foreignKey: 'mentor_id', as: 'mentor' });
+
+Mentor.hasMany(StudentDoubt, { foreignKey: 'mentor_id', as: 'doubts' });
+StudentDoubt.belongsTo(Mentor, { foreignKey: 'mentor_id', as: 'mentor' });
+
+Mentor.hasMany(Announcement, { foreignKey: 'mentor_id', as: 'announcements' });
+Announcement.belongsTo(Mentor, { foreignKey: 'mentor_id', as: 'mentor' });
+
+Student.hasMany(StudentDoubt, { foreignKey: 'student_id', as: 'doubts' });
+StudentDoubt.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 
 // Subject / Topic / Subtopic
 Subject.hasMany(Topic, { foreignKey: 'subject_id', as: 'topics' });
@@ -178,6 +189,8 @@ export {
   StudyEvent,
   Post,
   Comment,
+  StudentDoubt,
+  Announcement,
   Like,
   Report,
   Points,
