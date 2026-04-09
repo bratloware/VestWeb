@@ -30,6 +30,7 @@ import Points from './Points.js';
 import Badge from './Badge.js';
 import StudentBadge from './StudentBadge.js';
 import Streak from './Streak.js';
+import Subscription from './Subscription.js';
 
 // Student associations
 Student.hasMany(Session, { foreignKey: 'student_id', as: 'sessions' });
@@ -197,4 +198,5 @@ export {
   Badge,
   StudentBadge,
   Streak,
+  Subscription,
 };

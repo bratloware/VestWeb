@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import logo from '../../assets/images/logo.png';
 import LandingHeader from '../../components/LandingHeader';
+import CheckoutModal, { type PlanType, type BillingPeriod } from '../../components/CheckoutModal/CheckoutModal';
 import api from '../../api/api';
 import './LandingPage.css';
 
@@ -80,14 +81,33 @@ const companyPlans = [
   { name: 'Enterprise', limit: '100+ alunos', price: 22.90, highlight: false },
 ];
 
+interface CheckoutState {
+  isOpen: boolean;
+  planType: PlanType;
+  planTier: string;
+}
+
 const LandingPage = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [planTab, setPlanTab] = useState<'individual' | 'empresa'>('individual');
-  const [billingPeriod, setBillingPeriod] = useState<'mensal' | 'trimestral' | 'anual'>('anual');
-const [currentSlide, setCurrentSlide] = useState(0);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('anual');
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [contactSuccess, setContactSuccess] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
+  const [checkout, setCheckout] = useState<CheckoutState>({
+    isOpen: false,
+    planType: 'individual',
+    planTier: 'individual',
+  });
+
+  function openCheckout(planType: PlanType, planTier: string) {
+    setCheckout({ isOpen: true, planType, planTier });
+  }
+
+  function closeCheckout() {
+    setCheckout(prev => ({ ...prev, isOpen: false }));
+  }
 
   useEffect(() => {
     api.get('/landing/banners').then(r => { if (r.data.data?.length) setBanners(r.data.data); }).catch(() => {});
@@ -324,7 +344,12 @@ const handleContact = async (e: React.FormEvent) => {
                   </li>
                 ))}
               </ul>
-              <Link to="/register" className="plan-cta plan-cta-hero">Começar agora — grátis por 7 dias</Link>
+              <button
+                className="plan-cta plan-cta-hero"
+                onClick={() => openCheckout('individual', 'individual')}
+              >
+                Começar agora — grátis por 7 dias
+              </button>
               <p className="plan-cta-note">Cancele quando quiser. Sem fidelidade.</p>
             </div>
           </div>
@@ -353,11 +378,26 @@ const handleContact = async (e: React.FormEvent) => {
                     </li>
                   ))}
                 </ul>
-                <a href="#contato" className="plan-cta plan-cta-outline">Falar com a equipe</a>
+                <button
+                  className={`plan-cta${plan.highlight ? ' plan-cta-hero' : ' plan-cta-outline'}`}
+                  onClick={() => openCheckout('empresa', plan.name)}
+                >
+                  Assinar agora
+                </button>
               </div>
             ))}
           </div>
         )}
+
+        <CheckoutModal
+          isOpen={checkout.isOpen}
+          onClose={closeCheckout}
+          planType={checkout.planType}
+          planTier={checkout.planTier}
+          billingPeriod={billingPeriod}
+          priceLabel=""
+          billingNote=""
+        />
       </section>
 
       {/* Contato */}
