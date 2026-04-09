@@ -11,6 +11,14 @@ import './LandingPage.css';
 
 interface Banner { id: number; image_url: string; title?: string; subtitle?: string; }
 
+const WaveDivider = ({ to, flip = false }: { to: 'bg' | 'white' | 'sidebar'; flip?: boolean }) => (
+  <div className={`wave-divider wave-to-${to}${flip ? ' wave-divider--flip' : ''}`} aria-hidden="true">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,40 C480,0 960,0 1440,40 L1440,60 Z" />
+    </svg>
+  </div>
+);
+
 const features = [
   { icon: HelpCircle, title: 'Banco de Questões', desc: 'Milhares de questões de vestibulares anteriores organizadas por matéria e dificuldade.' },
   { icon: ClipboardList, title: 'Simulados', desc: 'Simulados completos com timer, correção automática e análise detalhada de desempenho.' },
@@ -22,7 +30,7 @@ const features = [
 
 const heroStats = [
   { target: 20, suffix: 'k+', label: 'Questões' },
-  { target: 100, suffix: '+', label: 'Vídeoaulas' },
+  { target: 100, suffix: '+', label: 'Videoaulas' },
   { target: 100, suffix: '+', label: 'Alunos' },
   { target: 95, suffix: '%', label: 'Aprovados' },
 ];
@@ -169,6 +177,7 @@ const handleContact = async (e: React.FormEvent) => {
             ))}
           </div>
         )}
+        <WaveDivider to="bg" />
       </section>
 
       {/* Espaco Aluno */}
@@ -189,6 +198,7 @@ const handleContact = async (e: React.FormEvent) => {
             </div>
           ))}
         </div>
+        <WaveDivider to="white" flip />
       </section>
 
       {/* Sobre */}
@@ -226,6 +236,7 @@ const handleContact = async (e: React.FormEvent) => {
             </div>
           </div>
         </div>
+        <WaveDivider to="bg" />
       </section>
 
       {/* Metodologia */}
@@ -251,6 +262,7 @@ const handleContact = async (e: React.FormEvent) => {
             </div>
           ))}
         </div>
+        <WaveDivider to="white" flip />
       </section>
 
       {/* Planos */}
@@ -358,6 +370,7 @@ const handleContact = async (e: React.FormEvent) => {
             ))}
           </div>
         )}
+        <WaveDivider to="bg" />
       </section>
 
       {/* Contato */}
@@ -365,12 +378,12 @@ const handleContact = async (e: React.FormEvent) => {
         <div className="section-header">
           <div className="section-tag">Contato</div>
           <h2 className="section-title">Fale conosco</h2>
-          <p className="section-desc">Tem alguma dúvida? Nossa equipe esta pronta para ajudar.</p>
+          <p className="section-desc">Tem alguma dúvida? Nossa equipe está pronta para ajudar.</p>
         </div>
         <div className="contact-content">
           <div className="contact-info">
             <h3>Entre em contato</h3>
-            <p>Estamos disponivéis para tirar suas dúvidas sobre a plataforma, planos e muito mais. Não deixe para amanhã o que pode resolver hoje!</p>
+            <p>Estamos disponíveis para tirar suas dúvidas sobre a plataforma, planos e muito mais. Não deixe para amanhã o que pode resolver hoje!</p>
             <div className="contact-links">
               <a href="mailto:contato@bratloware.com" className="contact-link">
                 <div className="contact-link-icon"><Mail size={20} /></div>
@@ -382,7 +395,7 @@ const handleContact = async (e: React.FormEvent) => {
               </a>
               <div className="contact-link">
                 <div className="contact-link-icon"><MapPin size={20} /></div>
-                Brasilia, DF - Brasil
+                Brasília, DF - Brasil
               </div>
             </div>
           </div>
@@ -430,6 +443,7 @@ const handleContact = async (e: React.FormEvent) => {
             </form>
           </div>
         </div>
+        <WaveDivider to="sidebar" />
       </section>
 
       {/* Footer */}
@@ -449,11 +463,11 @@ const handleContact = async (e: React.FormEvent) => {
             </ul>
           </div>
           <div className="footer-links">
-            <h4>Links Uteis</h4>
+            <h4>Links Úteis</h4>
             <ul>
               <li><Link to="/login">Entrar</Link></li>
               <li><a href="#contato">Contato</a></li>
-              <li><a href="#">Politica de Privacidade</a></li>
+              <li><a href="#">Política de Privacidade</a></li>
               <li><a href="#">Termos de Uso</a></li>
             </ul>
           </div>
