@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Lock, CreditCard, ChevronDown } from 'lucide-react';
+import { X, Lock, CreditCard, ChevronDown, QrCode } from 'lucide-react';
 import api from '../../api/api';
 import './CheckoutModal.css';
 
@@ -43,6 +43,7 @@ export default function CheckoutModal({
   billingPeriod: initialBillingPeriod,
 }: CheckoutModalProps) {
   const [billing, setBilling] = useState<BillingPeriod>(initialBillingPeriod);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [companyName, setCompanyName] = useState('');
@@ -109,9 +110,13 @@ export default function CheckoutModal({
       return;
     }
 
+    const endpoint = paymentMethod === 'pix'
+      ? '/payments/create-pix-session'
+      : '/payments/create-checkout-session';
+
     setLoading(true);
     try {
-      const { data } = await api.post('/payments/create-checkout-session', {
+      const { data } = await api.post(endpoint, {
         planType,
         planTier,
         billingPeriod: billing,
@@ -150,6 +155,32 @@ export default function CheckoutModal({
             <span className="checkout-trial">7 dias grátis inclusos</span>
           )}
         </div>
+
+        {/* Seletor de método de pagamento */}
+        <div className="checkout-payment-method">
+          <button
+            type="button"
+            className={`checkout-method-btn${paymentMethod === 'card' ? ' active' : ''}`}
+            onClick={() => setPaymentMethod('card')}
+          >
+            <CreditCard size={16} />
+            Cartão
+          </button>
+          <button
+            type="button"
+            className={`checkout-method-btn${paymentMethod === 'pix' ? ' active' : ''}`}
+            onClick={() => setPaymentMethod('pix')}
+          >
+            <QrCode size={16} />
+            PIX
+          </button>
+        </div>
+
+        {paymentMethod === 'pix' && (
+          <p className="checkout-pix-note">
+            PIX é pagamento único. O acesso é liberado automaticamente após a confirmação e renovado manualmente no próximo período.
+          </p>
+        )}
 
         {/* Toggle de período de cobrança */}
         <div className="checkout-billing-toggle">
@@ -232,6 +263,11 @@ export default function CheckoutModal({
           >
             {loading ? (
               <span className="checkout-spinner" />
+            ) : paymentMethod === 'pix' ? (
+              <>
+                <QrCode size={18} />
+                Gerar QR Code PIX
+              </>
             ) : (
               <>
                 <CreditCard size={18} />

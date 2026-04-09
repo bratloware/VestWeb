@@ -271,3 +271,44 @@
   color: var(--text-secondary, #999);
   margin: 0;
 }
+
+/* Seletor de método de pagamento */
+.checkout-payment-method {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.checkout-method-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0;
+  border: 2px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.checkout-method-btn.active {
+  border-color: var(--primary, #6c47ff);
+  color: var(--primary, #6c47ff);
+  background: color-mix(in srgb, var(--primary, #6c47ff) 8%, transparent);
+}
+
+.checkout-pix-note {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #888);
+  background: color-mix(in srgb, var(--primary, #6c47ff) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary, #6c47ff) 20%, transparent);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
