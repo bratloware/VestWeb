@@ -1,7 +1,13 @@
 import Stripe from 'stripe';
-import { Subscription } from '../db/models/index.js';
+import { Subscription, PendingStudent, Student } from '../db/models/index.js';
+import { hashPassword } from '../services/hashService.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+function generateEnrollment() {
+  const random = Math.floor(10000000 + Math.random() * 90000000);
+  return random.toString();
+}
 
 // Preços em centavos (BRL)
 const INDIVIDUAL_PRICES = {
@@ -39,12 +45,18 @@ export const createPixCheckoutSession = async (req, res) => {
       billingPeriod,
       name,
       email,
+      password,
+      targetVestibularId,
       numStudents,
       companyName,
     } = req.body;
 
     if (!planType || !billingPeriod || !email || !name) {
       return res.status(400).json({ message: 'Campos obrigatórios ausentes.' });
+    }
+
+    if (planType === 'individual' && !password) {
+      return res.status(400).json({ message: 'Senha obrigatória.' });
     }
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -104,6 +116,18 @@ export const createPixCheckoutSession = async (req, res) => {
       expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // QR Code válido por 24h
     });
 
+    // Salva dados do aluno temporariamente
+    if (planType === 'individual') {
+      const password_hash = await hashPassword(password);
+      await PendingStudent.upsert({
+        stripe_session_id: session.id,
+        name,
+        email,
+        password_hash,
+        target_vestibular_id: targetVestibularId || null,
+      }, { conflictFields: ['stripe_session_id'] });
+    }
+
     res.json({ url: session.url });
   } catch (err) {
     console.error('Stripe createPixCheckoutSession error:', err);
@@ -120,12 +144,18 @@ export const createCheckoutSession = async (req, res) => {
       billingPeriod, // 'mensal' | 'trimestral' | 'anual'
       name,
       email,
+      password,
+      targetVestibularId,
       numStudents,
       companyName,
     } = req.body;
 
     if (!planType || !billingPeriod || !email || !name) {
       return res.status(400).json({ message: 'Campos obrigatórios ausentes.' });
+    }
+
+    if (planType === 'individual' && !password) {
+      return res.status(400).json({ message: 'Senha obrigatória.' });
     }
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -200,6 +230,18 @@ export const createCheckoutSession = async (req, res) => {
 
     const session = await stripe.checkout.sessions.create(sessionConfig);
 
+    // Salva dados do aluno temporariamente — será criado no banco após pagamento confirmar
+    if (planType === 'individual') {
+      const password_hash = await hashPassword(password);
+      await PendingStudent.upsert({
+        stripe_session_id: session.id,
+        name,
+        email,
+        password_hash,
+        target_vestibular_id: targetVestibularId || null,
+      }, { conflictFields: ['stripe_session_id'] });
+    }
+
     res.json({ url: session.url });
   } catch (err) {
     console.error('Stripe createCheckoutSession error:', err);
@@ -252,11 +294,37 @@ export const handleWebhook = async (req, res) => {
         };
 
         if (isPix) {
-          // PIX é pagamento único — verifica por session_id para evitar duplicata
           const existing = await Subscription.findOne({ where: { stripe_session_id: session.id } });
           if (!existing) await Subscription.create(subscriptionData);
         } else {
           await Subscription.upsert(subscriptionData, { conflictFields: ['stripe_subscription_id'] });
+        }
+
+        // Cria o Student se for plano individual e ainda não existir
+        if (meta.plan_type === 'individual') {
+          const pending = await PendingStudent.findOne({ where: { stripe_session_id: session.id } });
+          if (pending) {
+            const alreadyExists = await Student.findOne({ where: { email: pending.email } });
+            if (!alreadyExists) {
+              // Garante enrollment único
+              let enrollment;
+              let enrollmentTaken = true;
+              while (enrollmentTaken) {
+                enrollment = generateEnrollment();
+                enrollmentTaken = !!(await Student.findOne({ where: { enrollment } }));
+              }
+
+              await Student.create({
+                name: pending.name,
+                email: pending.email,
+                password_hash: pending.password_hash,
+                enrollment,
+                target_vestibular_id: pending.target_vestibular_id || null,
+                role: 'student',
+              });
+            }
+            await pending.destroy();
+          }
         }
         break;
       }

@@ -302,6 +302,59 @@
   background: color-mix(in srgb, var(--primary, #6c47ff) 8%, transparent);
 }
 
+/* Campo de senha com botão de mostrar/ocultar */
+.checkout-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.checkout-password-wrapper input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.checkout-password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary, #999);
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.checkout-password-toggle:hover {
+  color: var(--text-primary, #333);
+}
+
+/* Select de vestibular */
+.checkout-select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: var(--bg-primary, #fff);
+  color: var(--text-primary, #333);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+  appearance: none;
+}
+
+.checkout-select:focus {
+  border-color: var(--primary, #6c47ff);
+}
+
+.checkout-field-optional {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #999);
+  font-weight: 400;
+}
+
 .checkout-pix-note {
   font-size: 0.78rem;
   color: var(--text-secondary, #888);

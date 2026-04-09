@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Lock, CreditCard, ChevronDown, QrCode } from 'lucide-react';
+import { X, Lock, CreditCard, ChevronDown, QrCode, Eye, EyeOff } from 'lucide-react';
 import api from '../../api/api';
 import './CheckoutModal.css';
 
@@ -46,6 +46,11 @@ export default function CheckoutModal({
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [targetVestibularId, setTargetVestibularId] = useState<number | ''>('');
+  const [vestibulares, setVestibulares] = useState<{ id: number; name: string }[]>([]);
   const [companyName, setCompanyName] = useState('');
   const [numStudents, setNumStudents] = useState(10);
   const [loading, setLoading] = useState(false);
@@ -54,6 +59,14 @@ export default function CheckoutModal({
   useEffect(() => {
     setBilling(initialBillingPeriod);
   }, [initialBillingPeriod]);
+
+  useEffect(() => {
+    if (isOpen && planType === 'individual') {
+      api.get('/questions/vestibulares')
+        .then(({ data }) => setVestibulares(data.data || []))
+        .catch(() => {});
+    }
+  }, [isOpen, planType]);
 
   useEffect(() => {
     if (isOpen) {
@@ -105,6 +118,20 @@ export default function CheckoutModal({
       setError('Por favor, preencha nome e e-mail.');
       return;
     }
+    if (!isEmpresa) {
+      if (!password) {
+        setError('Por favor, crie uma senha.');
+        return;
+      }
+      if (password.length < 8) {
+        setError('A senha deve ter pelo menos 8 caracteres.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError('As senhas não coincidem.');
+        return;
+      }
+    }
     if (isEmpresa && !companyName.trim()) {
       setError('Por favor, informe o nome da empresa.');
       return;
@@ -122,6 +149,7 @@ export default function CheckoutModal({
         billingPeriod: billing,
         name,
         email,
+        ...(!isEmpresa && { password, targetVestibularId: targetVestibularId || null }),
         numStudents: isEmpresa ? numStudents : 1,
         companyName: isEmpresa ? companyName : '',
       });
@@ -220,6 +248,56 @@ export default function CheckoutModal({
               required
             />
           </div>
+
+          {!isEmpresa && (
+            <>
+              <div className="checkout-field">
+                <label>Senha</label>
+                <div className="checkout-password-wrapper">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Mínimo 8 caracteres"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="checkout-password-toggle"
+                    onClick={() => setShowPassword(v => !v)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="checkout-field">
+                <label>Confirmar senha</label>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Repita a senha"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="checkout-field">
+                <label>Vestibular alvo <span className="checkout-field-optional">(opcional)</span></label>
+                <select
+                  value={targetVestibularId}
+                  onChange={e => setTargetVestibularId(e.target.value ? Number(e.target.value) : '')}
+                  className="checkout-select"
+                >
+                  <option value="">Selecione seu vestibular</option>
+                  {vestibulares.map(v => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
 
           {isEmpresa && (
             <>
