@@ -1,4 +1,5 @@
 import { Banner, Testimonial, InstitutionalVideo, Student } from '../db/models/index.js';
+import { sendContactEmail } from '../services/emailService.js';
 
 export const getBanners = async (req, res) => {
   try {
@@ -51,10 +52,10 @@ export const submitContact = async (req, res) => {
     if (!name || !email || !message) {
       return res.status(400).json({ message: 'name, email and message are required' });
     }
-    // In a real system, you'd send an email or save to DB
-    console.log('Contact form submission:', { name, email, message });
+    await sendContactEmail({ name, email, message });
     return res.json({ message: 'Mensagem recebida com sucesso! Entraremos em contato em breve.' });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    console.error('Erro ao enviar email de contato:', error.message);
+    return res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
   }
 };
