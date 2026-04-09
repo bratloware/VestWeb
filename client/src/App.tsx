@@ -23,6 +23,7 @@ import Community from './pages/Community/Community';
 import Mentoring from './pages/Mentoring/Mentoring';
 import Settings from './pages/Settings/Settings';
 import Flashcards from './pages/Flashcards/Flashcards';
+import EssayCorrection from './pages/EssayCorrection/EssayCorrection';
 
 function App() {
   const { mode } = useSelector((state: RootState) => state.theme);
@@ -68,6 +69,9 @@ function App() {
       } />
       <Route path="/classroom/flashcards" element={
         <ProtectedRoute><Flashcards /></ProtectedRoute>
+      } />
+      <Route path="/classroom/essay" element={
+        <ProtectedRoute><EssayCorrection /></ProtectedRoute>
       } />
 
       <Route path="/teacher/home" element={
