@@ -252,7 +252,6 @@ const Questions = () => {
             ) : question ? (
               <div className="question-container">
                 <div className="question-progress">
-                  <span className="question-counter">Questao {currentIndex + 1} de {questions.length}</span>
                   <div className={`question-timer${timer <= 30 ? ' warning' : ''}`}>
                     <Clock size={16} />
                     {formatTime(timer)}
