@@ -9,32 +9,19 @@ function generateEnrollment() {
   return random.toString();
 }
 
-// Preços em centavos (BRL)
-const INDIVIDUAL_PRICES = {
-  mensal:     { amount: 1990,  interval: 'month', interval_count: 1 },
-  trimestral: { amount: 5370,  interval: 'month', interval_count: 3 },
-  anual:      { amount: 15900, interval: 'year',  interval_count: 1 },
+// Preços em centavos (BRL) por plano individual e período
+const INDIVIDUAL_PLAN_PRICES = {
+  Básico: { mensal: 1490, trimestral: 4023,  anual: 11988 },
+  Plus:   { mensal: 2490, trimestral: 6723,  anual: 19992 },
+  Pro:    { mensal: 3990, trimestral: 10773, anual: 32076 },
+  Elite:  { mensal: 4490, trimestral: 12123, anual: 36084 },
 };
 
-const COMPANY_PRICES_PER_STUDENT = {
-  Starter:       3990,
-  Básico:        3290,
-  Profissional:  2790,
-  Enterprise:    2290,
+const BILLING_INTERVAL = {
+  mensal:     { interval: 'month', interval_count: 1 },
+  trimestral: { interval: 'month', interval_count: 3 },
+  anual:      { interval: 'year',  interval_count: 1 },
 };
-
-const BILLING_PERIOD_MULTIPLIER = {
-  mensal:     { months: 1,  discount: 1.00 },
-  trimestral: { months: 3,  discount: 0.90 },
-  anual:      { months: 12, discount: 0.67 },
-};
-
-function getCompanyAmount(planTier, billingPeriod, numStudents) {
-  const pricePerStudent = COMPANY_PRICES_PER_STUDENT[planTier];
-  if (!pricePerStudent) return null;
-  const { months, discount } = BILLING_PERIOD_MULTIPLIER[billingPeriod];
-  return Math.round(pricePerStudent * months * numStudents * discount);
-}
 
 // POST /api/payments/create-pix-session  (pagamento único — PIX não suporta recorrência)
 export const createPixCheckoutSession = async (req, res) => {
@@ -64,15 +51,11 @@ export const createPixCheckoutSession = async (req, res) => {
     let productName;
 
     if (planType === 'individual') {
-      const price = INDIVIDUAL_PRICES[billingPeriod];
-      if (!price) return res.status(400).json({ message: 'Período de cobrança inválido.' });
-      unitAmount = price.amount;
-      productName = `VestWeb Individual — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
-    } else if (planType === 'empresa') {
-      const students = parseInt(numStudents) || 1;
-      unitAmount = getCompanyAmount(planTier, billingPeriod, students);
-      if (!unitAmount) return res.status(400).json({ message: 'Plano inválido.' });
-      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)} (${parseInt(numStudents) || 1} alunos)`;
+      const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
+      if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
+      unitAmount = planPrices[billingPeriod];
+      if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
+      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
     } else {
       return res.status(400).json({ message: 'Tipo de plano inválido.' });
     }
@@ -166,25 +149,15 @@ export const createCheckoutSession = async (req, res) => {
     let trialDays = 0;
 
     if (planType === 'individual') {
-      const price = INDIVIDUAL_PRICES[billingPeriod];
-      if (!price) return res.status(400).json({ message: 'Período de cobrança inválido.' });
+      const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
+      if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
 
-      unitAmount = price.amount;
-      recurring = { interval: price.interval, interval_count: price.interval_count };
-      productName = `VestWeb Individual — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
-      trialDays = 0;
+      unitAmount = planPrices[billingPeriod];
+      if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
 
-    } else if (planType === 'empresa') {
-      const students = parseInt(numStudents) || 1;
-      unitAmount = getCompanyAmount(planTier, billingPeriod, students);
-      if (!unitAmount) return res.status(400).json({ message: 'Plano inválido.' });
-
-      const { interval, interval_count } = billingPeriod === 'anual'
-        ? { interval: 'year', interval_count: 1 }
-        : { interval: 'month', interval_count: billingPeriod === 'trimestral' ? 3 : 1 };
-
+      const { interval, interval_count } = BILLING_INTERVAL[billingPeriod];
       recurring = { interval, interval_count };
-      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)} (${students} alunos)`;
+      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
 
     } else {
       return res.status(400).json({ message: 'Tipo de plano inválido.' });

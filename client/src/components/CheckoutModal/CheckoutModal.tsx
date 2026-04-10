@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Lock, CreditCard, ChevronDown, QrCode, Eye, EyeOff } from 'lucide-react';
+import { X, Lock, CreditCard, QrCode, Eye, EyeOff } from 'lucide-react';
 import api from '../../api/api';
 import './CheckoutModal.css';
 
@@ -22,17 +22,11 @@ const BILLING_OPTIONS: { value: BillingPeriod; label: string; badge?: string }[]
   { value: 'anual',      label: 'Anual',      badge: '33% off' },
 ];
 
-const INDIVIDUAL_PRICES: Record<BillingPeriod, { amount: string; note: string }> = {
-  mensal:     { amount: 'R$ 19,90/mês',  note: 'Cobrado mensalmente' },
-  trimestral: { amount: 'R$ 17,90/mês',  note: 'Cobrado R$53,70 a cada 3 meses' },
-  anual:      { amount: 'R$ 13,27/mês',  note: 'Cobrado R$159,00 por ano' },
-};
-
-const COMPANY_PRICES: Record<string, number> = {
-  Starter: 39.90,
-  Básico: 32.90,
-  Profissional: 27.90,
-  Enterprise: 22.90,
+const INDIVIDUAL_PLAN_PRICES: Record<string, Record<BillingPeriod, { monthly: number; total: number }>> = {
+  Básico: { mensal: { monthly: 14.90, total: 14.90 },  trimestral: { monthly: 13.41, total: 40.23 },  anual: { monthly: 9.99,  total: 119.88 } },
+  Plus:   { mensal: { monthly: 24.90, total: 24.90 },  trimestral: { monthly: 22.41, total: 67.23 },  anual: { monthly: 16.66, total: 199.92 } },
+  Pro:    { mensal: { monthly: 39.90, total: 39.90 },  trimestral: { monthly: 35.91, total: 107.73 }, anual: { monthly: 26.73, total: 320.76 } },
+  Elite:  { mensal: { monthly: 44.90, total: 44.90 },  trimestral: { monthly: 40.41, total: 121.23 }, anual: { monthly: 30.07, total: 360.84 } },
 };
 
 export default function CheckoutModal({
@@ -51,8 +45,6 @@ export default function CheckoutModal({
   const [showPassword, setShowPassword] = useState(false);
   const [targetVestibularId, setTargetVestibularId] = useState<number | ''>('');
   const [vestibulares, setVestibulares] = useState<{ id: number; name: string }[]>([]);
-  const [companyName, setCompanyName] = useState('');
-  const [numStudents, setNumStudents] = useState(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -79,35 +71,20 @@ export default function CheckoutModal({
 
   if (!isOpen) return null;
 
-  const isEmpresa = planType === 'empresa';
-
-  function getCompanyTotal() {
-    const pricePerStudent = COMPANY_PRICES[planTier] ?? 39.90;
-    const multipliers: Record<BillingPeriod, { months: number; discount: number }> = {
-      mensal:     { months: 1,  discount: 1.00 },
-      trimestral: { months: 3,  discount: 0.90 },
-      anual:      { months: 12, discount: 0.67 },
-    };
-    const { months, discount } = multipliers[billing];
-    const total = pricePerStudent * months * numStudents * discount;
-    return total.toFixed(2).replace('.', ',');
-  }
-
   function getPriceLabel() {
-    if (isEmpresa) {
-      const pricePerStudent = COMPANY_PRICES[planTier] ?? 39.90;
-      return `R$ ${pricePerStudent.toFixed(2).replace('.', ',')}/aluno/mês`;
-    }
-    return INDIVIDUAL_PRICES[billing].amount;
+    const prices = INDIVIDUAL_PLAN_PRICES[planTier];
+    if (!prices) return '';
+    const { monthly } = prices[billing];
+    return `R$ ${monthly.toFixed(2).replace('.', ',')}/mês`;
   }
 
   function getBillingNote() {
-    if (isEmpresa) {
-      const total = getCompanyTotal();
-      const periodLabel = { mensal: 'mês', trimestral: '3 meses', anual: 'ano' }[billing];
-      return `Total: R$ ${total} a cada ${periodLabel} • ${numStudents} aluno(s)`;
-    }
-    return INDIVIDUAL_PRICES[billing].note;
+    const prices = INDIVIDUAL_PLAN_PRICES[planTier];
+    if (!prices) return '';
+    const { total } = prices[billing];
+    if (billing === 'mensal') return 'Cobrado mensalmente';
+    if (billing === 'trimestral') return `Cobrado R$${total.toFixed(2).replace('.', ',')} a cada 3 meses`;
+    return `Cobrado R$${total.toFixed(2).replace('.', ',')} por ano`;
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -118,25 +95,18 @@ export default function CheckoutModal({
       setError('Por favor, preencha nome e e-mail.');
       return;
     }
-    if (!isEmpresa) {
-      if (!password) {
-        setError('Por favor, crie uma senha.');
-        return;
-      }
-      if (password.length < 8) {
-        setError('A senha deve ter pelo menos 8 caracteres.');
-        return;
-      }
-      if (password !== confirmPassword) {
-        setError('As senhas não coincidem.');
-        return;
-      }
-    }
-    if (isEmpresa && !companyName.trim()) {
-      setError('Por favor, informe o nome da empresa.');
+    if (!password) {
+      setError('Por favor, crie uma senha.');
       return;
     }
-
+    if (password.length < 8) {
+      setError('A senha deve ter pelo menos 8 caracteres.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem.');
+      return;
+    }
     const endpoint = paymentMethod === 'pix'
       ? '/payments/create-pix-session'
       : '/payments/create-checkout-session';
@@ -149,9 +119,8 @@ export default function CheckoutModal({
         billingPeriod: billing,
         name,
         email,
-        ...(!isEmpresa && { password, targetVestibularId: targetVestibularId || null }),
-        numStudents: isEmpresa ? numStudents : 1,
-        companyName: isEmpresa ? companyName : '',
+        password,
+        targetVestibularId: targetVestibularId || null,
       });
 
       if (data.url) {
@@ -174,14 +143,9 @@ export default function CheckoutModal({
 
         {/* Cabeçalho do plano */}
         <div className="checkout-header">
-          <div className="checkout-plan-badge">
-            {isEmpresa ? `Plano ${planTier}` : 'VestWeb Individual'}
-          </div>
+          <div className="checkout-plan-badge">VestWeb {planTier}</div>
           <div className="checkout-price">{getPriceLabel()}</div>
           <p className="checkout-billing-note">{getBillingNote()}</p>
-          {!isEmpresa && (
-            <span className="checkout-trial">7 dias grátis inclusos</span>
-          )}
         </div>
 
         {/* Seletor de método de pagamento */}
@@ -249,9 +213,8 @@ export default function CheckoutModal({
             />
           </div>
 
-          {!isEmpresa && (
-            <>
-              <div className="checkout-field">
+          <>
+            <div className="checkout-field">
                 <label>Senha</label>
                 <div className="checkout-password-wrapper">
                   <input
@@ -296,41 +259,7 @@ export default function CheckoutModal({
                   ))}
                 </select>
               </div>
-            </>
-          )}
-
-          {isEmpresa && (
-            <>
-              <div className="checkout-field">
-                <label>Nome da empresa</label>
-                <input
-                  type="text"
-                  placeholder="Ex: Colégio ABC"
-                  value={companyName}
-                  onChange={e => setCompanyName(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="checkout-field">
-                <label>Número de alunos</label>
-                <div className="checkout-students-wrapper">
-                  <input
-                    type="number"
-                    min={1}
-                    max={9999}
-                    value={numStudents}
-                    onChange={e => setNumStudents(Math.max(1, parseInt(e.target.value) || 1))}
-                    required
-                  />
-                  <ChevronDown size={16} className="checkout-students-icon" />
-                </div>
-                <span className="checkout-field-hint">
-                  Total estimado: R$ {getCompanyTotal()} /{billing === 'anual' ? 'ano' : billing === 'trimestral' ? '3 meses' : 'mês'}
-                </span>
-              </div>
-            </>
-          )}
+          </>
 
           {error && <p className="checkout-error">{error}</p>}
 
@@ -349,7 +278,7 @@ export default function CheckoutModal({
             ) : (
               <>
                 <CreditCard size={18} />
-                {isEmpresa ? 'Assinar agora' : '7 dias grátis — Assinar'}
+                Assinar agora
               </>
             )}
           </button>
