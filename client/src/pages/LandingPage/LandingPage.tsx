@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import logo from '../../assets/images/logo.png';
 import LandingHeader from '../../components/LandingHeader';
+import CheckoutModal, { type PlanType, type BillingPeriod } from '../../components/CheckoutModal/CheckoutModal';
 import api from '../../api/api';
 import './LandingPage.css';
 
@@ -73,21 +74,67 @@ function AnimatedStat({ target, suffix, label }: { target: number; suffix: strin
   );
 }
 
-const companyPlans = [
-  { name: 'Starter', limit: 'Até 20 alunos', price: 39.90, highlight: false },
-  { name: 'Básico', limit: 'Até 50 alunos', price: 32.90, highlight: false },
-  { name: 'Profissional', limit: 'Até 100 alunos', price: 27.90, highlight: true },
-  { name: 'Enterprise', limit: '100+ alunos', price: 22.90, highlight: false },
+const individualPlans = [
+  {
+    name: 'Básico',
+    desc: 'Para quem está começando os estudos.',
+    prices: { mensal: 14.90, trimestral: 13.41, anual: 9.99 },
+    totals: { trimestral: 40.23, anual: 119.88 },
+    benefits: ['Banco de questões', '5 simulados por mês', 'Calendário de estudos'],
+    highlight: false,
+  },
+  {
+    name: 'Plus',
+    desc: 'O mais escolhido por quem quer evoluir rápido.',
+    prices: { mensal: 24.90, trimestral: 22.41, anual: 16.66 },
+    totals: { trimestral: 67.23, anual: 199.92 },
+    benefits: ['Tudo do Básico', 'Simulados ilimitados', 'VestWebFlix', 'Ranking e gamificação'],
+    highlight: true,
+  },
+  {
+    name: 'Pro',
+    desc: 'Para quem está focado na aprovação.',
+    prices: { mensal: 39.90, trimestral: 35.91, anual: 26.73 },
+    totals: { trimestral: 107.73, anual: 320.76 },
+    benefits: ['Tudo do Plus', 'Comunidade de alunos', 'Acompanhamento de desempenho', 'Suporte prioritário'],
+    highlight: false,
+  },
+  {
+    name: 'Elite',
+    desc: 'Máximo desempenho, com suporte exclusivo.',
+    prices: { mensal: 44.90, trimestral: 40.41, anual: 30.07 },
+    totals: { trimestral: 121.23, anual: 360.84 },
+    benefits: ['Tudo do Pro', 'Mentoria ao vivo', 'Conteúdos exclusivos', 'Acesso antecipado a novidades'],
+    highlight: false,
+  },
 ];
+
+interface CheckoutState {
+  isOpen: boolean;
+  planType: PlanType;
+  planTier: string;
+}
 
 const LandingPage = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
-  const [planTab, setPlanTab] = useState<'individual' | 'empresa'>('individual');
-  const [billingPeriod, setBillingPeriod] = useState<'mensal' | 'trimestral' | 'anual'>('anual');
-const [currentSlide, setCurrentSlide] = useState(0);
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('anual');
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [contactSuccess, setContactSuccess] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
+  const [checkout, setCheckout] = useState<CheckoutState>({
+    isOpen: false,
+    planType: 'individual',
+    planTier: 'individual',
+  });
+
+  function openCheckout(planType: PlanType, planTier: string) {
+    setCheckout({ isOpen: true, planType, planTier });
+  }
+
+  function closeCheckout() {
+    setCheckout(prev => ({ ...prev, isOpen: false }));
+  }
 
   useEffect(() => {
     api.get('/landing/banners').then(r => { if (r.data.data?.length) setBanners(r.data.data); }).catch(() => {});
@@ -261,103 +308,66 @@ const handleContact = async (e: React.FormEvent) => {
           <p className="section-desc">Acesso completo à plataforma. Sem surpresas, sem letras miúdas.</p>
         </div>
 
-        <div className="plans-tabs">
-          <button
-            className={`plans-tab${planTab === 'individual' ? ' active' : ''}`}
-            onClick={() => setPlanTab('individual')}
-          >
-            Individual
-          </button>
-          <button
-            className={`plans-tab${planTab === 'empresa' ? ' active' : ''}`}
-            onClick={() => setPlanTab('empresa')}
-          >
-            Para Empresas
-          </button>
-        </div>
-
         <div className="plans-tabs plans-billing-toggle">
-            {(['mensal', 'trimestral', 'anual'] as const).map((p) => (
-              <button
-                key={p}
-                className={`plans-tab${billingPeriod === p ? ' active' : ''}`}
-                onClick={() => setBillingPeriod(p)}
-              >
-                {p.charAt(0).toUpperCase() + p.slice(1)}
-                {p === 'anual' && <span className="billing-save-pill">–33%</span>}
-              </button>
-            ))}
+          {(['mensal', 'trimestral', 'anual'] as const).map((p) => (
+            <button
+              key={p}
+              className={`plans-tab${billingPeriod === p ? ' active' : ''}`}
+              onClick={() => setBillingPeriod(p)}
+            >
+              {p.charAt(0).toUpperCase() + p.slice(1)}
+              {p === 'trimestral' && <span className="billing-save-pill">–10%</span>}
+              {p === 'anual' && <span className="billing-save-pill">–33%</span>}
+            </button>
+          ))}
         </div>
 
-        {planTab === 'individual' ? (
-          <div className="plans-individual-wrapper">
-            <div className="plan-card plan-card-highlight">
-              <div className="plan-trial-badge">7 dias grátis</div>
-              <div className="plan-name">VestWeb Individual</div>
-              <p className="plan-desc">Tudo que você precisa para passar no vestibular em um só lugar.</p>
+        <div className="plans-individual-grid">
+          {individualPlans.map((plan, i) => (
+            <div key={i} className={`plan-card${plan.highlight ? ' plan-card-highlight' : ''}`}>
+              {plan.highlight && <div className="plan-popular-badge">Mais popular</div>}
+              <div className="plan-name">{plan.name}</div>
+              <p className="plan-desc">{plan.desc}</p>
               <div className="plan-price">
                 <span className="plan-currency">R$</span>
                 <span className="plan-amount">
-                  {billingPeriod === 'mensal' ? '19,90' : billingPeriod === 'trimestral' ? '17,90' : '13,27'}
+                  {plan.prices[billingPeriod].toFixed(2).replace('.', ',')}
                 </span>
                 <span className="plan-period">/mês</span>
               </div>
               <p className="plan-billing-note">
                 {billingPeriod === 'mensal' && 'Cobrado mensalmente'}
-                {billingPeriod === 'trimestral' && 'Cobrado R$53,70 a cada 3 meses'}
-                {billingPeriod === 'anual' && 'Cobrado R$159,00 por ano'}
+                {billingPeriod === 'trimestral' && `Cobrado R$${plan.totals.trimestral.toFixed(2).replace('.', ',')} a cada 3 meses`}
+                {billingPeriod === 'anual' && `Cobrado R$${plan.totals.anual.toFixed(2).replace('.', ',')} por ano`}
               </p>
               <ul className="plan-benefits">
-                {[
-                  'Banco completo de questões',
-                  'Simulados ilimitados',
-                  'VestWebFlix liberado',
-                  'Ranking e gamificação',
-                  'Calendário de estudos',
-                  'Comunidade de alunos',
-                  'Acompanhamento de desempenho',
-                  'Novos conteúdos toda semana',
-                ].map((b, i) => (
-                  <li key={i} className="plan-benefit-item">
+                {plan.benefits.map((b, j) => (
+                  <li key={j} className="plan-benefit-item">
                     <span className="plan-check">✓</span>
                     {b}
                   </li>
                 ))}
               </ul>
-              <Link to="/register" className="plan-cta plan-cta-hero">Começar agora — grátis por 7 dias</Link>
-              <p className="plan-cta-note">Cancele quando quiser. Sem fidelidade.</p>
+              <button
+                className={`plan-cta${plan.highlight ? ' plan-cta-hero' : ' plan-cta-outline'}`}
+                onClick={() => openCheckout('individual', plan.name)}
+              >
+                Assinar agora
+              </button>
+              <p className="plan-cta-note">Cancele quando quiser.</p>
             </div>
-          </div>
-        ) : (
-          <div className="plans-company-grid">
-            {companyPlans.map((plan, i) => (
-              <div key={i} className={`plan-card${plan.highlight ? ' plan-card-highlight' : ''}`}>
-                <div className={`plan-popular-badge${plan.highlight ? '' : ' plan-popular-badge--hidden'}`}>Mais popular</div>
-                <div className="plan-name">{plan.name}</div>
-                <p className="plan-limit">{plan.limit}</p>
-                <div className="plan-price">
-                  <span className="plan-currency">R$</span>
-                  <span className="plan-amount">{plan.price.toFixed(2).replace('.', ',')}</span>
-                </div>
-                <p className="plan-price-label">por aluno/mês</p>
-                <ul className="plan-benefits">
-                  {[
-                    'Acesso completo à plataforma',
-                    'Painel de gestão de alunos',
-                    'Relatórios de desempenho',
-                    'Suporte prioritário',
-                  ].map((b, j) => (
-                    <li key={j} className="plan-benefit-item">
-                      <span className="plan-check">✓</span>
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-                <a href="#contato" className="plan-cta plan-cta-outline">Falar com a equipe</a>
-              </div>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
+
+        <CheckoutModal
+          isOpen={checkout.isOpen}
+          onClose={closeCheckout}
+          planType={checkout.planType}
+          planTier={checkout.planTier}
+          billingPeriod={billingPeriod}
+          priceLabel=""
+          billingNote=""
+        />
       </section>
 
       {/* Contato */}

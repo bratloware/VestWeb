@@ -463,8 +463,8 @@
   justify-content: center;
 }
 
-/* Company plans */
-.plans-company-grid {
+/* Individual plans grid */
+.plans-individual-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
@@ -882,7 +882,7 @@
 @media (max-width: 900px) {
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .about-content { grid-template-columns: 1fr; }
-  .plans-company-grid { grid-template-columns: 1fr 1fr; }
+  .plans-individual-grid { grid-template-columns: 1fr 1fr; }
   .plan-card-highlight { max-width: 100%; }
   .contact-content { grid-template-columns: 1fr; }
   .methodology-grid { grid-template-columns: 1fr; }
@@ -895,7 +895,7 @@
   .methodology-grid { grid-template-columns: 1fr; }
   .footer-content { grid-template-columns: 1fr; }
   .hero-stats { gap: 28px; }
-  .plans-company-grid { grid-template-columns: 1fr; }
+  .plans-individual-grid { grid-template-columns: 1fr; }
   .plans-tab { padding: 10px 20px; font-size: 14px; }
   .plan-cta { width: 100%; }
 }

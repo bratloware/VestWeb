@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm config:*)",
+      "Bash(curl -I https://registry.npmjs.org/stripe)",
+      "Bash(node -e \"require\\('stripe'\\)\")",
+      "Read(//c/Users/Otávio Borges/**)",
+      "Bash(node -e \"import\\('stripe'\\).then\\(m => { const s = new m.default\\('sk_test_51TKLpiQ3SvaIc1iZlF0geEsecvLfO6JYQDXH2Y2AezYSJiR031kP5laKMw6KkvWG0g8qVYroXxrEPmzwi5p4pjDh00L9fUA4Zg'\\); return s.products.list\\({ limit: 1 }\\); }\\).then\\(\\(\\) => console.log\\('Stripe OK'\\)\\).catch\\(e => console.error\\('Erro:', e.message\\)\\)\")",
+      "Bash(where stripe:*)",
+      "Bash(winget install:*)",
+      "Bash(powershell -Command \"& 'C:\\\\Users\\\\Otávio Borges\\\\AppData\\\\Local\\\\Microsoft\\\\WinGet\\\\Links\\\\stripe.exe' --version\")",
+      "Read(//c/Program Files/**)",
+      "Bash('/c/Users/Otávio Borges/AppData/Local/Microsoft/WinGet/Packages/Stripe.StripeCli_Microsoft.Winget.Source_8wekyb3d8bbwe/stripe.exe' login --api-key sk_test_51TKLpiQ3SvaIc1iZlF0geEsecvLfO6JYQDXH2Y2AezYSJiR031kP5laKMw6KkvWG0g8qVYroXxrEPmzwi5p4pjDh00L9fUA4Zg)",
+      "Bash(node --input-type=module)",
+      "Bash(timeout 8 '/c/Users/Otávio Borges/AppData/Local/Microsoft/WinGet/Packages/Stripe.StripeCli_Microsoft.Winget.Source_8wekyb3d8bbwe/stripe.exe' listen --api-key sk_test_51TKLpiQ3SvaIc1iZlF0geEsecvLfO6JYQDXH2Y2AezYSJiR031kP5laKMw6KkvWG0g8qVYroXxrEPmzwi5p4pjDh00L9fUA4Zg --forward-to localhost:3001/api/payments/webhook)"
+    ]
+  }
+}
