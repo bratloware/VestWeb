@@ -166,6 +166,7 @@ Like.belongsTo(Comment, { foreignKey: 'comment_id', as: 'comment' });
 Badge.hasMany(StudentBadge, { foreignKey: 'badge_id', as: 'studentBadges' });
 StudentBadge.belongsTo(Badge, { foreignKey: 'badge_id', as: 'badge' });
 
+
 export {
   Student,
   Session,

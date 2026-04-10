@@ -26,7 +26,7 @@ const buildCards = (questions: Question[]): FlashCard[] =>
       return {
         id: q.id,
         front: q.statement,
-        back: correct ? `${correct.letter}) ${correct.text}` : '—',
+        back: correct ? correct.text : '—',
         subject: q.topic?.subject?.name ?? '',
         topic: q.topic?.name ?? '',
         subtopic: q.subtopic?.name,
