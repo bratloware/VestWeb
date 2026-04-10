@@ -26,6 +26,9 @@ const Alternative = sequelize.define('Alternative', {
 }, {
   tableName: 'alternatives',
   timestamps: false,
+  indexes: [
+    { fields: ['question_id'] },
+  ],
 });
 
 export default Alternative;

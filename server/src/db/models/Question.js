@@ -35,19 +35,39 @@ const Question = sequelize.define('Question', {
   bank: {
     type: DataTypes.STRING(100),
     allowNull: true,
-    index: true,
   },
   created_by: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  attempt_count: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
+  correct_count: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
   created_at: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  updated_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
 }, {
   tableName: 'questions',
   timestamps: false,
+  indexes: [
+    { fields: ['topic_id'] },
+    { fields: ['subtopic_id'] },
+    { fields: ['difficulty'] },
+    { fields: ['year'] },
+    { fields: ['bank'] },
+  ],
 });
 
 export default Question;
