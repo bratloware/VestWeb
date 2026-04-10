@@ -365,3 +365,33 @@
   margin: 0 0 1rem;
   line-height: 1.5;
 }
+
+/* Tela de verificação de email */
+.checkout-verify-email {
+  text-align: center;
+  padding: 2.5rem 2rem;
+}
+
+.checkout-verify-icon {
+  color: var(--primary, #6c47ff);
+  margin-bottom: 1.25rem;
+}
+
+.checkout-verify-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.checkout-verify-desc {
+  color: var(--text-secondary, #555);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+.checkout-verify-note {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #999);
+  margin: 0;
+}

@@ -1,12 +1,53 @@
 import Stripe from 'stripe';
-import { Subscription, PendingStudent, Student } from '../db/models/index.js';
+import { randomUUID } from 'crypto';
+import { Subscription, Student } from '../db/models/index.js';
 import { hashPassword } from '../services/hashService.js';
+import { sendVerificationEmail, sendEnrollmentEmail } from '../services/emailService.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 function generateEnrollment() {
   const random = Math.floor(10000000 + Math.random() * 90000000);
   return random.toString();
+}
+
+async function uniqueEnrollment() {
+  let enrollment;
+  let taken = true;
+  while (taken) {
+    enrollment = generateEnrollment();
+    taken = !!(await Student.findOne({ where: { enrollment } }));
+  }
+  return enrollment;
+}
+
+// Cria o Student (ou atualiza token se já existir) e envia email de verificação
+async function createStudentAndSendEmail({ name, email, password, targetVestibularId, stripeUrl }) {
+  const password_hash = await hashPassword(password);
+  const token = randomUUID();
+
+  let student = await Student.findOne({ where: { email } });
+
+  if (student) {
+    // Já existe — atualiza token e URL do Stripe (nova tentativa de assinatura)
+    await student.update({ token, stripe_session_url: stripeUrl });
+  } else {
+    const enrollment = await uniqueEnrollment();
+    student = await Student.create({
+      name,
+      email,
+      password_hash,
+      enrollment,
+      target_vestibular_id: targetVestibularId || null,
+      role: 'student',
+      token,
+      stripe_session_url: stripeUrl,
+    });
+  }
+
+  sendVerificationEmail({ to: email, name, token }).catch(err =>
+    console.error('sendVerificationEmail error:', err)
+  );
 }
 
 // Preços em centavos (BRL) por plano individual e período
@@ -23,44 +64,29 @@ const BILLING_INTERVAL = {
   anual:      { interval: 'year',  interval_count: 1 },
 };
 
-// POST /api/payments/create-pix-session  (pagamento único — PIX não suporta recorrência)
+// POST /api/payments/create-pix-session
 export const createPixCheckoutSession = async (req, res) => {
   try {
-    const {
-      planType,
-      planTier,
-      billingPeriod,
-      name,
-      email,
-      password,
-      targetVestibularId,
-      numStudents,
-      companyName,
-    } = req.body;
+    const { planType, planTier, billingPeriod, name, email, password, targetVestibularId, numStudents, companyName } = req.body;
 
     if (!planType || !billingPeriod || !email || !name) {
       return res.status(400).json({ message: 'Campos obrigatórios ausentes.' });
     }
-
     if (planType === 'individual' && !password) {
       return res.status(400).json({ message: 'Senha obrigatória.' });
     }
-
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    let unitAmount;
-    let productName;
-
-    if (planType === 'individual') {
-      const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
-      if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
-      unitAmount = planPrices[billingPeriod];
-      if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
-      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
-    } else {
+    if (planType !== 'individual') {
       return res.status(400).json({ message: 'Tipo de plano inválido.' });
     }
 
-    // Calcula data de expiração do acesso com base no período escolhido
+    const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
+    if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
+    const unitAmount = planPrices[billingPeriod];
+    if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
+
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
+
     const periodMonths = { mensal: 1, trimestral: 3, anual: 12 };
     const accessEndDate = new Date();
     accessEndDate.setMonth(accessEndDate.getMonth() + (periodMonths[billingPeriod] || 1));
@@ -71,12 +97,7 @@ export const createPixCheckoutSession = async (req, res) => {
       line_items: [{
         price_data: {
           currency: 'brl',
-          product_data: {
-            name: productName,
-            description: planType === 'individual'
-              ? 'Acesso completo à plataforma VestWeb'
-              : `Plano empresarial VestWeb para ${numStudents || 1} aluno(s)`,
-          },
+          product_data: { name: productName, description: 'Acesso completo à plataforma VestWeb' },
           unit_amount: unitAmount,
         },
         quantity: 1,
@@ -86,7 +107,7 @@ export const createPixCheckoutSession = async (req, res) => {
       cancel_url: `${clientUrl}/payment/cancel`,
       metadata: {
         plan_type: planType,
-        plan_tier: planTier || 'individual',
+        plan_tier: planTier,
         billing_period: billingPeriod,
         customer_name: name,
         customer_email: email,
@@ -96,22 +117,12 @@ export const createPixCheckoutSession = async (req, res) => {
         payment_method: 'pix',
       },
       locale: 'pt-BR',
-      expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // QR Code válido por 24h
+      expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
     });
 
-    // Salva dados do aluno temporariamente
-    if (planType === 'individual') {
-      const password_hash = await hashPassword(password);
-      await PendingStudent.upsert({
-        stripe_session_id: session.id,
-        name,
-        email,
-        password_hash,
-        target_vestibular_id: targetVestibularId || null,
-      }, { conflictFields: ['stripe_session_id'] });
-    }
+    await createStudentAndSendEmail({ name, email, password, targetVestibularId, stripeUrl: session.url });
 
-    res.json({ url: session.url });
+    res.json({ requiresVerification: true });
   } catch (err) {
     console.error('Stripe createPixCheckoutSession error:', err);
     res.status(500).json({ message: 'Erro ao criar sessão PIX.' });
@@ -121,73 +132,45 @@ export const createPixCheckoutSession = async (req, res) => {
 // POST /api/payments/create-checkout-session
 export const createCheckoutSession = async (req, res) => {
   try {
-    const {
-      planType,      // 'individual' | 'empresa'
-      planTier,      // 'individual' | 'Starter' | 'Básico' | 'Profissional' | 'Enterprise'
-      billingPeriod, // 'mensal' | 'trimestral' | 'anual'
-      name,
-      email,
-      password,
-      targetVestibularId,
-      numStudents,
-      companyName,
-    } = req.body;
+    const { planType, planTier, billingPeriod, name, email, password, targetVestibularId, numStudents, companyName } = req.body;
 
     if (!planType || !billingPeriod || !email || !name) {
       return res.status(400).json({ message: 'Campos obrigatórios ausentes.' });
     }
-
     if (planType === 'individual' && !password) {
       return res.status(400).json({ message: 'Senha obrigatória.' });
     }
-
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    let lineItems;
-    let productName;
-    let unitAmount;
-    let recurring;
-    let trialDays = 0;
-
-    if (planType === 'individual') {
-      const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
-      if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
-
-      unitAmount = planPrices[billingPeriod];
-      if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
-
-      const { interval, interval_count } = BILLING_INTERVAL[billingPeriod];
-      recurring = { interval, interval_count };
-      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
-
-    } else {
+    if (planType !== 'individual') {
       return res.status(400).json({ message: 'Tipo de plano inválido.' });
     }
 
-    lineItems = [{
-      price_data: {
-        currency: 'brl',
-        product_data: {
-          name: productName,
-          description: planType === 'individual'
-            ? 'Acesso completo à plataforma VestWeb'
-            : `Plano empresarial VestWeb para ${numStudents || 1} aluno(s)`,
-        },
-        unit_amount: unitAmount,
-        recurring,
-      },
-      quantity: 1,
-    }];
+    const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
+    if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
+    const unitAmount = planPrices[billingPeriod];
+    if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
 
-    const sessionConfig = {
+    const { interval, interval_count } = BILLING_INTERVAL[billingPeriod];
+    const productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+    const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       customer_email: email,
-      line_items: lineItems,
+      line_items: [{
+        price_data: {
+          currency: 'brl',
+          product_data: { name: productName, description: 'Acesso completo à plataforma VestWeb' },
+          unit_amount: unitAmount,
+          recurring: { interval, interval_count },
+        },
+        quantity: 1,
+      }],
       mode: 'subscription',
       success_url: `${clientUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${clientUrl}/payment/cancel`,
       metadata: {
         plan_type: planType,
-        plan_tier: planTier || 'individual',
+        plan_tier: planTier,
         billing_period: billingPeriod,
         customer_name: name,
         customer_email: email,
@@ -195,34 +178,18 @@ export const createCheckoutSession = async (req, res) => {
         company_name: companyName || '',
       },
       locale: 'pt-BR',
-    };
+    });
 
-    if (trialDays > 0) {
-      sessionConfig.subscription_data = { trial_period_days: trialDays };
-    }
+    await createStudentAndSendEmail({ name, email, password, targetVestibularId, stripeUrl: session.url });
 
-    const session = await stripe.checkout.sessions.create(sessionConfig);
-
-    // Salva dados do aluno temporariamente — será criado no banco após pagamento confirmar
-    if (planType === 'individual') {
-      const password_hash = await hashPassword(password);
-      await PendingStudent.upsert({
-        stripe_session_id: session.id,
-        name,
-        email,
-        password_hash,
-        target_vestibular_id: targetVestibularId || null,
-      }, { conflictFields: ['stripe_session_id'] });
-    }
-
-    res.json({ url: session.url });
+    res.json({ requiresVerification: true });
   } catch (err) {
     console.error('Stripe createCheckoutSession error:', err);
     res.status(500).json({ message: 'Erro ao criar sessão de pagamento.' });
   }
 };
 
-// POST /api/payments/webhook  (raw body obrigatório — configurado em app.js)
+// POST /api/payments/webhook
 export const handleWebhook = async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
@@ -241,8 +208,6 @@ export const handleWebhook = async (req, res) => {
         const meta = session.metadata || {};
         const isPix = meta.payment_method === 'pix';
 
-        // Para PIX: só processa se o pagamento foi confirmado
-        // Para assinaturas: processa mesmo em trial (payment_status = 'no_payment_required')
         const isPaid = session.payment_status === 'paid';
         const isTrialing = session.payment_status === 'no_payment_required';
         if (!isPaid && !isTrialing) break;
@@ -273,30 +238,17 @@ export const handleWebhook = async (req, res) => {
           await Subscription.upsert(subscriptionData, { conflictFields: ['stripe_subscription_id'] });
         }
 
-        // Cria o Student se for plano individual e ainda não existir
+        // Student já existe — só envia email de matrícula
         if (meta.plan_type === 'individual') {
-          const pending = await PendingStudent.findOne({ where: { stripe_session_id: session.id } });
-          if (pending) {
-            const alreadyExists = await Student.findOne({ where: { email: pending.email } });
-            if (!alreadyExists) {
-              // Garante enrollment único
-              let enrollment;
-              let enrollmentTaken = true;
-              while (enrollmentTaken) {
-                enrollment = generateEnrollment();
-                enrollmentTaken = !!(await Student.findOne({ where: { enrollment } }));
-              }
-
-              await Student.create({
-                name: pending.name,
-                email: pending.email,
-                password_hash: pending.password_hash,
-                enrollment,
-                target_vestibular_id: pending.target_vestibular_id || null,
-                role: 'student',
-              });
-            }
-            await pending.destroy();
+          const studentEmail = meta.customer_email || session.customer_email;
+          const student = await Student.findOne({ where: { email: studentEmail } });
+          if (student) {
+            sendEnrollmentEmail({
+              to: student.email,
+              name: student.name,
+              enrollment: student.enrollment,
+              planTier: meta.plan_tier || '',
+            }).catch(err => console.error('sendEnrollmentEmail error:', err));
           }
         }
         break;
@@ -305,10 +257,7 @@ export const handleWebhook = async (req, res) => {
       case 'customer.subscription.updated': {
         const sub = event.data.object;
         await Subscription.update(
-          {
-            status: sub.status,
-            current_period_end: new Date(sub.current_period_end * 1000),
-          },
+          { status: sub.status, current_period_end: new Date(sub.current_period_end * 1000) },
           { where: { stripe_subscription_id: sub.id } }
         );
         break;
@@ -323,10 +272,8 @@ export const handleWebhook = async (req, res) => {
         break;
       }
 
-      // PIX pago de forma assíncrona (usuário fechou a tela e pagou depois)
       case 'payment_intent.succeeded': {
         const pi = event.data.object;
-        // Atualiza status caso a subscription tenha sido criada mas ainda estava pendente
         await Subscription.update(
           { status: 'active' },
           { where: { stripe_session_id: pi.metadata?.session_id || '', status: 'incomplete' } }
@@ -345,7 +292,7 @@ export const handleWebhook = async (req, res) => {
   }
 };
 
-// POST /api/payments/portal  (requer autenticação)
+// POST /api/payments/portal
 export const createPortalSession = async (req, res) => {
   try {
     const { email } = req.body;
@@ -384,11 +331,7 @@ export const getSubscription = async (req, res) => {
       order: [['created_at', 'DESC']],
     });
 
-    if (!subscription) {
-      return res.json({ subscription: null });
-    }
-
-    res.json({ subscription });
+    res.json({ subscription: subscription || null });
   } catch (err) {
     console.error('Get subscription error:', err);
     res.status(500).json({ message: 'Erro ao buscar assinatura.' });

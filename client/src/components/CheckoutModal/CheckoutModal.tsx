@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Lock, CreditCard, QrCode, Eye, EyeOff } from 'lucide-react';
+import { X, Lock, CreditCard, QrCode, Eye, EyeOff, Mail } from 'lucide-react';
 import api from '../../api/api';
 import './CheckoutModal.css';
 
@@ -47,6 +47,7 @@ export default function CheckoutModal({
   const [vestibulares, setVestibulares] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailSent, setEmailSent] = useState(false);
 
   useEffect(() => {
     setBilling(initialBillingPeriod);
@@ -123,7 +124,9 @@ export default function CheckoutModal({
         targetVestibularId: targetVestibularId || null,
       });
 
-      if (data.url) {
+      if (data.requiresVerification) {
+        setEmailSent(true);
+      } else if (data.url) {
         window.location.href = data.url;
       }
     } catch {
@@ -131,6 +134,23 @@ export default function CheckoutModal({
     } finally {
       setLoading(false);
     }
+  }
+
+  if (emailSent) {
+    return (
+      <div className="checkout-overlay" onClick={onClose}>
+        <div className="checkout-modal checkout-verify-email" onClick={e => e.stopPropagation()}>
+          <button className="checkout-close" onClick={onClose} aria-label="Fechar"><X size={20} /></button>
+          <div className="checkout-verify-icon"><Mail size={48} /></div>
+          <h2 className="checkout-verify-title">Verifique seu e-mail</h2>
+          <p className="checkout-verify-desc">
+            Enviamos um link de confirmação para <strong>{email}</strong>.
+            <br />Clique no link para ser direcionado ao pagamento.
+          </p>
+          <p className="checkout-verify-note">Não recebeu? Verifique a caixa de spam.</p>
+        </div>
+      </div>
+    );
   }
 
   return (

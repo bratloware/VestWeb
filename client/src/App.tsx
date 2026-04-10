@@ -7,6 +7,7 @@ import TeacherRoute from './components/TeacherRoute';
 import LandingPage from './pages/LandingPage/LandingPage';
 import PaymentSuccess from './pages/PaymentSuccess/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel/PaymentCancel';
+import VerifyEmail from './pages/VerifyEmail/VerifyEmail';
 import LoginPage from './pages/LoginPage/LoginPage';
 import TeacherLoginPage from './pages/TeacherLoginPage/TeacherLoginPage';
 import TeacherHome from './pages/TeacherArea/TeacherHome';
@@ -38,6 +39,7 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/payment/success" element={<PaymentSuccess />} />
       <Route path="/payment/cancel" element={<PaymentCancel />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/teacher/login" element={<TeacherLoginPage />} />
       <Route path="/select-platform" element={

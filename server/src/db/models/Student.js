@@ -51,6 +51,15 @@ const Student = sequelize.define('Student', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  token: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    unique: true,
+  },
+  stripe_session_url: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
