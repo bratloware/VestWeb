@@ -54,3 +54,8 @@ pids/
 .yarn/unplugged
 .yarn/install-state.gz
 .pnp.*
+
+# Claude / projeto
+.claude/
+tests.md
+sinapse-prompt.md
