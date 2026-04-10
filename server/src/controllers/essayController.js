@@ -1,105 +1,145 @@
-import fetch from 'node-fetch';
-import formidable from 'formidable';
-import { readFileSync } from 'fs';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { Essay, Student } from '../db/models/index.js';
 
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadDir = path.join(__dirname, '../../uploads/essays');
 
-const parseForm = (req) =>
-  new Promise((resolve, reject) => {
-    const form = formidable({ maxFileSize: 10 * 1024 * 1024, filter: ({ mimetype }) => mimetype === 'application/pdf' });
-    form.parse(req, (err, _fields, files) => {
-      if (err) return reject(err);
-      resolve(files);
-    });
-  });
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-export const correctEssay = async (req, res) => {
-  let files;
+const ALLOWED_MIMES = {
+  'application/pdf': 'pdf',
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  'text/plain': 'txt',
+};
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `essay_${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`);
+  },
+});
+
+export const upload = multer({
+  storage,
+  limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (ALLOWED_MIMES[file.mimetype]) {
+      cb(null, true);
+    } else {
+      cb(new Error('Formato não suportado. Use PDF, JPG, PNG, DOC, DOCX ou TXT.'));
+    }
+  },
+});
+
+export const submitEssay = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'Nenhum arquivo enviado.' });
+  }
   try {
-    files = await parseForm(req);
+    const essay = await Essay.create({
+      student_id: req.user.id,
+      file_path: req.file.filename,
+      original_name: req.file.originalname,
+      file_type: ALLOWED_MIMES[req.file.mimetype] || 'unknown',
+      status: 'pending',
+    });
+    return res.status(201).json({ essay });
   } catch (err) {
-    return res.status(400).json({ message: err.message || 'Erro ao processar o arquivo.' });
+    console.error('Erro ao salvar redação:', err);
+    return res.status(500).json({ message: 'Erro ao salvar redação.' });
   }
+};
 
-  const uploaded = files.pdf;
-  const file = Array.isArray(uploaded) ? uploaded[0] : uploaded;
-
-  if (!file) {
-    return res.status(400).json({ message: 'Nenhum arquivo PDF enviado.' });
-  }
-
-  let pdfBase64;
+export const getMyEssays = async (req, res) => {
   try {
-    pdfBase64 = readFileSync(file.filepath).toString('base64');
-  } catch {
-    return res.status(422).json({ message: 'Não foi possível ler o arquivo.' });
-  }
-
-  const prompt = `Você é um corretor especializado em redações do ENEM. Analise a redação no PDF anexado e forneça uma correção detalhada nas 5 competências do ENEM.
-
-Para cada competência, atribua uma nota de 0 a 200 (apenas múltiplos de 40: 0, 40, 80, 120, 160 ou 200) e forneça um comentário detalhado em português.
-
-Responda APENAS com JSON válido, sem texto antes ou depois, no seguinte formato:
-{
-  "nota_total": <soma das 5 notas>,
-  "competencias": [
-    { "numero": 1, "nome": "Domínio da norma padrão da língua escrita", "nota": <0-200>, "comentario": "..." },
-    { "numero": 2, "nome": "Compreensão da proposta e desenvolvimento do tema", "nota": <0-200>, "comentario": "..." },
-    { "numero": 3, "nome": "Seleção e organização das informações e argumentos", "nota": <0-200>, "comentario": "..." },
-    { "numero": 4, "nome": "Conhecimento dos mecanismos linguísticos de argumentação", "nota": <0-200>, "comentario": "..." },
-    { "numero": 5, "nome": "Proposta de intervenção", "nota": <0-200>, "comentario": "..." }
-  ],
-  "comentario_geral": "...",
-  "pontos_positivos": ["...", "..."],
-  "pontos_melhorar": ["...", "..."]
-}`;
-
-  try {
-    const response = await fetch(ANTHROPIC_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'pdfs-2024-09-25',
-      },
-      body: JSON.stringify({
-        model: 'claude-opus-4-6',
-        max_tokens: 2048,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'document',
-                source: {
-                  type: 'base64',
-                  media_type: 'application/pdf',
-                  data: pdfBase64,
-                },
-              },
-              { type: 'text', text: prompt },
-            ],
-          },
-        ],
-      }),
+    const essays = await Essay.findAll({
+      where: { student_id: req.user.id },
+      order: [['created_at', 'DESC']],
     });
+    return res.json({ essays });
+  } catch (err) {
+    console.error('Erro ao buscar redações:', err);
+    return res.status(500).json({ message: 'Erro ao buscar redações.' });
+  }
+};
 
-    if (!response.ok) {
-      const errBody = await response.text();
-      console.error('Anthropic API error:', response.status, errBody);
-      return res.status(502).json({ message: 'Erro ao consultar a IA. Verifique a chave ANTHROPIC_API_KEY.' });
+export const getEssayFile = async (req, res) => {
+  try {
+    const essay = await Essay.findByPk(req.params.id);
+    if (!essay) return res.status(404).json({ message: 'Redação não encontrada.' });
+
+    if (req.user.role === 'student' && essay.student_id !== req.user.id) {
+      return res.status(403).json({ message: 'Sem permissão.' });
     }
 
-    const aiData = await response.json();
-    const raw = aiData.content?.[0]?.text ?? '';
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('Resposta da IA fora do formato esperado.');
+    const filePath = path.join(uploadDir, essay.file_path);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: 'Arquivo não encontrado no servidor.' });
+    }
 
-    const correction = JSON.parse(jsonMatch[0]);
-    return res.json({ correction });
+    res.sendFile(filePath);
   } catch (err) {
-    console.error('Erro na correção IA:', err);
-    return res.status(500).json({ message: 'Erro ao processar correção com IA.' });
+    console.error('Erro ao servir arquivo:', err);
+    return res.status(500).json({ message: 'Erro ao buscar arquivo.' });
+  }
+};
+
+// ── Teacher ──────────────────────────────────────────────
+
+export const getEssaysForTeacher = async (req, res) => {
+  try {
+    const essays = await Essay.findAll({
+      include: [{
+        model: Student,
+        as: 'student',
+        attributes: ['id', 'name', 'email', 'avatar_url'],
+      }],
+      order: [['created_at', 'DESC']],
+    });
+    return res.json({ essays });
+  } catch (err) {
+    console.error('Erro ao buscar redações:', err);
+    return res.status(500).json({ message: 'Erro ao buscar redações.' });
+  }
+};
+
+export const correctEssay = async (req, res) => {
+  const { id } = req.params;
+  const { nota_total, competencias, comentario_geral, pontos_positivos, pontos_melhorar } = req.body;
+
+  try {
+    const essay = await Essay.findByPk(id);
+    if (!essay) return res.status(404).json({ message: 'Redação não encontrada.' });
+
+    const [c1, c2, c3, c4, c5] = competencias;
+
+    await essay.update({
+      status: 'corrected',
+      nota_total,
+      c1_nota: c1.nota, c1_comentario: c1.comentario,
+      c2_nota: c2.nota, c2_comentario: c2.comentario,
+      c3_nota: c3.nota, c3_comentario: c3.comentario,
+      c4_nota: c4.nota, c4_comentario: c4.comentario,
+      c5_nota: c5.nota, c5_comentario: c5.comentario,
+      comentario_geral,
+      pontos_positivos,
+      pontos_melhorar,
+      corrected_by: req.user.id,
+      corrected_at: new Date(),
+    });
+
+    return res.json({ essay });
+  } catch (err) {
+    console.error('Erro ao salvar correção:', err);
+    return res.status(500).json({ message: 'Erro ao salvar correção.' });
   }
 };

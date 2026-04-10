@@ -1,5 +1,6 @@
 import Student from './Student.js';
 import Session from './Session.js';
+import Essay from './Essay.js';
 import Banner from './Banner.js';
 import Testimonial from './Testimonial.js';
 import InstitutionalVideo from './InstitutionalVideo.js';
@@ -30,6 +31,11 @@ import Points from './Points.js';
 import Badge from './Badge.js';
 import StudentBadge from './StudentBadge.js';
 import Streak from './Streak.js';
+
+// Essay associations
+Student.hasMany(Essay, { foreignKey: 'student_id', as: 'essays' });
+Essay.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+Essay.belongsTo(Student, { foreignKey: 'corrected_by', as: 'corrector' });
 
 // Student associations
 Student.hasMany(Session, { foreignKey: 'student_id', as: 'sessions' });
@@ -167,6 +173,7 @@ StudentBadge.belongsTo(Badge, { foreignKey: 'badge_id', as: 'badge' });
 export {
   Student,
   Session,
+  Essay,
   Banner,
   Testimonial,
   InstitutionalVideo,

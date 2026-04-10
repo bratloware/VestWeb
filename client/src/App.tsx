@@ -12,6 +12,7 @@ import TeacherSessions from './pages/TeacherArea/TeacherSessions';
 import TeacherQuestions from './pages/TeacherArea/TeacherQuestions';
 import TeacherVestWebFlix from './pages/TeacherArea/TeacherSinaflix';
 import TeacherSettings from './pages/TeacherArea/TeacherSettings';
+import TeacherEssays from './pages/TeacherArea/TeacherEssays';
 import SelectPlatform from './pages/SelectPlatform/SelectPlatform';
 import VestWebFlix from './pages/Sinaflix/Sinaflix';
 import Home from './pages/Home/Home';
@@ -88,6 +89,9 @@ function App() {
       } />
       <Route path="/teacher/settings" element={
         <TeacherRoute><TeacherSettings /></TeacherRoute>
+      } />
+      <Route path="/teacher/essays" element={
+        <TeacherRoute><TeacherEssays /></TeacherRoute>
       } />
     </Routes>
   );

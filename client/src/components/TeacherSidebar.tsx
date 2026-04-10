@@ -1,4 +1,4 @@
-import { LayoutDashboard, HelpCircle, MessageCircle, Settings, Play } from 'lucide-react';
+import { LayoutDashboard, HelpCircle, MessageCircle, Settings, Play, FileText } from 'lucide-react';
 import Sidebar, { NavItem } from './Sidebar';
 
 const teacherNavItems: NavItem[] = [
@@ -6,6 +6,7 @@ const teacherNavItems: NavItem[] = [
   { label: 'Questões', icon: HelpCircle, to: '/teacher/questions' },
   { label: 'VestWebFlix', icon: Play, to: '/teacher/VestWebFlix' },
   { label: 'Sessões de Mentoria', icon: MessageCircle, to: '/teacher/sessions' },
+  { label: 'Redações', icon: FileText, to: '/teacher/essays' },
   { label: 'Configurações', icon: Settings, to: '/teacher/settings' },
 ];
 

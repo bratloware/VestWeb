@@ -16,6 +16,7 @@ import {
   deleteAnnouncement,
   getAnnouncementsFeed,
 } from '../controllers/teacherController.js';
+import { getEssaysForTeacher, correctEssay, getEssayFile } from '../controllers/essayController.js';
 
 const router = Router();
 
@@ -38,5 +39,9 @@ router.get('/questions', getMyQuestions);
 router.post('/questions', createQuestion);
 router.put('/questions/:id', updateQuestion);
 router.delete('/questions/:id', deleteQuestion);
+
+router.get('/essays', getEssaysForTeacher);
+router.get('/essays/file/:id', getEssayFile);
+router.put('/essays/:id/correct', correctEssay);
 
 export default router;
