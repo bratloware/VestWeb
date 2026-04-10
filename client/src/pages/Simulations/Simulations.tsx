@@ -86,7 +86,7 @@ const Simulations = () => {
 
   const formatTime = (s: number) => `${Math.floor(s / 3600).toString().padStart(2, '0')}:${Math.floor((s % 3600) / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 
-  const questions = currentSimulation?.simulationQuestions?.map((sq: any) => sq.question) || [];
+  const questions = (currentSimulation?.simulationQuestions?.map((sq: any) => sq.question) || []).filter(Boolean);
   const currentQ = questions[currentQIdx];
 
   const getDifficultyLabel = (d: string) => ({ easy: 'Facil', medium: 'Media', hard: 'Dificil', mixed: 'Mista' }[d] || d);

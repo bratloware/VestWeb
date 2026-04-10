@@ -1,5 +1,6 @@
 import { Simulation, SimulationQuestion, Question, Alternative, QuestionSession, Answer, Student } from '../db/models/index.js';
 import sequelize from '../db/index.js';
+import { Op } from 'sequelize';
 
 export const getAll = async (req, res) => {
   try {
@@ -22,6 +23,8 @@ export const getById = async (req, res) => {
         include: [{
           model: Question,
           as: 'question',
+          where: { statement: { [Op.notLike]: '%[[placeholder]]%' } },
+          required: false,
           include: [{ model: Alternative, as: 'alternatives' }],
         }],
         order: [['order', 'ASC']],

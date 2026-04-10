@@ -1,5 +1,6 @@
 import { Question, Alternative, Topic, Subtopic, Subject, Vestibular, QuestionVestibular, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
 import sequelize from '../db/index.js';
+import { Op } from 'sequelize';
 
 export const getAll = async (req, res) => {
   try {
@@ -12,6 +13,7 @@ export const getAll = async (req, res) => {
     if (difficulty) where.difficulty = difficulty;
     if (bank) where.bank = bank;
     if (subject_id) topicWhere.subject_id = subject_id;
+    where.statement = { [Op.notLike]: '%[[placeholder]]%' };
     // Se vestibular_id for passado, filtra questões daquele vestibular
     const vestibularInclude = vestibular_id
       ? { model: Vestibular, as: 'vestibulares', through: { attributes: [] }, where: { id: vestibular_id }, required: true }

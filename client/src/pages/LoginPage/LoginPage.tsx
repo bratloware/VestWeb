@@ -6,6 +6,7 @@ import logo from '../../assets/images/logo.png';
 import { loginThunk } from '../../slices/authSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import { isTeacherRole } from '../../utils/roles';
+import api from '../../api/api';
 import './LoginPage.css';
 
 const getRedirectPath = (role: string) =>
@@ -15,6 +16,8 @@ const LoginPage = () => {
   const [enrollment, setEnrollment] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [emailNotVerified, setEmailNotVerified] = useState(false);
+  const [resendStatus, setResendStatus] = useState<'idle' | 'loading' | 'sent'>('idle');
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error, token } = useSelector((state: RootState) => state.auth);
@@ -26,9 +29,25 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEmailNotVerified(false);
     const result = await dispatch(loginThunk({ enrollment, password }));
     if (loginThunk.fulfilled.match(result)) {
       navigate(getRedirectPath(result.payload.student.role));
+    } else {
+      const payload = result.payload as any;
+      if (payload?.code === 'EMAIL_NOT_VERIFIED') {
+        setEmailNotVerified(true);
+      }
+    }
+  };
+
+  const handleResend = async () => {
+    setResendStatus('loading');
+    try {
+      await api.post('/auth/resend-verification', { enrollment });
+      setResendStatus('sent');
+    } catch {
+      setResendStatus('idle');
     }
   };
 
@@ -70,7 +89,30 @@ const LoginPage = () => {
           <h2>Acesse sua conta</h2>
           <p>Entre com sua matricula e senha para continuar.</p>
 
-          {error && <div className="login-error">{error}</div>}
+          {error && !emailNotVerified && <div className="login-error">{error}</div>}
+
+          {emailNotVerified && (
+            <div className="login-error" style={{ lineHeight: '1.5' }}>
+              <strong>E-mail não verificado.</strong> Verifique sua caixa de entrada e clique no link que enviamos.
+              {resendStatus === 'sent' ? (
+                <p style={{ margin: '6px 0 0', color: '#16a34a', fontWeight: 600 }}>
+                  E-mail reenviado! Verifique sua caixa de entrada.
+                </p>
+              ) : (
+                <p style={{ margin: '6px 0 0' }}>
+                  Não recebeu?{' '}
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resendStatus === 'loading'}
+                    style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer', fontWeight: 600, padding: 0, textDecoration: 'underline' }}
+                  >
+                    {resendStatus === 'loading' ? 'Enviando...' : 'Reenviar e-mail'}
+                  </button>
+                </p>
+              )}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">

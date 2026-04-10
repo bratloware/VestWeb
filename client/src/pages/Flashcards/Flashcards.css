@@ -269,7 +269,7 @@
 }
 
 .fc-card {
-  position: relative;
+  display: grid;
   width: 100%;
   min-height: 320px;
   transform-style: preserve-3d;
@@ -283,8 +283,7 @@
 }
 
 .fc-card-face {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   border-radius: var(--radius-xl);
