@@ -160,6 +160,34 @@ const Questions = () => {
     return parts;
   };
 
+  const preprocessStatement = (text: string): string => {
+    // Remove \r\n do PDF e colapsa espaços extras
+    text = text.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+
+    // Remove título duplicado no início (ex: "Título Título, continua...")
+    const words = text.split(' ');
+    for (let len = 3; len <= Math.min(12, Math.floor(words.length / 2)); len++) {
+      const firstPhrase = words.slice(0, len).join(' ');
+      const rest = words.slice(len).join(' ');
+      if (rest.startsWith(firstPhrase)) {
+        const nextChar = rest[firstPhrase.length];
+        if (!nextChar || /[,.\s;!?]/.test(nextChar)) {
+          text = rest;
+          break;
+        }
+      }
+    }
+
+    // Insere quebra de parágrafo antes de citações bibliográficas
+    // Padrão: SOBRENOME, I. ou SOBRENOME; após ponto final
+    text = text.replace(
+      /(\.)(\s+)([A-ZÁÉÍÓÚÂÊÎÔÛÃÕÀÈÌ]{2,},\s[A-Z]\.)/g,
+      '.\n\n$3'
+    );
+
+    return text.trim();
+  };
+
   const question: Question | undefined = questions[currentIndex];
   const progress = questions.length > 0 ? ((currentIndex) / questions.length) * 100 : 0;
 
@@ -302,7 +330,7 @@ const Questions = () => {
                   className={`question-statement${highlightMode ? ' highlight-active' : ''}`}
                   onMouseUp={handleMouseUp}
                 >
-                  {renderWithHighlights(question.statement)}
+                  {renderWithHighlights(preprocessStatement(question.statement))}
                 </p>
 
                 {question.image && (
@@ -323,7 +351,7 @@ const Questions = () => {
                 )}
 
                 <div className="alternatives-list">
-                  {question.alternatives.map((alt: Alternative) => {
+                  {[...question.alternatives].sort((a, b) => a.letter.localeCompare(b.letter)).map((alt: Alternative) => {
                     let cls = 'alternative-item';
                     if (alt.id === selectedAlt) cls += ' selected';
                     if (answered) {
