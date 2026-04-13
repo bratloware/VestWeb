@@ -54,3 +54,7 @@ pids/
 .yarn/unplugged
 .yarn/install-state.gz
 .pnp.*
+
+/server/data
+
+/client/public/images/enem

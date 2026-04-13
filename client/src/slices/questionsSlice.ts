@@ -31,6 +31,8 @@ export interface Question {
   difficulty: 'easy' | 'medium' | 'hard';
   source?: string;
   year?: number;
+  number?: number;
+  image?: string | null;
   bank?: string;
   alternatives: Alternative[];
   topic?: { id: number; name: string; subject?: { id: number; name: string } };

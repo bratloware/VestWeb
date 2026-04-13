@@ -32,7 +32,7 @@ export const getAll = async (req, res) => {
       ],
       limit: parseInt(limit),
       offset: parseInt(offset),
-      order: [['id', 'DESC']],
+      order: [sequelize.random()],
       distinct: true,
     });
 

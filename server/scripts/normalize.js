@@ -97,6 +97,19 @@ function normalizeSubject(raw) {
   return raw.trim().replace(/\b\w/g, c => c.toUpperCase());
 }
 
+// ── Remove lixo de extração de PDF no texto das alternativas ────────────────
+// Ex: "resposta correta. ENEM2025ENEM2025..." ou "texto. CADERNO 1 AZUL..."
+function cleanAltText(text) {
+  if (!text) return text;
+  // Corta no primeiro trecho de lixo típico de PDF do ENEM
+  return text
+    .replace(/\s*(ENEM\d{4}){2,}.*/s, '')
+    .replace(/\s*(CN|CH|LC|MT)\s*[–-]\s*\d+.*$/s, '')
+    .replace(/\s*CADERNO\s+\d+\s*[–-].*$/si, '')
+    .replace(/\s*\d{2,}\s+[A-Z]{2,}.*\d{4,}.*$/s, '')
+    .trim();
+}
+
 // ── Normaliza letra da alternativa ───────────────────────────────────────────
 function letterFromIndex(i) {
   return String.fromCharCode(65 + i); // 0→A, 1→B...
@@ -140,14 +153,14 @@ function normalizeAlternatives(q) {
     if (alts[0].is_correct !== undefined) {
       return alts.map((a, i) => ({
         letter: normalizeLetter(a.letter) || letterFromIndex(i),
-        text: String(a.text || '').trim(),
+        text: cleanAltText(String(a.text || '').trim()),
         is_correct: Boolean(a.is_correct),
       }));
     }
     // tem letter + text mas sem is_correct
     return alts.map((a, i) => ({
       letter: normalizeLetter(a.letter) || letterFromIndex(i),
-      text: String(a.text || a.content || '').trim(),
+      text: cleanAltText(String(a.text || a.content || '').trim()),
       is_correct: correctIndex !== null ? i === correctIndex : false,
     }));
   }
@@ -157,14 +170,14 @@ function normalizeAlternatives(q) {
     if (typeof q.options[0] === 'object') {
       return q.options.map((a, i) => ({
         letter: normalizeLetter(a.letter) || letterFromIndex(i),
-        text: String(a.text || a.content || '').trim(),
+        text: cleanAltText(String(a.text || a.content || '').trim()),
         is_correct: a.is_correct === true || (correctIndex !== null ? i === correctIndex : false),
       }));
     }
     // options como array de strings simples
     return q.options.map((opt, i) => ({
       letter: letterFromIndex(i),
-      text: String(opt).trim(),
+      text: cleanAltText(String(opt).trim()),
       is_correct: correctIndex !== null ? i === correctIndex : false,
     }));
   }
@@ -173,7 +186,7 @@ function normalizeAlternatives(q) {
   if (Array.isArray(q.alternativas) && q.alternativas.length > 0) {
     return q.alternativas.map((a, i) => ({
       letter: normalizeLetter(a.letra) || letterFromIndex(i),
-      text: String(a.texto || a.text || '').trim(),
+      text: cleanAltText(String(a.texto || a.text || '').trim()),
       is_correct: correctIndex !== null ? i === correctIndex : false,
     }));
   }
@@ -185,12 +198,23 @@ function normalizeAlternatives(q) {
       .filter(l => q[l] !== undefined)
       .map((l, i) => ({
         letter: l.toUpperCase(),
-        text: String(q[l]).trim(),
+        text: cleanAltText(String(q[l]).trim()),
         is_correct: correctIndex !== null ? i === correctIndex : false,
       }));
   }
 
   return [];
+}
+
+// ── Inferência de matéria do ENEM pelo número da questão ────────────────────
+function subjectFromEnemNumber(number) {
+  if (!number) return null;
+  const n = parseInt(number, 10);
+  if (n >= 1   && n <= 45)  return 'Linguagens e Códigos';
+  if (n >= 46  && n <= 90)  return 'Ciências Humanas';
+  if (n >= 91  && n <= 135) return 'Ciências da Natureza';
+  if (n >= 136 && n <= 180) return 'Matemática';
+  return null;
 }
 
 // ── Extrai o enunciado ───────────────────────────────────────────────────────
@@ -231,23 +255,22 @@ function normalizeQuestion(q, vestibular) {
     const idx = detectCorrect(q, alternatives);
     if (idx !== null && idx < alternatives.length) {
       alternatives.forEach((a, i) => { a.is_correct = i === idx; });
-    } else if (allowNoAnswer) {
-      // Dataset sem gabarito: marca a primeira como correta provisoriamente
-      alternatives.forEach((a, i) => { a.is_correct = i === 0; });
-    } else {
-      return null; // sem gabarito confiável
     }
+    // Se não encontrar gabarito, importa mesmo assim (is_correct ficará false em todas)
   }
 
+  const rawSubject = q.subject || q.materia || q.disciplina || q.area ||
+    q.subject_name || q.subjectName || null;
   const subject = normalizeSubject(
-    q.subject || q.materia || q.disciplina || q.area ||
-    q.subject_name || q.subjectName || null
+    rawSubject || (vestibular === 'ENEM' ? subjectFromEnemNumber(q.number) : null)
   );
 
   const topic = (q.topic || q.assunto || q.topico || q.tópico || null);
 
   return {
     statement,
+    number: q.number ?? null,
+    image: q.image ?? null,
     year: extractYear(q),
     difficulty: extractDifficulty(q),
     vestibular: vestibular.toUpperCase(),
@@ -263,7 +286,6 @@ function validate(q, index) {
   const errors = [];
   if (!q.statement) errors.push('statement vazio');
   if (!q.alternatives || q.alternatives.length < 2) errors.push('menos de 2 alternativas');
-  if (q.alternatives?.filter(a => a.is_correct).length !== 1) errors.push('não tem exatamente 1 alternativa correta');
   if (q.alternatives?.some(a => !a.text)) errors.push('alternativa sem texto');
   return errors;
 }

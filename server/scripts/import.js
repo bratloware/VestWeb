@@ -122,8 +122,6 @@ function validate(q, index) {
   if (!Array.isArray(q.alternatives) || q.alternatives.length < 2)
     errors.push('alternatives deve ter pelo menos 2 itens');
   else {
-    const correct = q.alternatives.filter(a => a.is_correct === true);
-    if (correct.length !== 1) errors.push(`deve ter 1 alternativa correta, tem ${correct.length}`);
     if (q.alternatives.some(a => !a.text?.trim())) errors.push('alternativa sem texto');
   }
   return errors;
@@ -237,6 +235,8 @@ async function main() {
           subtopic_id: ids.subtopicId,
           difficulty:  q.difficulty,
           year:        q.year || null,
+          number:      q.number ?? null,
+          image:       q.image ?? null,
           bank:        q.vestibular || null,
           created_by:  null,
         })),

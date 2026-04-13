@@ -308,6 +308,14 @@ const Questions = () => {
                   {renderWithHighlights(question.statement)}
                 </p>
 
+                {question.image && (
+                  <img
+                    src={question.image}
+                    alt="Imagem da questão"
+                    className="question-image"
+                  />
+                )}
+
                 {answered && (
                   <div className={`question-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>
                     <strong>{isCorrect ? '✓ Resposta correta!' : '✗ Resposta incorreta!'}</strong>
