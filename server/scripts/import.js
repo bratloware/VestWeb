@@ -49,7 +49,11 @@ const cache = {
 
 async function getOrCreateSubject(name) {
   if (cache.subjects.has(name)) return cache.subjects.get(name);
-  const [instance] = await Subject.findOrCreate({ where: { name } });
+  // Nunca cria matéria nova — busca pelo nome exato ou cai em "Geral"
+  let instance = await Subject.findOne({ where: { name } });
+  if (!instance) {
+    instance = cache.subjects.get('Geral') || await Subject.findOne({ where: { name: 'Geral' } });
+  }
   cache.subjects.set(name, instance);
   return instance;
 }

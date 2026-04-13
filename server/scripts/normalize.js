@@ -207,14 +207,19 @@ function normalizeAlternatives(q) {
 }
 
 // ── Inferência de matéria do ENEM pelo número da questão ────────────────────
+// Subjects existentes no banco: 1=Biologia, 2=Química, 3=Física, 4=Matemática,
+// 5=Língua Portuguesa, 6=Literatura, 7=Redação, 8=História, 9=Geografia,
+// 10=Filosofia, 11=Sociologia, 12=Inglês, 13=Espanhol, 19=Geral
 function subjectFromEnemNumber(number) {
   if (!number) return null;
   const n = parseInt(number, 10);
-  if (n >= 1   && n <= 45)  return 'Linguagens e Códigos';
-  if (n >= 46  && n <= 90)  return 'Ciências Humanas';
-  if (n >= 91  && n <= 135) return 'Ciências da Natureza';
+  // Q 136-180: Matemática (única área ENEM que mapeia 1:1 com um subject existente)
   if (n >= 136 && n <= 180) return 'Matemática';
-  return null;
+  // Q 1-45: Linguagens (abrange Língua Portuguesa, Literatura, Inglês, Espanhol)
+  // Q 46-90: Ciências Humanas (abrange História, Geografia, Filosofia, Sociologia)
+  // Q 91-135: Ciências da Natureza (abrange Biologia, Física, Química)
+  // → todas as demais áreas caem em Geral (não há subject único correspondente)
+  return 'Geral';
 }
 
 // ── Extrai o enunciado ───────────────────────────────────────────────────────
