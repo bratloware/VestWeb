@@ -1,21 +1,23 @@
 .teacher-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background: var(--bg);
+  overflow: hidden;
 }
 
 .teacher-main {
   flex: 1;
-  padding: 32px;
   margin-left: var(--sidebar-width);
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   background: var(--bg);
+  transition: margin-left 0.3s ease;
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
   .teacher-main {
     margin-left: 0;
-    padding: 16px;
     padding-bottom: 80px;
   }
 }
@@ -23,6 +25,7 @@
 /* Home */
 .teacher-home {
   max-width: 900px;
+  padding: 32px;
 }
 
 .teacher-home-greeting {

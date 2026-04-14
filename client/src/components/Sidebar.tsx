@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BookOpen, BarChart2, Users, MessageCircle,
   Settings, LogOut, Menu, X, LucideIcon, Sun, Moon, Layers,
+  ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import logo from '../assets/images/logo.png';
 import { AppDispatch, RootState } from '../store/store';
@@ -12,6 +13,9 @@ import { logoutThunk } from '../slices/authSlice';
 import { toggleTheme } from '../slices/themeSlice';
 import { getInitials } from '../utils/stringUtils';
 import './Sidebar.css';
+
+const COLLAPSED_WIDTH = '56px';
+const EXPANDED_WIDTH = '260px';
 
 export interface NavItem {
   label: string;
@@ -39,10 +43,21 @@ interface SidebarProps {
 
 const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { student } = useSelector((state: RootState) => state.auth);
   const { mode } = useSelector((state: RootState) => state.theme);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--sidebar-width',
+      collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH,
+    );
+    return () => {
+      document.documentElement.style.removeProperty('--sidebar-width');
+    };
+  }, [collapsed]);
 
   const handleLogout = async () => {
     await dispatch(logoutThunk());
@@ -57,11 +72,18 @@ const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
         {open ? <X size={22} /> : <Menu size={22} />}
       </button>
 
-      <aside className={`sidebar${open ? ' open' : ''}`}>
+      <aside className={`sidebar${open ? ' open' : ''}${collapsed ? ' collapsed' : ''}`}>
         <div className="sidebar-header">
           <Link to="/" className="sidebar-logo">
             <img src={logo} alt="VestWeb" className="sidebar-logo-img" />
           </Link>
+          <button
+            className="sidebar-collapse-btn"
+            onClick={() => setCollapsed(c => !c)}
+            aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          </button>
         </div>
 
         {student && (

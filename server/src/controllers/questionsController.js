@@ -72,9 +72,9 @@ export const create = async (req, res) => {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
-    const { statement, topic_id, subtopic_id, difficulty, source, year, bank, alternatives, vestibular_ids } = req.body;
+    const { statement, topic_id, subtopic_id, difficulty, source, year, bank, image, alternatives, vestibular_ids } = req.body;
     const question = await Question.create({
-      statement, topic_id, subtopic_id, difficulty, source, year, bank, created_by: req.user.id,
+      statement, topic_id, subtopic_id, difficulty, source, year, bank, image: image || null, created_by: req.user.id,
     });
 
     if (alternatives && Array.isArray(alternatives)) {
@@ -112,8 +112,19 @@ export const update = async (req, res) => {
     const question = await Question.findByPk(id);
     if (!question) return res.status(404).json({ message: 'Question not found' });
 
-    const { vestibular_ids, ...fields } = req.body;
+    const { vestibular_ids, alternatives, ...fields } = req.body;
     await question.update(fields);
+
+    if (alternatives && Array.isArray(alternatives)) {
+      for (const alt of alternatives) {
+        if (alt.id) {
+          await Alternative.update(
+            { text: alt.text, image: alt.image ?? null },
+            { where: { id: alt.id, question_id: id } },
+          );
+        }
+      }
+    }
 
     if (vestibular_ids && Array.isArray(vestibular_ids)) {
       await QuestionVestibular.destroy({ where: { question_id: id } });
@@ -122,7 +133,10 @@ export const update = async (req, res) => {
       }
     }
 
-    return res.json({ message: 'Question updated', data: question });
+    const updated = await Question.findByPk(id, {
+      include: [{ model: Alternative, as: 'alternatives' }],
+    });
+    return res.json({ message: 'Question updated', data: updated });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }

@@ -23,6 +23,10 @@ const Alternative = sequelize.define('Alternative', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  image: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
 }, {
   tableName: 'alternatives',
   timestamps: false,

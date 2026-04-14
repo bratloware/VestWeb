@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
-import { Plus, Trash2, Edit2, Save, X, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Plus, Trash2, Edit2, Save, X, Search, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react';
 import TeacherSidebar from '../../components/TeacherSidebar';
 import api from '../../api/api';
 import './TeacherQuestions.css';
@@ -8,12 +8,14 @@ interface Alternative {
   id?: number;
   letter?: string;
   text: string;
+  image?: string;
   is_correct: boolean;
 }
 
 interface Question {
   id: number;
   statement: string;
+  image: string | null;
   difficulty: 'easy' | 'medium' | 'hard';
   source: string | null;
   year: number | null;
@@ -30,11 +32,13 @@ interface Subject {
 interface EditRow {
   id: number;
   statement: string;
+  image: string;
   topic_id: string;
   subject_id: string;
   difficulty: string;
   source: string;
   year: string;
+  alternatives: Alternative[];
 }
 
 const DIFF_LABEL: Record<string, string> = { easy: 'Fácil', medium: 'Médio', hard: 'Difícil' };
@@ -42,17 +46,18 @@ const PAGE_SIZE = 30;
 
 const emptyNew = {
   statement: '',
+  image: '',
   topic_id: '',
   subject_id: '',
   difficulty: 'medium',
   source: '',
   year: '',
   alternatives: [
-    { text: '', is_correct: true },
-    { text: '', is_correct: false },
-    { text: '', is_correct: false },
-    { text: '', is_correct: false },
-    { text: '', is_correct: false },
+    { text: '', image: '', is_correct: true },
+    { text: '', image: '', is_correct: false },
+    { text: '', image: '', is_correct: false },
+    { text: '', image: '', is_correct: false },
+    { text: '', image: '', is_correct: false },
   ] as Alternative[],
 };
 
@@ -103,13 +108,15 @@ const TeacherQuestions = () => {
 
   const startEdit = (q: Question) => {
     setEditingRow({
-      id:         q.id,
-      statement:  q.statement,
-      topic_id:   String(q.topic?.id ?? ''),
-      subject_id: String(q.topic?.subject?.id ?? ''),
-      difficulty: q.difficulty,
-      source:     q.source ?? '',
-      year:       q.year ? String(q.year) : '',
+      id:           q.id,
+      statement:    q.statement,
+      image:        q.image ?? '',
+      topic_id:     String(q.topic?.id ?? ''),
+      subject_id:   String(q.topic?.subject?.id ?? ''),
+      difficulty:   q.difficulty,
+      source:       q.source ?? '',
+      year:         q.year ? String(q.year) : '',
+      alternatives: q.alternatives.map(a => ({ ...a })),
     });
   };
 
@@ -117,26 +124,24 @@ const TeacherQuestions = () => {
     if (!editingRow) return;
     setSaving(true);
     try {
-      await api.put(`/questions/${editingRow.id}`, {
-        statement: editingRow.statement,
-        topic_id:  Number(editingRow.topic_id),
-        difficulty: editingRow.difficulty,
-        source:    editingRow.source || null,
-        year:      editingRow.year ? Number(editingRow.year) : null,
+      const res = await api.put(`/questions/${editingRow.id}`, {
+        statement:    editingRow.statement,
+        image:        editingRow.image || null,
+        topic_id:     Number(editingRow.topic_id),
+        difficulty:   editingRow.difficulty,
+        source:       editingRow.source || null,
+        year:         editingRow.year ? Number(editingRow.year) : null,
+        alternatives: editingRow.alternatives.map(a => ({
+          id:    a.id,
+          text:  a.text,
+          image: a.image || null,
+        })),
       });
-      const topic = allTopics.find(t => t.id === Number(editingRow.topic_id));
-      setQuestions(prev => prev.map(q =>
-        q.id !== editingRow.id ? q : {
-          ...q,
-          statement:  editingRow.statement,
-          difficulty: editingRow.difficulty as Question['difficulty'],
-          source:     editingRow.source || null,
-          year:       editingRow.year ? Number(editingRow.year) : null,
-          topic:      topic
-            ? { id: topic.id, name: topic.name, subject: { id: topic.subjectId, name: topic.subjectName } }
-            : q.topic,
-        }
-      ));
+      const updated: Question = res.data.data;
+      setQuestions(prev => prev.map(q => q.id !== editingRow.id ? q : {
+        ...updated,
+        topic: q.topic,
+      }));
       setEditingRow(null);
     } finally {
       setSaving(false);
@@ -151,10 +156,19 @@ const TeacherQuestions = () => {
 
   const handleAltChange = (i: number, field: string, value: string | boolean) => {
     setNewForm(prev => {
-      const alts = [...prev.alternatives];
+      const alts = prev.alternatives.map(a => ({ ...a }));
       if (field === 'is_correct') alts.forEach((a, idx) => { a.is_correct = idx === i; });
       else alts[i] = { ...alts[i], [field]: value };
       return { ...prev, alternatives: alts };
+    });
+  };
+
+  const handleEditAltChange = (i: number, field: 'text' | 'image', value: string) => {
+    setEditingRow(r => {
+      if (!r) return r;
+      const alts = r.alternatives.map(a => ({ ...a }));
+      alts[i] = { ...alts[i], [field]: value };
+      return { ...r, alternatives: alts };
     });
   };
 
@@ -164,6 +178,7 @@ const TeacherQuestions = () => {
     try {
       await api.post('/questions', {
         statement:    newForm.statement,
+        image:        newForm.image || null,
         topic_id:     Number(newForm.topic_id),
         difficulty:   newForm.difficulty,
         source:       newForm.source || null,
@@ -224,6 +239,19 @@ const TeacherQuestions = () => {
                 />
               </div>
 
+              <div className="tqf-group">
+                <label>Imagem do enunciado (URL)</label>
+                <input
+                  type="text"
+                  value={newForm.image}
+                  onChange={e => setNewForm(p => ({ ...p, image: e.target.value }))}
+                  placeholder="https://..."
+                />
+                {newForm.image && (
+                  <img src={newForm.image} alt="preview" className="tqf-img-preview" />
+                )}
+              </div>
+
               <div className="tqf-row">
                 <div className="tqf-group">
                   <label>Matéria *</label>
@@ -281,13 +309,25 @@ const TeacherQuestions = () => {
                         checked={alt.is_correct}
                         onChange={() => handleAltChange(i, 'is_correct', true)}
                       />
-                      <input
-                        type="text"
-                        value={alt.text}
-                        required
-                        onChange={e => handleAltChange(i, 'text', e.target.value)}
-                        placeholder={`Alternativa ${String.fromCharCode(65 + i)}`}
-                      />
+                      <div className="tqf-alt-fields">
+                        <input
+                          type="text"
+                          value={alt.text}
+                          required
+                          onChange={e => handleAltChange(i, 'text', e.target.value)}
+                          placeholder={`Alternativa ${String.fromCharCode(65 + i)}`}
+                        />
+                        <input
+                          type="text"
+                          value={alt.image ?? ''}
+                          onChange={e => handleAltChange(i, 'image', e.target.value)}
+                          placeholder="URL da imagem (opcional)"
+                          className="tqf-alt-img-input"
+                        />
+                        {alt.image && (
+                          <img src={alt.image} alt="preview" className="tqf-img-preview tqf-img-preview--sm" />
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -338,6 +378,7 @@ const TeacherQuestions = () => {
                     <tr>
                       <th className="tqe-col-id">ID</th>
                       <th className="tqe-col-statement">Enunciado</th>
+                      <th className="tqe-col-img">Img</th>
                       <th className="tqe-col-subject">Matéria</th>
                       <th className="tqe-col-topic">Tópico</th>
                       <th className="tqe-col-diff">Dificuldade</th>
@@ -351,7 +392,8 @@ const TeacherQuestions = () => {
                     {paged.map(q => {
                       const isEditing = editingRow?.id === q.id;
                       return (
-                        <tr key={q.id} className={isEditing ? 'tqe-editing' : ''}>
+                        <React.Fragment key={q.id}>
+                        <tr className={isEditing ? 'tqe-editing' : ''}>
 
                           {/* ID */}
                           <td className="tqe-col-id tqe-cell-id">{q.id}</td>
@@ -359,18 +401,37 @@ const TeacherQuestions = () => {
                           {/* Enunciado */}
                           <td className="tqe-col-statement">
                             {isEditing ? (
-                              <textarea
-                                className="tqe-input tqe-textarea"
-                                value={editingRow.statement}
-                                rows={3}
-                                onChange={e => setEditingRow(r => r && { ...r, statement: e.target.value })}
-                              />
+                              <div className="tqe-edit-statement">
+                                <textarea
+                                  className="tqe-input tqe-textarea"
+                                  value={editingRow.statement}
+                                  rows={3}
+                                  onChange={e => setEditingRow(r => r && { ...r, statement: e.target.value })}
+                                />
+                                <input
+                                  className="tqe-input tqe-img-url-input"
+                                  value={editingRow.image}
+                                  onChange={e => setEditingRow(r => r && { ...r, image: e.target.value })}
+                                  placeholder="URL da imagem do enunciado..."
+                                />
+                                {editingRow.image && (
+                                  <img src={editingRow.image} alt="preview" className="tqe-img-thumb" />
+                                )}
+                              </div>
                             ) : (
                               <span className="tqe-truncate" title={q.statement}>
                                 {q.statement.replace(/\r?\n/g, ' ').slice(0, 130)}
                                 {q.statement.length > 130 ? '…' : ''}
                               </span>
                             )}
+                          </td>
+
+                          {/* Imagem */}
+                          <td className="tqe-col-img tqe-cell-center">
+                            {q.image
+                              ? <img src={q.image} alt="img" className="tqe-img-thumb" />
+                              : <span className="tqe-cell-text" style={{ color: 'var(--border)' }}><ImageIcon size={14} /></span>
+                            }
                           </td>
 
                           {/* Matéria */}
@@ -477,12 +538,38 @@ const TeacherQuestions = () => {
                             )}
                           </td>
                         </tr>
+
+                          {/* Linha extra: imagens das alternativas no modo edição */}
+                          {isEditing && (
+                            <tr className="tqe-editing tqe-alt-img-row">
+                              <td colSpan={10}>
+                                <div className="tqe-alt-imgs">
+                                  <span className="tqe-alt-imgs-label">Imagens das alternativas:</span>
+                                  {editingRow.alternatives.map((alt, i) => (
+                                    <div key={i} className="tqe-alt-img-item">
+                                      <span className="tqf-alt-letter">{String.fromCharCode(65 + i)}</span>
+                                      <input
+                                        className="tqe-input tqe-img-url-input"
+                                        value={alt.image ?? ''}
+                                        onChange={e => handleEditAltChange(i, 'image', e.target.value)}
+                                        placeholder="URL da imagem..."
+                                      />
+                                      {alt.image && (
+                                        <img src={alt.image} alt="preview" className="tqe-img-thumb" />
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
                       );
                     })}
 
                     {paged.length === 0 && (
                       <tr>
-                        <td colSpan={9} className="tqe-empty">Nenhuma questão encontrada.</td>
+                        <td colSpan={10} className="tqe-empty">Nenhuma questão encontrada.</td>
                       </tr>
                     )}
                   </tbody>

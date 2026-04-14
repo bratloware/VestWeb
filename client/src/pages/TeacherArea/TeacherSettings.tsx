@@ -77,6 +77,7 @@ const TeacherSettings = () => {
     <div className="teacher-layout">
       <TeacherSidebar />
       <main className="teacher-main">
+        <div style={{ padding: '32px' }}>
         <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Configurações</h1>
 
         <div className="settings-layout">
@@ -265,6 +266,7 @@ const TeacherSettings = () => {
               </div>
             )}
           </div>
+        </div>
         </div>
       </main>
     </div>
