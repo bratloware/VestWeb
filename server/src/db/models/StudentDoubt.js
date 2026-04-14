@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../index.js';
 
-const MentoringSession = sequelize.define('MentoringSession', {
+const StudentDoubt = sequelize.define('StudentDoubt', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -15,30 +15,21 @@ const MentoringSession = sequelize.define('MentoringSession', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  scheduled_at: {
-    type: DataTypes.DATE,
+  question: {
+    type: DataTypes.TEXT,
     allowNull: false,
   },
-  status: {
-    type: DataTypes.ENUM('pending', 'confirmed', 'done', 'cancelled'),
-    defaultValue: 'pending',
-  },
-  notes: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
-  rating: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    validate: { min: 1, max: 5 },
+  answered: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
 }, {
-  tableName: 'mentoring_sessions',
+  tableName: 'student_doubts',
   timestamps: false,
 });
 
-export default MentoringSession;
+export default StudentDoubt;

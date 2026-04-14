@@ -5,6 +5,8 @@ import { RootState } from './store/store';
 import ProtectedRoute from './components/ProtectedRoute';
 import TeacherRoute from './components/TeacherRoute';
 import LandingPage from './pages/LandingPage/LandingPage';
+import PaymentSuccess from './pages/PaymentSuccess/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel/PaymentCancel';
 import LoginPage from './pages/LoginPage/LoginPage';
 import TeacherLoginPage from './pages/TeacherLoginPage/TeacherLoginPage';
 import TeacherHome from './pages/TeacherArea/TeacherHome';
@@ -34,6 +36,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/payment/success" element={<PaymentSuccess />} />
+      <Route path="/payment/cancel" element={<PaymentCancel />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/teacher/login" element={<TeacherLoginPage />} />
       <Route path="/select-platform" element={

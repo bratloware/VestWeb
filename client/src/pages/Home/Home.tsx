@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import {
   HelpCircle, ClipboardList, Play, Calendar, BarChart2, Users,
   MessageCircle, Zap, Target, Trophy, Flame, Lightbulb,
-  CheckCircle2, Circle, Plus, Rocket, BookOpen, Video,
+  CheckCircle2, Circle, Plus, Rocket, BookOpen, Video, Megaphone, X,
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api/api';
@@ -83,6 +83,24 @@ const Home = () => {
   const [weekEvents, setWeekEvents] = useState<WeekEvent[]>([]);
   const [resumeItems, setResumeItems] = useState<ResumeItem[]>([]);
   const [resumeLoaded, setResumeLoaded] = useState(false);
+  const [announcements, setAnnouncements] = useState<{ id: number; content: string; mentor: { student: { name: string } } }[]>([]);
+  const [dismissedAnnouncements, setDismissedAnnouncements] = useState<number[]>(() => {
+    try { return JSON.parse(localStorage.getItem('dismissed_announcements') ?? '[]'); } catch { return []; }
+  });
+
+  useEffect(() => {
+    api.get('/teacher/announcements/feed')
+      .then(res => setAnnouncements(res.data.data ?? []))
+      .catch(() => {});
+  }, []);
+
+  const dismissAnnouncement = (id: number) => {
+    const next = [...dismissedAnnouncements, id];
+    setDismissedAnnouncements(next);
+    localStorage.setItem('dismissed_announcements', JSON.stringify(next));
+  };
+
+  const visibleAnnouncements = announcements.filter(a => !dismissedAnnouncements.includes(a.id));
 
   // Metrics + calendar
   useEffect(() => {
@@ -278,6 +296,27 @@ const Home = () => {
           <h1>{getGreeting()}, <span>{student?.name?.split(' ')[0] || 'Aluno'}</span>!</h1>
           <p>Tudo pronto para mais um dia de estudos?</p>
         </div>
+
+        {visibleAnnouncements.length > 0 && (
+          <div className="home-announcements">
+            {visibleAnnouncements.map(a => (
+              <div key={a.id} className="home-announcement-banner">
+                <Megaphone size={16} className="home-announcement-icon" />
+                <div className="home-announcement-content">
+                  <span className="home-announcement-from">{a.mentor.student.name.replace(/^PROF\.\s*/i, '')}</span>
+                  <p>{a.content}</p>
+                </div>
+                <button
+                  className="home-announcement-dismiss"
+                  onClick={() => dismissAnnouncement(a.id)}
+                  title="Dispensar"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="home-metrics">
           <div className="metric-card">

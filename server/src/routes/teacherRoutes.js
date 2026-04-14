@@ -9,6 +9,12 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  getInsights,
+  getActivity,
+  getMyAnnouncements,
+  createAnnouncement,
+  deleteAnnouncement,
+  getAnnouncementsFeed,
 } from '../controllers/teacherController.js';
 
 const router = Router();
@@ -17,6 +23,13 @@ router.use(authMiddleware);
 router.use(requireTeacher);
 
 router.get('/profile', getProfile);
+router.get('/insights', getInsights);
+router.get('/activity', getActivity);
+
+router.get('/announcements/feed', getAnnouncementsFeed);
+router.get('/announcements', getMyAnnouncements);
+router.post('/announcements', createAnnouncement);
+router.delete('/announcements/:id', deleteAnnouncement);
 
 router.get('/sessions', getMySessions);
 router.put('/sessions/:id', updateSession);

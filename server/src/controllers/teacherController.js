@@ -1,4 +1,5 @@
-import { Mentor, MentoringSession, Student, Question, Alternative, Topic, Subject } from '../db/models/index.js';
+import { Op } from 'sequelize';
+import { Mentor, MentoringSession, Student, Question, Alternative, Topic, Subject, Video, VideoProgress, StudentDoubt, Post, Comment, Announcement } from '../db/models/index.js';
 
 export const getProfile = async (req, res) => {
   try {
@@ -114,6 +115,155 @@ export const updateQuestion = async (req, res) => {
   }
 };
 
+export const getActivity = async (req, res) => {
+  try {
+    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
+    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+
+    // 1. Recent mentoring session bookings
+    const recentSessions = await MentoringSession.findAll({
+      where: { mentor_id: mentor.id },
+      include: [{ model: Student, as: 'student', attributes: ['id', 'name', 'avatar_url'] }],
+      order: [['created_at', 'DESC']],
+      limit: 6,
+    });
+
+    // 2. Recent VideoProgress on teacher's videos
+    const myVideos = await Video.findAll({
+      where: { created_by: req.user.id },
+      attributes: ['id', 'title'],
+    });
+    const myVideoMap = Object.fromEntries(myVideos.map(v => [v.id, v.title]));
+    const myVideoIds = myVideos.map(v => v.id);
+
+    let recentViews = [];
+    if (myVideoIds.length > 0) {
+      recentViews = await VideoProgress.findAll({
+        where: { video_id: { [Op.in]: myVideoIds } },
+        include: [{ model: Student, as: 'student', attributes: ['id', 'name', 'avatar_url'] }],
+        order: [['updated_at', 'DESC']],
+        limit: 6,
+      });
+    }
+
+    // 3. Recent comments on teacher's posts
+    const myPosts = await Post.findAll({
+      where: { student_id: req.user.id },
+      attributes: ['id'],
+    });
+    const myPostIds = myPosts.map(p => p.id);
+
+    let recentComments = [];
+    if (myPostIds.length > 0) {
+      recentComments = await Comment.findAll({
+        where: { post_id: { [Op.in]: myPostIds }, student_id: { [Op.ne]: req.user.id } },
+        include: [{ model: Student, as: 'student', attributes: ['id', 'name', 'avatar_url'] }],
+        order: [['created_at', 'DESC']],
+        limit: 6,
+      });
+    }
+
+    // Merge and sort by date
+    const events = [
+      ...recentSessions.map(s => ({
+        type: 'session',
+        date: s.created_at,
+        student: s.student,
+        meta: { scheduled_at: s.scheduled_at, status: s.status },
+      })),
+      ...recentViews.map(vp => ({
+        type: 'view',
+        date: vp.updated_at,
+        student: vp.student,
+        meta: { videoTitle: myVideoMap[vp.video_id] ?? 'uma aula' },
+      })),
+      ...recentComments.map(c => ({
+        type: 'comment',
+        date: c.created_at,
+        student: c.student,
+        meta: {},
+      })),
+    ]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 10);
+
+    return res.json({ message: 'Activity fetched', data: events });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const getInsights = async (req, res) => {
+  try {
+    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
+    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+
+    // Pending doubts
+    const pendingDoubts = await StudentDoubt.count({
+      where: { mentor_id: mentor.id, answered: false },
+    });
+
+    // Active students in last 24h watching this teacher's videos
+    const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const myVideos = await Video.findAll({
+      where: { created_by: req.user.id },
+      attributes: ['id'],
+    });
+    const myVideoIds = myVideos.map(v => v.id);
+
+    let activeStudents = 0;
+    if (myVideoIds.length > 0) {
+      const rows = await VideoProgress.findAll({
+        where: {
+          video_id: { [Op.in]: myVideoIds },
+          updated_at: { [Op.gte]: since24h },
+        },
+        attributes: ['student_id'],
+        group: ['student_id'],
+      });
+      activeStudents = rows.length;
+    }
+
+    // Average rating from done sessions
+    const doneSessions = await MentoringSession.findAll({
+      where: { mentor_id: mentor.id, status: 'done', rating: { [Op.not]: null } },
+      attributes: ['rating'],
+    });
+    const avgRating = doneSessions.length > 0
+      ? (doneSessions.reduce((sum, s) => sum + s.rating, 0) / doneSessions.length).toFixed(1)
+      : null;
+
+    // Video status breakdown
+    const allMyVideos = await Video.findAll({
+      where: { created_by: req.user.id },
+      attributes: ['id', 'title', 'published_at', 'thumbnail_url', 'created_at'],
+      order: [['created_at', 'DESC']],
+      limit: 5,
+    });
+    const now = new Date();
+    const videoStats = {
+      total: await Video.count({ where: { created_by: req.user.id } }),
+      published: await Video.count({ where: { created_by: req.user.id, published_at: { [Op.lte]: now, [Op.not]: null } } }),
+      scheduled: await Video.count({ where: { created_by: req.user.id, published_at: { [Op.gt]: now } } }),
+      draft: await Video.count({ where: { created_by: req.user.id, published_at: null } }),
+      recent: allMyVideos.map(v => ({
+        id: v.id,
+        title: v.title,
+        thumbnail_url: v.thumbnail_url,
+        status: !v.published_at ? 'draft' : new Date(v.published_at) > now ? 'scheduled' : 'published',
+        published_at: v.published_at,
+      })),
+    };
+
+    return res.json({
+      message: 'Insights fetched',
+      data: { pendingDoubts, activeStudents, avgRating, ratingCount: doneSessions.length, videoStats },
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 export const deleteQuestion = async (req, res) => {
   try {
     const { id } = req.params;
@@ -126,6 +276,91 @@ export const deleteQuestion = async (req, res) => {
 
     await question.destroy();
     return res.json({ message: 'Question deleted' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+// ── Announcements ──────────────────────────────────────────────────────────────
+
+export const getMyAnnouncements = async (req, res) => {
+  try {
+    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
+    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+
+    const announcements = await Announcement.findAll({
+      where: { mentor_id: mentor.id },
+      order: [['created_at', 'DESC']],
+    });
+    return res.json({ message: 'Announcements fetched', data: announcements });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const createAnnouncement = async (req, res) => {
+  try {
+    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
+    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+
+    const { content, expires_at } = req.body;
+    if (!content?.trim()) return res.status(400).json({ message: 'Conteúdo obrigatório' });
+
+    const announcement = await Announcement.create({
+      mentor_id: mentor.id,
+      content: content.trim(),
+      expires_at: expires_at ?? null,
+    });
+    return res.status(201).json({ message: 'Announcement created', data: announcement });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const deleteAnnouncement = async (req, res) => {
+  try {
+    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
+    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+
+    const announcement = await Announcement.findByPk(req.params.id);
+    if (!announcement) return res.status(404).json({ message: 'Aviso não encontrado' });
+    if (announcement.mentor_id !== mentor.id) return res.status(403).json({ message: 'Forbidden' });
+
+    await announcement.destroy();
+    return res.json({ message: 'Announcement deleted' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+// Student-facing: active announcements from mentors this student has sessions with
+export const getAnnouncementsFeed = async (req, res) => {
+  try {
+    const now = new Date();
+
+    // Find mentors linked to this student via any session
+    const sessions = await MentoringSession.findAll({
+      where: { student_id: req.user.id },
+      attributes: ['mentor_id'],
+      group: ['mentor_id'],
+    });
+    const mentorIds = sessions.map(s => s.mentor_id);
+    if (mentorIds.length === 0) return res.json({ message: 'No announcements', data: [] });
+
+    const announcements = await Announcement.findAll({
+      where: {
+        mentor_id: { [Op.in]: mentorIds },
+        [Op.or]: [{ expires_at: null }, { expires_at: { [Op.gt]: now } }],
+      },
+      include: [{
+        model: Mentor,
+        as: 'mentor',
+        include: [{ model: Student, as: 'student', attributes: ['id', 'name', 'avatar_url'] }],
+      }],
+      order: [['created_at', 'DESC']],
+    });
+
+    return res.json({ message: 'Feed fetched', data: announcements });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
