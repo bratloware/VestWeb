@@ -74,6 +74,7 @@ const TeacherQuestions = () => {
   const [showNew, setShowNew]         = useState(false);
   const [newForm, setNewForm]         = useState(emptyNew);
   const [newSaving, setNewSaving]     = useState(false);
+  const [modifiedIds, setModifiedIds] = useState<Set<number>>(new Set());
 
   const load = async () => {
     setLoading(true);
@@ -142,6 +143,7 @@ const TeacherQuestions = () => {
         ...updated,
         topic: q.topic,
       }));
+      setModifiedIds(prev => new Set(prev).add(editingRow.id));
       setEditingRow(null);
     } finally {
       setSaving(false);
@@ -198,10 +200,6 @@ const TeacherQuestions = () => {
     [allTopics, newForm.subject_id]
   );
 
-  const editTopics = useMemo(
-    () => editingRow?.subject_id ? allTopics.filter(t => String(t.subjectId) === editingRow.subject_id) : allTopics,
-    [allTopics, editingRow?.subject_id]
-  );
 
   return (
     <div className="teacher-layout">
@@ -380,7 +378,6 @@ const TeacherQuestions = () => {
                       <th className="tqe-col-statement">Enunciado</th>
                       <th className="tqe-col-img">Img</th>
                       <th className="tqe-col-subject">Matéria</th>
-                      <th className="tqe-col-topic">Tópico</th>
                       <th className="tqe-col-diff">Dificuldade</th>
                       <th className="tqe-col-source">Fonte</th>
                       <th className="tqe-col-year">Ano</th>
@@ -396,7 +393,10 @@ const TeacherQuestions = () => {
                         <tr className={isEditing ? 'tqe-editing' : ''}>
 
                           {/* ID */}
-                          <td className="tqe-col-id tqe-cell-id">{q.id}</td>
+                          <td className="tqe-col-id tqe-cell-id">
+                            {q.id}
+                            {modifiedIds.has(q.id) && <span className="tqe-modified-dot" title="Alterada" />}
+                          </td>
 
                           {/* Enunciado */}
                           <td className="tqe-col-statement">
@@ -447,22 +447,6 @@ const TeacherQuestions = () => {
                               </select>
                             ) : (
                               <span className="tqe-cell-text">{q.topic?.subject?.name}</span>
-                            )}
-                          </td>
-
-                          {/* Tópico */}
-                          <td className="tqe-col-topic">
-                            {isEditing ? (
-                              <select
-                                className="tqe-input"
-                                value={editingRow.topic_id}
-                                onChange={e => setEditingRow(r => r && { ...r, topic_id: e.target.value })}
-                              >
-                                <option value="">Selecione...</option>
-                                {editTopics.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-                              </select>
-                            ) : (
-                              <span className="tqe-cell-text">{q.topic?.name}</span>
                             )}
                           </td>
 
