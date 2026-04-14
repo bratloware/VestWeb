@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(xargs basename:*)",
-      "Bash(xargs grep:*)",
-      "Bash(cat /c/Projects/VestWebWeb/server/src/routes/*.js)"
-    ]
-  }
-}
