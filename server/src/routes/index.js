@@ -10,6 +10,7 @@ import gamificationRoutes from './gamificationRoutes.js';
 import landingRoutes from './landingRoutes.js';
 import teacherRoutes from './teacherRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
+import essayRoutes from './essayRoutes.js';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/gamification', gamificationRoutes);
 router.use('/landing', landingRoutes);
 router.use('/teacher', teacherRoutes);
 router.use('/payments', paymentRoutes);
+router.use('/essay', essayRoutes);
 
 export default router;
