@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Filter, ChevronRight, RotateCcw, PenLine, Trash2 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
