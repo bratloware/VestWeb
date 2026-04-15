@@ -38,14 +38,14 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message, error: process.env.NODE_ENV === 'development' ? err.stack : undefined });
 });
 
-sequelize.sync({ alter: true })
+sequelize.authenticate()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`VestWeb server running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error('Erro ao sincronizar banco de dados:', err);
+    console.error('Erro ao conectar ao banco de dados:', err);
     process.exit(1);
   });
 

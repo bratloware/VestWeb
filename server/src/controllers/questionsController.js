@@ -1,42 +1,85 @@
-import { Question, Alternative, Topic, Subtopic, Subject, Vestibular, QuestionVestibular, Answer, QuestionSession, Points, Streak } from '../db/models/index.js';
+import { QueryTypes } from 'sequelize';
+import { Alternative, Answer, Points, Streak } from '../db/models/index.js';
 import sequelize from '../db/index.js';
+
+// Mapeamento subject_id (int) ↔ discipline (string da tabela "Question")
+const DISCIPLINE_MAP = {
+  1: 'ciencias-humanas',
+  2: 'ciencias-natureza',
+  3: 'linguagens',
+  4: 'matematica',
+};
+
+const SUBJECTS_LIST = [
+  { id: 1, name: 'Ciências Humanas e suas Tecnologias',       topics: [] },
+  { id: 2, name: 'Ciências da Natureza e suas Tecnologias',   topics: [] },
+  { id: 3, name: 'Linguagens, Códigos e suas Tecnologias',    topics: [] },
+  { id: 4, name: 'Matemática e suas Tecnologias',             topics: [] },
+];
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+const QUESTION_SELECT = `
+  SELECT
+    q.id,
+    q.title,
+    q.index,
+    q.year,
+    q.discipline,
+    q.language,
+    q.context                  AS statement,
+    q.files->>0                AS image,
+    q."correctAlternative",
+    q."alternativesIntroduction",
+    json_agg(
+      json_build_object(
+        'id',        a.id,
+        'letter',    a.letter,
+        'text',      a.text,
+        'file',      a.file,
+        'is_correct', a."isCorrect"
+      ) ORDER BY a.letter
+    ) AS alternatives
+  FROM "Question" q
+  LEFT JOIN "Alternative" a ON a."questionId" = q.id
+`;
+
+// ─── Endpoints ──────────────────────────────────────────────────────────────
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, topic_id, subtopic_id, difficulty, bank, vestibular_id, limit = 100, offset = 0 } = req.query;
-    const where = {};
-    const topicWhere = {};
+    const { subject_id, vestibular_id, limit = 20, offset = 0 } = req.query;
 
-    if (topic_id) where.topic_id = topic_id;
-    if (subtopic_id) where.subtopic_id = subtopic_id;
-    if (difficulty) where.difficulty = difficulty;
-    if (bank) where.bank = bank;
-    if (subject_id) topicWhere.subject_id = subject_id;
-    // Se vestibular_id for passado, filtra questões daquele vestibular
-    const vestibularInclude = vestibular_id
-      ? { model: Vestibular, as: 'vestibulares', through: { attributes: [] }, where: { id: vestibular_id }, required: true }
-      : { model: Vestibular, as: 'vestibulares', through: { attributes: [] }, required: false };
+    const conditions = ['q.language IS NULL'];
+    const replacements = { limit: parseInt(limit), offset: parseInt(offset) };
 
-    const questions = await Question.findAndCountAll({
-      where,
-      include: [
-        { model: Alternative, as: 'alternatives' },
-        {
-          model: Topic,
-          as: 'topic',
-          where: Object.keys(topicWhere).length ? topicWhere : undefined,
-          include: [{ model: Subject, as: 'subject' }],
-        },
-        { model: Subtopic, as: 'subtopic', required: false },
-        vestibularInclude,
-      ],
-      limit: parseInt(limit),
-      offset: parseInt(offset),
-      order: [sequelize.random()],
-      distinct: true,
+    if (subject_id && DISCIPLINE_MAP[subject_id]) {
+      conditions.push(`q.discipline = :discipline`);
+      replacements.discipline = DISCIPLINE_MAP[subject_id];
+    }
+
+    if (vestibular_id) {
+      conditions.push(`q.year = :year`);
+      replacements.year = parseInt(vestibular_id);
+    }
+
+    const where = `WHERE ${conditions.join(' AND ')}`;
+
+    const [questions, countRows] = await Promise.all([
+      sequelize.query(
+        `${QUESTION_SELECT} ${where} GROUP BY q.id ORDER BY RANDOM() LIMIT :limit OFFSET :offset`,
+        { replacements, type: QueryTypes.SELECT },
+      ),
+      sequelize.query(
+        `SELECT COUNT(*) AS count FROM "Question" q ${where}`,
+        { replacements, type: QueryTypes.SELECT },
+      ),
+    ]);
+
+    return res.json({
+      message: 'Questions fetched',
+      data: { count: parseInt(countRows[0].count), rows: questions },
     });
-
-    return res.json({ message: 'Questions fetched', data: questions });
   } catch (error) {
     console.error('getAll questions error:', error);
     return res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -46,18 +89,10 @@ export const getAll = async (req, res) => {
 export const getById = async (req, res) => {
   try {
     const { id } = req.params;
-    const question = await Question.findByPk(id, {
-      include: [
-        { model: Alternative, as: 'alternatives' },
-        {
-          model: Topic, as: 'topic',
-          include: [{ model: Subject, as: 'subject' }],
-        },
-        { model: Subtopic, as: 'subtopic', required: false },
-        { model: Vestibular, as: 'vestibulares', through: { attributes: [] } },
-      ],
-      order: [[{ model: Alternative, as: 'alternatives' }, 'letter', 'ASC']],
-    });
+    const [question] = await sequelize.query(
+      `${QUESTION_SELECT} WHERE q.id = :id GROUP BY q.id`,
+      { replacements: { id: parseInt(id) }, type: QueryTypes.SELECT },
+    );
     if (!question) return res.status(404).json({ message: 'Question not found' });
     return res.json({ message: 'Question fetched', data: question });
   } catch (error) {
@@ -65,138 +100,35 @@ export const getById = async (req, res) => {
   }
 };
 
-export const create = async (req, res) => {
-  try {
-    const { role } = req.user;
-    if (role !== 'teacher' && role !== 'admin') {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-
-    const { statement, topic_id, subtopic_id, difficulty, source, year, bank, image, alternatives, vestibular_ids } = req.body;
-    const question = await Question.create({
-      statement, topic_id, subtopic_id, difficulty, source, year, bank, image: image || null, created_by: req.user.id,
-    });
-
-    if (alternatives && Array.isArray(alternatives)) {
-      for (const alt of alternatives) {
-        await Alternative.create({ question_id: question.id, ...alt });
-      }
-    }
-
-    if (vestibular_ids && Array.isArray(vestibular_ids)) {
-      for (const vestibular_id of vestibular_ids) {
-        await QuestionVestibular.create({ question_id: question.id, vestibular_id });
-      }
-    }
-
-    const full = await Question.findByPk(question.id, {
-      include: [
-        { model: Alternative, as: 'alternatives' },
-        { model: Vestibular, as: 'vestibulares', through: { attributes: [] } },
-      ],
-    });
-
-    return res.status(201).json({ message: 'Question created', data: full });
-  } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
-
-export const update = async (req, res) => {
-  try {
-    const { role } = req.user;
-    if (role !== 'teacher' && role !== 'admin') {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-    const { id } = req.params;
-    const question = await Question.findByPk(id);
-    if (!question) return res.status(404).json({ message: 'Question not found' });
-
-    const { vestibular_ids, alternatives, ...fields } = req.body;
-    await question.update(fields);
-
-    if (alternatives && Array.isArray(alternatives)) {
-      for (const alt of alternatives) {
-        if (alt.id) {
-          await Alternative.update(
-            { text: alt.text, image: alt.image ?? null },
-            { where: { id: alt.id, question_id: id } },
-          );
-        }
-      }
-    }
-
-    if (vestibular_ids && Array.isArray(vestibular_ids)) {
-      await QuestionVestibular.destroy({ where: { question_id: id } });
-      for (const vestibular_id of vestibular_ids) {
-        await QuestionVestibular.create({ question_id: id, vestibular_id });
-      }
-    }
-
-    const updated = await Question.findByPk(id, {
-      include: [{ model: Alternative, as: 'alternatives' }],
-    });
-    return res.json({ message: 'Question updated', data: updated });
-  } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
-
-export const remove = async (req, res) => {
-  try {
-    const { role } = req.user;
-    if (role !== 'teacher' && role !== 'admin') {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
-    const { id } = req.params;
-    const question = await Question.findByPk(id);
-    if (!question) return res.status(404).json({ message: 'Question not found' });
-    await question.destroy();
-    return res.json({ message: 'Question deleted' });
-  } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
-
 export const getSubjects = async (req, res) => {
-  try {
-    // Retorna apenas matérias que possuem ao menos uma questão
-    const subjects = await Subject.findAll({
-      include: [{
-        model: Topic,
-        as: 'topics',
-        required: true,
-        include: [{ model: Subtopic, as: 'subtopics' }],
-        where: sequelize.literal(
-          `EXISTS (SELECT 1 FROM questions q WHERE q.topic_id = "topics"."id")`
-        ),
-      }],
-      order: [['name', 'ASC']],
-    });
-    return res.json({ message: 'Subjects fetched', data: subjects });
-  } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
+  return res.json({ message: 'Subjects fetched', data: SUBJECTS_LIST });
 };
 
 export const getVestibulares = async (req, res) => {
   try {
-    const vestibulares = await Vestibular.findAll({ order: [['name', 'ASC']] });
-    return res.json({ message: 'Vestibulares fetched', data: vestibulares });
+    const rows = await sequelize.query(
+      `SELECT year AS id, title AS name FROM "Exam" ORDER BY year DESC`,
+      { type: QueryTypes.SELECT },
+    );
+    return res.json({ message: 'Vestibulares fetched', data: rows });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
-export const setTargetVestibular = async (req, res) => {
+export const getYears = async (req, res) => {
   try {
-    const { vestibular_id } = req.body;
-    await req.user.update({ target_vestibular_id: vestibular_id || null });
-    return res.json({ message: 'Target vestibular updated', data: { target_vestibular_id: vestibular_id } });
+    const rows = await sequelize.query(
+      `SELECT year FROM "Exam" ORDER BY year DESC`,
+      { type: QueryTypes.SELECT },
+    );
+    return res.json({ message: 'Years fetched', data: rows.map(r => r.year) });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
+
+// ─── Answer submission ───────────────────────────────────────────────────────
 
 export const submitAnswer = async (req, res) => {
   try {
@@ -214,11 +146,6 @@ export const submitAnswer = async (req, res) => {
       response_time_seconds,
     });
 
-    await Question.increment(
-      is_correct ? { attempt_count: 1, correct_count: 1 } : { attempt_count: 1 },
-      { where: { id: question_id } }
-    );
-
     if (is_correct) {
       await Points.create({ student_id, amount: 10, reason: 'correct_answer' });
     }
@@ -230,10 +157,24 @@ export const submitAnswer = async (req, res) => {
     } else if (streak.last_activity_date !== today) {
       const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
       const new_streak = streak.last_activity_date === yesterday ? streak.current_streak + 1 : 1;
-      await streak.update({ current_streak: new_streak, longest_streak: Math.max(new_streak, streak.longest_streak), last_activity_date: today });
+      await streak.update({
+        current_streak: new_streak,
+        longest_streak: Math.max(new_streak, streak.longest_streak),
+        last_activity_date: today,
+      });
     }
 
     return res.json({ message: 'Answer submitted', data: { answer, is_correct } });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const setTargetVestibular = async (req, res) => {
+  try {
+    const { vestibular_id } = req.body;
+    await req.user.update({ target_vestibular_id: vestibular_id || null });
+    return res.json({ message: 'Target vestibular updated', data: { target_vestibular_id: vestibular_id } });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }

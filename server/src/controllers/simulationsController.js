@@ -61,6 +61,9 @@ export const create = async (req, res) => {
 export const startSession = async (req, res) => {
   try {
     const { id } = req.params;
+    const simulation = await Simulation.findByPk(id);
+    if (!simulation) return res.status(404).json({ message: 'Simulation not found' });
+
     const session = await QuestionSession.create({
       student_id: req.user.id,
       simulation_id: id,
