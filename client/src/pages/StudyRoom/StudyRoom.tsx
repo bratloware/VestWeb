@@ -20,6 +20,7 @@ const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6:00 to 21:00
 
 const StudyRoom = () => {
   const [events, setEvents] = useState<StudyEvent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedCell, setSelectedCell] = useState<{ dayOffset: number; hour: number } | null>(null);
   const [form, setForm] = useState({ title: '', date: '', start_time: '', end_time: '', type: 'study_block', topic_id: '' });
@@ -39,7 +40,7 @@ const StudyRoom = () => {
     try {
       const res = await api.get('/calendar/events');
       setEvents(res.data.data || []);
-    } catch { /* ignore */ }
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
   useEffect(() => { loadEvents(); }, []);
@@ -90,6 +91,15 @@ const StudyRoom = () => {
     const d = new Date(e.date);
     return d >= weekDates[0] && d <= weekDates[6];
   }).sort((a, b) => (a.date + (a.start_time || '')) > (b.date + (b.start_time || '')) ? 1 : -1);
+
+  if (loading) return (
+    <div className="study-room-page">
+      <Sidebar />
+      <main className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner" />
+      </main>
+    </div>
+  );
 
   return (
     <div className="study-room-page">

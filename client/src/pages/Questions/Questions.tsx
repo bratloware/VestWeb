@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, Clock, ChevronRight, RotateCcw, PenLine, Trash2 } from 'lucide-react';
+import { Filter, ChevronRight, RotateCcw, PenLine, Trash2 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Questions.css';
-
-const QUESTION_TIME = 120;
 
 const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,7 +17,6 @@ const Questions = () => {
   const [answered, setAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [sessionId, setSessionId] = useState<number | null>(null);
-  const [timer, setTimer] = useState(QUESTION_TIME);
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [finished, setFinished] = useState(false);
   const [highlightMode, setHighlightMode] = useState(false);
@@ -31,22 +28,6 @@ const Questions = () => {
     dispatch(fetchVestibulares());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!answered && questions.length > 0 && !finished) {
-      setTimer(QUESTION_TIME);
-      const interval = setInterval(() => {
-        setTimer(prev => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [currentIndex, answered, questions.length, finished]);
-
   const handleSearch = async () => {
     dispatch(fetchQuestions({ ...filters, limit: 200 }));
     setCurrentIndex(0);
@@ -57,10 +38,10 @@ const Questions = () => {
     setScore({ correct: 0, total: 0 });
 
     try {
-      const res = await api.post('/simulations/1/start'); // practice mode
+      const res = await api.post('/questions/session');
       setSessionId(res.data.data.id);
     } catch {
-      setSessionId(1);
+      setSessionId(null);
     }
   };
 
@@ -80,7 +61,6 @@ const Questions = () => {
           session_id: sessionId,
           question_id: question.id,
           chosen_alternative_id: selectedAlt,
-          response_time_seconds: QUESTION_TIME - timer,
         });
       } catch { /* ignore */ }
     }
@@ -191,8 +171,6 @@ const Questions = () => {
   const question: Question | undefined = questions[currentIndex];
   const progress = questions.length > 0 ? ((currentIndex) / questions.length) * 100 : 0;
 
-  const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
-
   return (
     <div className="questions-page">
       <Sidebar />
@@ -279,13 +257,6 @@ const Questions = () => {
               </div>
             ) : question ? (
               <div className="question-container">
-                <div className="question-progress">
-                  <div className={`question-timer${timer <= 30 ? ' warning' : ''}`}>
-                    <Clock size={16} />
-                    {formatTime(timer)}
-                  </div>
-                </div>
-
                 <div className="progress-bar">
                   <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
                 </div>

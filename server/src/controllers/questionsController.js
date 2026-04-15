@@ -1,5 +1,5 @@
 import { QueryTypes } from 'sequelize';
-import { Alternative, Answer, Points, Streak } from '../db/models/index.js';
+import { Answer, Points, Streak } from '../db/models/index.js';
 import sequelize from '../db/index.js';
 
 // Mapeamento subject_id (int) ↔ discipline (string da tabela "Question")
@@ -135,14 +135,19 @@ export const submitAnswer = async (req, res) => {
     const { session_id, question_id, chosen_alternative_id, response_time_seconds } = req.body;
     const student_id = req.user.id;
 
-    const alternative = await Alternative.findByPk(chosen_alternative_id);
-    const is_correct = alternative ? alternative.is_correct : false;
+    // Busca na tabela Prisma "Alternative"
+    const [alt] = await sequelize.query(
+      `SELECT "isCorrect" FROM "Alternative" WHERE id = :id`,
+      { replacements: { id: chosen_alternative_id }, type: QueryTypes.SELECT },
+    );
+    const is_correct = alt ? alt.isCorrect : false;
 
     const answer = await Answer.create({
       session_id,
       question_id,
       chosen_alternative_id,
       is_correct,
+      student_id,
       response_time_seconds,
     });
 
@@ -165,6 +170,20 @@ export const submitAnswer = async (req, res) => {
     }
 
     return res.json({ message: 'Answer submitted', data: { answer, is_correct } });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const startPracticeSession = async (req, res) => {
+  try {
+    const { QuestionSession } = await import('../db/models/index.js');
+    const session = await QuestionSession.create({
+      student_id: req.user.id,
+      simulation_id: null,
+      mode: 'practice',
+    });
+    return res.status(201).json({ message: 'Session started', data: session });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }

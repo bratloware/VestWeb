@@ -288,6 +288,15 @@ const Home = () => {
     return 'Boa noite';
   };
 
+  if (!metricsLoaded || !resumeLoaded) return (
+    <div className="home-page">
+      <Sidebar />
+      <main className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner" />
+      </main>
+    </div>
+  );
+
   return (
     <div className="home-page">
       <Sidebar />
