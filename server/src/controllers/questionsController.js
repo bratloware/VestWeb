@@ -2,76 +2,85 @@ import { QueryTypes } from 'sequelize';
 import { Answer, Points, Streak } from '../db/models/index.js';
 import sequelize from '../db/index.js';
 
-// Mapeamento subject_id (int) ↔ discipline (string da tabela "Question")
-const DISCIPLINE_MAP = {
-  1: 'ciencias-humanas',
-  2: 'ciencias-natureza',
-  3: 'linguagens',
-  4: 'matematica',
-};
-
-const SUBJECTS_LIST = [
-  { id: 1, name: 'Ciências Humanas e suas Tecnologias',       topics: [] },
-  { id: 2, name: 'Ciências da Natureza e suas Tecnologias',   topics: [] },
-  { id: 3, name: 'Linguagens, Códigos e suas Tecnologias',    topics: [] },
-  { id: 4, name: 'Matemática e suas Tecnologias',             topics: [] },
-];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const QUESTION_SELECT = `
   SELECT
     q.id,
-    q.title,
-    q.index,
+    q.statement,
     q.year,
-    q.discipline,
-    q.language,
-    q.context                  AS statement,
-    q.files->>0                AS image,
-    q."correctAlternative",
-    q."alternativesIntroduction",
+    q.difficulty,
+    s.id   AS subject_id,
+    s.name AS subject,
+    v.id   AS vestibular_id,
+    v.name AS vestibular,
+    (
+      SELECT a2.letter
+      FROM alternatives a2
+      WHERE a2.question_id = q.id AND a2.is_correct = true
+      LIMIT 1
+    ) AS "correctAlternative",
     json_agg(
       json_build_object(
         'id',        a.id,
         'letter',    a.letter,
         'text',      a.text,
-        'file',      a.file,
-        'is_correct', a."isCorrect"
+        'is_correct', a.is_correct
       ) ORDER BY a.letter
     ) AS alternatives
-  FROM "Question" q
-  LEFT JOIN "Alternative" a ON a."questionId" = q.id
+  FROM questions q
+  LEFT JOIN alternatives a ON a.question_id = q.id
+  LEFT JOIN topics t ON t.id = q.topic_id
+  LEFT JOIN subjects s ON s.id = t.subject_id
+  LEFT JOIN question_vestibulares qv2 ON qv2.question_id = q.id
+  LEFT JOIN vestibulares v ON v.id = qv2.vestibular_id
 `;
 
 // ─── Endpoints ──────────────────────────────────────────────────────────────
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, vestibular_id, limit = 20, offset = 0 } = req.query;
+    const { subject_id, vestibular_id, year, difficulty, limit = 20, offset = 0 } = req.query;
 
-    const conditions = ['q.language IS NULL'];
+    const conditions = [];
     const replacements = { limit: parseInt(limit), offset: parseInt(offset) };
 
-    if (subject_id && DISCIPLINE_MAP[subject_id]) {
-      conditions.push(`q.discipline = :discipline`);
-      replacements.discipline = DISCIPLINE_MAP[subject_id];
+    if (subject_id) {
+      conditions.push(`s.id = :subject_id`);
+      replacements.subject_id = parseInt(subject_id);
     }
 
     if (vestibular_id) {
-      conditions.push(`q.year = :year`);
-      replacements.year = parseInt(vestibular_id);
+      conditions.push(`qv2.vestibular_id = :vestibular_id`);
+      replacements.vestibular_id = parseInt(vestibular_id);
     }
 
-    const where = `WHERE ${conditions.join(' AND ')}`;
+    if (year) {
+      conditions.push(`q.year = :year`);
+      replacements.year = parseInt(year);
+    }
+
+    if (difficulty) {
+      conditions.push(`q.difficulty = :difficulty`);
+      replacements.difficulty = difficulty;
+    }
+
+    const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     const [questions, countRows] = await Promise.all([
       sequelize.query(
-        `${QUESTION_SELECT} ${where} GROUP BY q.id ORDER BY RANDOM() LIMIT :limit OFFSET :offset`,
+        `${QUESTION_SELECT} ${where} GROUP BY q.id, s.id, v.id ORDER BY RANDOM() LIMIT :limit OFFSET :offset`,
         { replacements, type: QueryTypes.SELECT },
       ),
       sequelize.query(
-        `SELECT COUNT(*) AS count FROM "Question" q ${where}`,
+        `SELECT COUNT(DISTINCT q.id) AS count
+         FROM questions q
+         LEFT JOIN topics t ON t.id = q.topic_id
+         LEFT JOIN subjects s ON s.id = t.subject_id
+         LEFT JOIN question_vestibulares qv2 ON qv2.question_id = q.id
+         LEFT JOIN vestibulares v ON v.id = qv2.vestibular_id
+         ${where}`,
         { replacements, type: QueryTypes.SELECT },
       ),
     ]);
@@ -101,13 +110,36 @@ export const getById = async (req, res) => {
 };
 
 export const getSubjects = async (req, res) => {
-  return res.json({ message: 'Subjects fetched', data: SUBJECTS_LIST });
+  try {
+    const rows = await sequelize.query(
+      `SELECT id, name FROM subjects ORDER BY id`,
+      { type: QueryTypes.SELECT },
+    );
+    return res.json({ message: 'Subjects fetched', data: rows });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const getTopics = async (req, res) => {
+  try {
+    const rows = await sequelize.query(
+      `SELECT t.id, t.name, t.subject_id, s.name AS subject_name
+       FROM topics t
+       JOIN subjects s ON s.id = t.subject_id
+       ORDER BY s.name, t.name`,
+      { type: QueryTypes.SELECT },
+    );
+    return res.json({ message: 'Topics fetched', data: rows });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
 };
 
 export const getVestibulares = async (req, res) => {
   try {
     const rows = await sequelize.query(
-      `SELECT year AS id, title AS name FROM "Exam" ORDER BY year DESC`,
+      `SELECT id, name, full_name FROM vestibulares ORDER BY name`,
       { type: QueryTypes.SELECT },
     );
     return res.json({ message: 'Vestibulares fetched', data: rows });
@@ -119,7 +151,7 @@ export const getVestibulares = async (req, res) => {
 export const getYears = async (req, res) => {
   try {
     const rows = await sequelize.query(
-      `SELECT year FROM "Exam" ORDER BY year DESC`,
+      `SELECT DISTINCT year FROM questions WHERE bank = 'ENEM' AND year IS NOT NULL ORDER BY year DESC`,
       { type: QueryTypes.SELECT },
     );
     return res.json({ message: 'Years fetched', data: rows.map(r => r.year) });
@@ -135,12 +167,11 @@ export const submitAnswer = async (req, res) => {
     const { session_id, question_id, chosen_alternative_id, response_time_seconds } = req.body;
     const student_id = req.user.id;
 
-    // Busca na tabela Prisma "Alternative"
     const [alt] = await sequelize.query(
-      `SELECT "isCorrect" FROM "Alternative" WHERE id = :id`,
+      `SELECT is_correct FROM alternatives WHERE id = :id`,
       { replacements: { id: chosen_alternative_id }, type: QueryTypes.SELECT },
     );
-    const is_correct = alt ? alt.isCorrect : false;
+    const is_correct = alt ? alt.is_correct : false;
 
     const answer = await Answer.create({
       session_id,

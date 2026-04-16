@@ -26,18 +26,18 @@ export interface Subtopic {
 export interface Question {
   id: number;
   statement: string;
-  topic_id: number;
+  topic_id?: number;
   subtopic_id?: number;
   difficulty: 'easy' | 'medium' | 'hard';
   source?: string;
   year?: number;
-  number?: number;
-  image?: string | null;
   bank?: string;
+  correctAlternative?: string;
+  subject?: string;
+  subject_id?: number;
+  vestibular?: string;
+  vestibular_id?: number;
   alternatives: Alternative[];
-  topic?: { id: number; name: string; subject?: { id: number; name: string } };
-  subtopic?: Subtopic;
-  vestibulares?: Vestibular[];
 }
 
 export interface Subject {

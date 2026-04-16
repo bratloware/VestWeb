@@ -262,19 +262,15 @@ const Questions = () => {
                 </div>
 
                 <div className="question-meta">
-                  {question.topic && (
-                    <span className="question-meta-tag question-meta-tag-topic">{question.topic.name}</span>
+                  {question.subject && (
+                    <span className="question-meta-tag question-meta-tag-topic">{question.subject}</span>
                   )}
-                  {question.subtopic && (
-                    <span className="question-meta-tag question-meta-tag-subtopic">{question.subtopic.name}</span>
+                  {question.vestibular && (
+                    <span className="question-meta-tag question-meta-tag-vestibular">{question.vestibular}</span>
                   )}
-                  {question.vestibulares && question.vestibulares.length > 0 && question.vestibulares.map(v => (
-                    <span key={v.id} className="question-meta-tag question-meta-tag-vestibular">{v.name}</span>
-                  ))}
                   {question.year && (
                     <span className="question-meta-tag question-meta-tag-year">{question.year}</span>
                   )}
-
                   <span className={`badge badge-${question.difficulty}`}>
                     {question.difficulty === 'easy' ? 'Fácil' : question.difficulty === 'medium' ? 'Média' : 'Difícil'}
                   </span>
@@ -303,14 +299,6 @@ const Questions = () => {
                 >
                   {renderWithHighlights(preprocessStatement(question.statement))}
                 </p>
-
-                {question.image && (
-                  <img
-                    src={question.image}
-                    alt="Imagem da questão"
-                    className="question-image"
-                  />
-                )}
 
                 {answered && (
                   <div className={`question-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>

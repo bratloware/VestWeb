@@ -19,14 +19,22 @@ interface Question {
   difficulty: 'easy' | 'medium' | 'hard';
   source: string | null;
   year: number | null;
-  topic: { id: number; name: string; subject: { id: number; name: string } };
+  topic_id?: number;
+  subject_id?: number;
+  subject?: string;
   alternatives: Alternative[];
 }
 
 interface Subject {
   id: number;
   name: string;
-  topics: { id: number; name: string }[];
+}
+
+interface Topic {
+  id: number;
+  name: string;
+  subject_id: number;
+  subject_name: string;
 }
 
 interface EditRow {
@@ -64,6 +72,7 @@ const emptyNew = {
 const TeacherQuestions = () => {
   const [questions, setQuestions]     = useState<Question[]>([]);
   const [subjects, setSubjects]       = useState<Subject[]>([]);
+  const [topics, setTopics]           = useState<Topic[]>([]);
   const [loading, setLoading]         = useState(true);
   const [search, setSearch]           = useState('');
   const [filterSubject, setFilterSubject] = useState('');
@@ -79,12 +88,14 @@ const TeacherQuestions = () => {
   const load = async () => {
     setLoading(true);
     try {
-      const [qRes, sRes] = await Promise.all([
+      const [qRes, sRes, tRes] = await Promise.all([
         api.get('/questions?limit=1000'),
         api.get('/questions/subjects'),
+        api.get('/questions/topics'),
       ]);
       setQuestions(qRes.data.data.rows ?? []);
       setSubjects(sRes.data.data ?? []);
+      setTopics(tRes.data.data ?? []);
     } finally {
       setLoading(false);
     }
@@ -92,14 +103,9 @@ const TeacherQuestions = () => {
 
   useEffect(() => { load(); }, []);
 
-  const allTopics = useMemo(
-    () => subjects.flatMap(s => s.topics.map(t => ({ ...t, subjectId: s.id, subjectName: s.name }))),
-    [subjects]
-  );
-
   const filtered = useMemo(() => questions.filter(q => {
     const matchSearch = !search || q.statement.toLowerCase().includes(search.toLowerCase());
-    const matchSubj   = !filterSubject || String(q.topic?.subject?.id) === filterSubject;
+    const matchSubj   = !filterSubject || String(q.subject_id) === filterSubject;
     const matchDiff   = !filterDiff || q.difficulty === filterDiff;
     return matchSearch && matchSubj && matchDiff;
   }), [questions, search, filterSubject, filterDiff]);
@@ -107,13 +113,16 @@ const TeacherQuestions = () => {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  const topicsForSubject = (subject_id: string) =>
+    subject_id ? topics.filter(t => String(t.subject_id) === subject_id) : topics;
+
   const startEdit = (q: Question) => {
     setEditingRow({
       id:           q.id,
       statement:    q.statement,
       image:        q.image ?? '',
-      topic_id:     String(q.topic?.id ?? ''),
-      subject_id:   String(q.topic?.subject?.id ?? ''),
+      topic_id:     String(q.topic_id ?? ''),
+      subject_id:   String(q.subject_id ?? ''),
       difficulty:   q.difficulty,
       source:       q.source ?? '',
       year:         q.year ? String(q.year) : '',
@@ -140,8 +149,8 @@ const TeacherQuestions = () => {
       });
       const updated: Question = res.data.data;
       setQuestions(prev => prev.map(q => q.id !== editingRow.id ? q : {
+        ...q,
         ...updated,
-        topic: q.topic,
       }));
       setModifiedIds(prev => new Set(prev).add(editingRow.id));
       setEditingRow(null);
@@ -194,12 +203,6 @@ const TeacherQuestions = () => {
       setNewSaving(false);
     }
   };
-
-  const newTopics = useMemo(
-    () => newForm.subject_id ? allTopics.filter(t => String(t.subjectId) === newForm.subject_id) : allTopics,
-    [allTopics, newForm.subject_id]
-  );
-
 
   return (
     <div className="teacher-layout">
@@ -271,7 +274,9 @@ const TeacherQuestions = () => {
                     onChange={e => setNewForm(p => ({ ...p, topic_id: e.target.value }))}
                   >
                     <option value="">Selecione...</option>
-                    {newTopics.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                    {topicsForSubject(newForm.subject_id).map(t => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
                   </select>
                 </div>
 
@@ -446,7 +451,7 @@ const TeacherQuestions = () => {
                                 {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                               </select>
                             ) : (
-                              <span className="tqe-cell-text">{q.topic?.subject?.name}</span>
+                              <span className="tqe-cell-text">{q.subject ?? '—'}</span>
                             )}
                           </td>
 
@@ -523,11 +528,24 @@ const TeacherQuestions = () => {
                           </td>
                         </tr>
 
-                          {/* Linha extra: imagens das alternativas no modo edição */}
+                          {/* Linha extra: tópico e imagens das alternativas no modo edição */}
                           {isEditing && (
                             <tr className="tqe-editing tqe-alt-img-row">
                               <td colSpan={10}>
                                 <div className="tqe-alt-imgs">
+                                  <div className="tqf-group" style={{ marginBottom: '8px' }}>
+                                    <label>Tópico</label>
+                                    <select
+                                      className="tqe-input"
+                                      value={editingRow.topic_id}
+                                      onChange={e => setEditingRow(r => r && { ...r, topic_id: e.target.value })}
+                                    >
+                                      <option value="">Selecione...</option>
+                                      {topicsForSubject(editingRow.subject_id).map(t => (
+                                        <option key={t.id} value={t.id}>{t.name}</option>
+                                      ))}
+                                    </select>
+                                  </div>
                                   <span className="tqe-alt-imgs-label">Imagens das alternativas:</span>
                                   {editingRow.alternatives.map((alt, i) => (
                                     <div key={i} className="tqe-alt-img-item">
