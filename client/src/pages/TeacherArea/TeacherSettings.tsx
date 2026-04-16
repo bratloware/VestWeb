@@ -8,7 +8,7 @@ import { getInitials } from '../../utils/stringUtils';
 import '../../pages/Settings/Settings.css';
 
 const TeacherSettings = () => {
-  const { student } = useSelector((s: RootState) => s.auth);
+  const { user: student } = useSelector((s: RootState) => s.auth);
   const [activeSection, setActiveSection] = useState<'profile' | 'password' | 'notifications' | 'privacy'>('profile');
 
   const [profileForm, setProfileForm] = useState({

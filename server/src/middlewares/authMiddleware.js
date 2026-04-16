@@ -1,5 +1,5 @@
 import { verifyToken } from '../services/jwtService.js';
-import { Student } from '../db/models/index.js';
+import { Student, Teacher } from '../db/models/index.js';
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -11,12 +11,16 @@ const authMiddleware = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
     const decoded = verifyToken(token);
 
-    const student = await Student.findByPk(decoded.id);
-    if (!student) {
-      return res.status(401).json({ message: 'User not found' });
+    if (decoded.type === 'teacher') {
+      const teacher = await Teacher.findByPk(decoded.id);
+      if (!teacher) return res.status(401).json({ message: 'User not found' });
+      req.user = { ...teacher.toJSON(), type: 'teacher', role: 'teacher' };
+    } else {
+      const student = await Student.findByPk(decoded.id);
+      if (!student) return res.status(401).json({ message: 'User not found' });
+      req.user = { ...student.toJSON(), type: 'student' };
     }
 
-    req.user = student.toJSON();
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Invalid or expired token' });

@@ -45,7 +45,7 @@ interface SidebarProps {
 const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const { student } = useSelector((state: RootState) => state.auth);
+  const { user: student } = useSelector((state: RootState) => state.auth);
   const { mode } = useSelector((state: RootState) => state.theme);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();

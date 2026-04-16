@@ -6,7 +6,7 @@ import { RootState } from '../../store/store';
 import './SelectPlatform.css';
 
 const SelectPlatform = () => {
-  const { student } = useSelector((state: RootState) => state.auth);
+  const { user: student } = useSelector((state: RootState) => state.auth);
 
   return (
     <div className="select-platform">

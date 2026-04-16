@@ -33,7 +33,7 @@ const getInitials = (name: string) =>
   name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
 
 const TeacherHome = () => {
-  const { student } = useSelector((state: RootState) => state.auth);
+  const { user: student } = useSelector((state: RootState) => state.auth);
   const [questionCount, setQuestionCount] = useState(0);
   const [sessions, setSessions] = useState<SessionSummary>({ total: 0, pending: 0, confirmed: 0, done: 0 });
   const [upcoming, setUpcoming] = useState<UpcomingSession[]>([]);

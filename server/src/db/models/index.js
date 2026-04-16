@@ -1,5 +1,7 @@
 import Student from './Student.js';
 import Session from './Session.js';
+import Teacher from './Teacher.js';
+import TeacherSession from './TeacherSession.js';
 import Banner from './Banner.js';
 import Testimonial from './Testimonial.js';
 import InstitutionalVideo from './InstitutionalVideo.js';
@@ -166,9 +168,14 @@ Like.belongsTo(Comment, { foreignKey: 'comment_id', as: 'comment' });
 Badge.hasMany(StudentBadge, { foreignKey: 'badge_id', as: 'studentBadges' });
 StudentBadge.belongsTo(Badge, { foreignKey: 'badge_id', as: 'badge' });
 
+Teacher.hasMany(TeacherSession, { foreignKey: 'teacher_id', as: 'sessions' });
+TeacherSession.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
+
 export {
   Student,
   Session,
+  Teacher,
+  TeacherSession,
   Banner,
   Testimonial,
   InstitutionalVideo,

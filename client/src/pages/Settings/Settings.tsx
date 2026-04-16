@@ -10,7 +10,7 @@ import './Settings.css';
 
 const Settings = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { student } = useSelector((s: RootState) => s.auth);
+  const { user: student } = useSelector((s: RootState) => s.auth);
   const { vestibulares } = useSelector((s: RootState) => s.questions);
   const [activeSection, setActiveSection] = useState<'profile' | 'password' | 'notifications' | 'privacy'>('profile');
   const [targetVestibularId, setTargetVestibularId] = useState<string>(String(student?.target_vestibular_id || ''));
