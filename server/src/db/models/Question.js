@@ -24,14 +24,6 @@ const Question = sequelize.define('Question', {
     allowNull: false,
     defaultValue: 'medium',
   },
-  number: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  image: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
   source: {
     type: DataTypes.STRING(100),
     allowNull: true,

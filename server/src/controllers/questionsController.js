@@ -1,5 +1,5 @@
 import { QueryTypes } from 'sequelize';
-import { Answer, Points, Streak } from '../db/models/index.js';
+import { Answer, Points, Streak, Question, Alternative } from '../db/models/index.js';
 import sequelize from '../db/index.js';
 
 
@@ -11,6 +11,7 @@ const QUESTION_SELECT = `
     q.statement,
     q.year,
     q.difficulty,
+    q.topic_id,
     s.id   AS subject_id,
     s.name AS subject,
     v.id   AS vestibular_id,
@@ -225,6 +226,88 @@ export const setTargetVestibular = async (req, res) => {
     const { vestibular_id } = req.body;
     await req.user.update({ target_vestibular_id: vestibular_id || null });
     return res.json({ message: 'Target vestibular updated', data: { target_vestibular_id: vestibular_id } });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+// ─── Teacher CRUD ────────────────────────────────────────────────────────────
+
+export const createQuestion = async (req, res) => {
+  try {
+    const { statement, topic_id, difficulty, source, year, bank, alternatives } = req.body;
+
+    if (!statement || !topic_id || !difficulty || !Array.isArray(alternatives) || alternatives.length < 2) {
+      return res.status(400).json({ message: 'Campos obrigatórios: statement, topic_id, difficulty, alternatives' });
+    }
+
+    const t = await sequelize.transaction();
+    try {
+      const question = await Question.create(
+        { statement, topic_id, difficulty, source: source || null, year: year || null, bank: bank || null, created_by: req.user.id },
+        { transaction: t, fields: ['statement', 'topic_id', 'difficulty', 'source', 'year', 'bank', 'created_by'] }
+      );
+
+      const letters = ['A', 'B', 'C', 'D', 'E'];
+      await Alternative.bulkCreate(
+        alternatives.map((a, i) => ({
+          question_id: question.id,
+          letter: a.letter || letters[i],
+          text: a.text,
+          is_correct: a.is_correct || false,
+        })),
+        { transaction: t, fields: ['question_id', 'letter', 'text', 'is_correct'] }
+      );
+
+      await t.commit();
+      return res.status(201).json({ message: 'Question created', data: question });
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const updateQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { statement, topic_id, difficulty, source, year, bank, alternatives } = req.body;
+
+    const question = await Question.findByPk(id);
+    if (!question) return res.status(404).json({ message: 'Question not found' });
+
+    await question.update({
+      statement:  statement  ?? question.statement,
+      topic_id:   topic_id   ?? question.topic_id,
+      difficulty: difficulty ?? question.difficulty,
+      source:     source     !== undefined ? source || null  : question.source,
+      year:       year       !== undefined ? year   || null  : question.year,
+      bank:       bank       !== undefined ? bank   || null  : question.bank,
+    });
+
+    if (Array.isArray(alternatives)) {
+      for (const a of alternatives) {
+        if (a.id) {
+          await Alternative.update({ text: a.text }, { where: { id: a.id } });
+        }
+      }
+    }
+
+    return res.json({ message: 'Question updated', data: question });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const deleteQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const question = await Question.findByPk(id);
+    if (!question) return res.status(404).json({ message: 'Question not found' });
+    await question.destroy();
+    return res.json({ message: 'Question deleted' });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
