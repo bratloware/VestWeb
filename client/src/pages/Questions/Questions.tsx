@@ -300,6 +300,10 @@ const Questions = () => {
                   {renderWithHighlights(preprocessStatement(question.statement))}
                 </p>
 
+                {question.image_url && (
+                  <img src={question.image_url} alt="Imagem da questão" className="question-image" />
+                )}
+
                 {answered && (
                   <div className={`question-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>
                     <strong>{isCorrect ? '✓ Resposta correta!' : '✗ Resposta incorreta!'}</strong>
@@ -325,7 +329,10 @@ const Questions = () => {
                         onClick={() => !answered && setSelectedAlt(alt.id)}
                       >
                         <div className="alternative-letter">{alt.letter}</div>
-                        <div className="alternative-text">{alt.text}</div>
+                        <div className="alternative-text">
+                          {alt.text}
+                          {alt.image_url && <img src={alt.image_url} alt={`Alternativa ${alt.letter}`} className="alternative-image" />}
+                        </div>
                       </div>
                     );
                   })}

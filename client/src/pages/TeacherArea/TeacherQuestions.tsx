@@ -8,14 +8,14 @@ interface Alternative {
   id?: number;
   letter?: string;
   text: string;
-  image?: string;
+  image_url?: string;
   is_correct: boolean;
 }
 
 interface Question {
   id: number;
   statement: string;
-  image: string | null;
+  image_url: string | null;
   difficulty: 'easy' | 'medium' | 'hard';
   source: string | null;
   year: number | null;
@@ -40,7 +40,7 @@ interface Topic {
 interface EditRow {
   id: number;
   statement: string;
-  image: string;
+  image_url: string;
   topic_id: string;
   subject_id: string;
   difficulty: string;
@@ -54,18 +54,18 @@ const PAGE_SIZE = 30;
 
 const emptyNew = {
   statement: '',
-  image: '',
+  image_url: '',
   topic_id: '',
   subject_id: '',
   difficulty: 'medium',
   source: '',
   year: '',
   alternatives: [
-    { text: '', image: '', is_correct: true },
-    { text: '', image: '', is_correct: false },
-    { text: '', image: '', is_correct: false },
-    { text: '', image: '', is_correct: false },
-    { text: '', image: '', is_correct: false },
+    { text: '', image_url: '', is_correct: true },
+    { text: '', image_url: '', is_correct: false },
+    { text: '', image_url: '', is_correct: false },
+    { text: '', image_url: '', is_correct: false },
+    { text: '', image_url: '', is_correct: false },
   ] as Alternative[],
 };
 
@@ -120,7 +120,7 @@ const TeacherQuestions = () => {
     setEditingRow({
       id:           q.id,
       statement:    q.statement,
-      image:        q.image ?? '',
+      image_url:    q.image_url ?? '',
       topic_id:     String(q.topic_id ?? ''),
       subject_id:   String(q.subject_id ?? ''),
       difficulty:   q.difficulty,
@@ -136,7 +136,7 @@ const TeacherQuestions = () => {
     try {
       const res = await api.put(`/questions/${editingRow.id}`, {
         statement:    editingRow.statement,
-        image:        editingRow.image || null,
+        image_url:    editingRow.image_url || null,
         topic_id:     Number(editingRow.topic_id),
         difficulty:   editingRow.difficulty,
         source:       editingRow.source || null,
@@ -144,7 +144,7 @@ const TeacherQuestions = () => {
         alternatives: editingRow.alternatives.map(a => ({
           id:    a.id,
           text:  a.text,
-          image: a.image || null,
+          image_url: a.image_url || null,
         })),
       });
       const updated: Question = res.data.data;
@@ -174,7 +174,7 @@ const TeacherQuestions = () => {
     });
   };
 
-  const handleEditAltChange = (i: number, field: 'text' | 'image', value: string) => {
+  const handleEditAltChange = (i: number, field: 'text' | 'image_url', value: string) => {
     setEditingRow(r => {
       if (!r) return r;
       const alts = r.alternatives.map(a => ({ ...a }));
@@ -189,7 +189,7 @@ const TeacherQuestions = () => {
     try {
       await api.post('/questions', {
         statement:    newForm.statement,
-        image:        newForm.image || null,
+        image_url:    newForm.image_url || null,
         topic_id:     Number(newForm.topic_id),
         difficulty:   newForm.difficulty,
         source:       newForm.source || null,
@@ -244,12 +244,12 @@ const TeacherQuestions = () => {
                 <label>Imagem do enunciado (URL)</label>
                 <input
                   type="text"
-                  value={newForm.image}
-                  onChange={e => setNewForm(p => ({ ...p, image: e.target.value }))}
+                  value={newForm.image_url}
+                  onChange={e => setNewForm(p => ({ ...p, image_url: e.target.value }))}
                   placeholder="https://..."
                 />
-                {newForm.image && (
-                  <img src={newForm.image} alt="preview" className="tqf-img-preview" />
+                {newForm.image_url && (
+                  <img src={newForm.image_url} alt="preview" className="tqf-img-preview" />
                 )}
               </div>
 
@@ -322,13 +322,13 @@ const TeacherQuestions = () => {
                         />
                         <input
                           type="text"
-                          value={alt.image ?? ''}
-                          onChange={e => handleAltChange(i, 'image', e.target.value)}
+                          value={alt.image_url ?? ''}
+                          onChange={e => handleAltChange(i, 'image_url', e.target.value)}
                           placeholder="URL da imagem (opcional)"
                           className="tqf-alt-img-input"
                         />
-                        {alt.image && (
-                          <img src={alt.image} alt="preview" className="tqf-img-preview tqf-img-preview--sm" />
+                        {alt.image_url && (
+                          <img src={alt.image_url} alt="preview" className="tqf-img-preview tqf-img-preview--sm" />
                         )}
                       </div>
                     </div>
@@ -415,12 +415,12 @@ const TeacherQuestions = () => {
                                 />
                                 <input
                                   className="tqe-input tqe-img-url-input"
-                                  value={editingRow.image}
-                                  onChange={e => setEditingRow(r => r && { ...r, image: e.target.value })}
+                                  value={editingRow.image_url}
+                                  onChange={e => setEditingRow(r => r && { ...r, image_url: e.target.value })}
                                   placeholder="URL da imagem do enunciado..."
                                 />
-                                {editingRow.image && (
-                                  <img src={editingRow.image} alt="preview" className="tqe-img-thumb" />
+                                {editingRow.image_url && (
+                                  <img src={editingRow.image_url} alt="preview" className="tqe-img-thumb" />
                                 )}
                               </div>
                             ) : (
@@ -433,8 +433,8 @@ const TeacherQuestions = () => {
 
                           {/* Imagem */}
                           <td className="tqe-col-img tqe-cell-center">
-                            {q.image
-                              ? <img src={q.image} alt="img" className="tqe-img-thumb" />
+                            {q.image_url
+                              ? <img src={q.image_url} alt="img" className="tqe-img-thumb" />
                               : <span className="tqe-cell-text" style={{ color: 'var(--border)' }}><ImageIcon size={14} /></span>
                             }
                           </td>
@@ -552,12 +552,12 @@ const TeacherQuestions = () => {
                                       <span className="tqf-alt-letter">{String.fromCharCode(65 + i)}</span>
                                       <input
                                         className="tqe-input tqe-img-url-input"
-                                        value={alt.image ?? ''}
-                                        onChange={e => handleEditAltChange(i, 'image', e.target.value)}
+                                        value={alt.image_url ?? ''}
+                                        onChange={e => handleEditAltChange(i, 'image_url', e.target.value)}
                                         placeholder="URL da imagem..."
                                       />
-                                      {alt.image && (
-                                        <img src={alt.image} alt="preview" className="tqe-img-thumb" />
+                                      {alt.image_url && (
+                                        <img src={alt.image_url} alt="preview" className="tqe-img-thumb" />
                                       )}
                                     </div>
                                   ))}

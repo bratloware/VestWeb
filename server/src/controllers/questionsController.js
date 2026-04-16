@@ -9,6 +9,7 @@ const QUESTION_SELECT = `
   SELECT
     q.id,
     q.statement,
+    q.image_url,
     q.year,
     q.difficulty,
     q.topic_id,
@@ -27,6 +28,7 @@ const QUESTION_SELECT = `
         'id',        a.id,
         'letter',    a.letter,
         'text',      a.text,
+        'image_url', a.image_url,
         'is_correct', a.is_correct
       ) ORDER BY a.letter
     ) AS alternatives
@@ -235,7 +237,7 @@ export const setTargetVestibular = async (req, res) => {
 
 export const createQuestion = async (req, res) => {
   try {
-    const { statement, topic_id, difficulty, source, year, bank, alternatives } = req.body;
+    const { statement, image_url, topic_id, difficulty, source, year, bank, alternatives } = req.body;
 
     if (!statement || !topic_id || !difficulty || !Array.isArray(alternatives) || alternatives.length < 2) {
       return res.status(400).json({ message: 'Campos obrigatórios: statement, topic_id, difficulty, alternatives' });
@@ -248,6 +250,13 @@ export const createQuestion = async (req, res) => {
         { transaction: t, fields: ['statement', 'topic_id', 'difficulty', 'source', 'year', 'bank', 'created_by'] }
       );
 
+      if (image_url) {
+        await sequelize.query(
+          `UPDATE questions SET image_url = :image_url WHERE id = :id`,
+          { replacements: { image_url, id: question.id }, transaction: t, type: QueryTypes.UPDATE }
+        );
+      }
+
       const letters = ['A', 'B', 'C', 'D', 'E'];
       await Alternative.bulkCreate(
         alternatives.map((a, i) => ({
@@ -258,6 +267,17 @@ export const createQuestion = async (req, res) => {
         })),
         { transaction: t, fields: ['question_id', 'letter', 'text', 'is_correct'] }
       );
+
+      // save alternative image_urls via raw query (column not in model)
+      for (const a of alternatives) {
+        if (a.image_url) {
+          const letter = a.letter || letters[alternatives.indexOf(a)];
+          await sequelize.query(
+            `UPDATE alternatives SET image_url = :image_url WHERE question_id = :qid AND letter = :letter`,
+            { replacements: { image_url: a.image_url, qid: question.id, letter }, transaction: t, type: QueryTypes.UPDATE }
+          );
+        }
+      }
 
       await t.commit();
       return res.status(201).json({ message: 'Question created', data: question });
@@ -273,7 +293,7 @@ export const createQuestion = async (req, res) => {
 export const updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { statement, topic_id, difficulty, source, year, bank, alternatives } = req.body;
+    const { statement, image_url, topic_id, difficulty, source, year, bank, alternatives } = req.body;
 
     const question = await Question.findByPk(id);
     if (!question) return res.status(404).json({ message: 'Question not found' });
@@ -287,10 +307,20 @@ export const updateQuestion = async (req, res) => {
       bank:       bank       !== undefined ? bank   || null  : question.bank,
     });
 
+    if (image_url !== undefined) {
+      await sequelize.query(
+        `UPDATE questions SET image_url = :image_url WHERE id = :id`,
+        { replacements: { image_url: image_url || null, id }, type: QueryTypes.UPDATE }
+      );
+    }
+
     if (Array.isArray(alternatives)) {
       for (const a of alternatives) {
         if (a.id) {
-          await Alternative.update({ text: a.text }, { where: { id: a.id } });
+          await sequelize.query(
+            `UPDATE alternatives SET text = :text, image_url = :image_url WHERE id = :id`,
+            { replacements: { text: a.text, image_url: a.image_url || null, id: a.id }, type: QueryTypes.UPDATE }
+          );
         }
       }
     }
