@@ -1,8 +1,8 @@
 :root {
-  --primary: #0f8b8d;
-  --primary-dark: #0a6b6d;
-  --primary-light: #e0f4f4;
-  --primary-hover: #0d7a7c;
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #ede9fe;
+  --primary-hover: #5558e8;
   --text: #111827;
   --text-secondary: #4b5563;
   --bg: #f1f5f9;
@@ -26,7 +26,7 @@
   --white: #1e293b;
   --border: #334155;
   --sidebar-bg: #0d1526;
-  --primary-light: #0f2a2b;
+  --primary-light: #1e1b4b;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
@@ -190,7 +190,7 @@ img {
 
 .form-control:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(15, 139, 141, 0.1);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
 }
 
 /* Empty state */

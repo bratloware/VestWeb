@@ -6,11 +6,11 @@ import {
 } from 'lucide-react';
 import logo from '../../assets/images/logo.png';
 import LandingHeader from '../../components/LandingHeader';
+import { WebGLShader } from '../../components/ui/web-gl-shader';
 import CheckoutModal, { type PlanType, type BillingPeriod } from '../../components/CheckoutModal/CheckoutModal';
 import api from '../../api/api';
 import './LandingPage.css';
 
-interface Banner { id: number; image_url: string; title?: string; subtitle?: string; }
 
 const WaveDivider = ({ to, flip = false }: { to: 'bg' | 'white' | 'sidebar'; flip?: boolean }) => (
   <div className={`wave-divider wave-to-${to}${flip ? ' wave-divider--flip' : ''}`} aria-hidden="true">
@@ -124,9 +124,7 @@ interface CheckoutState {
 }
 
 const LandingPage = () => {
-  const [banners, setBanners] = useState<Banner[]>([]);
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('anual');
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [contactSuccess, setContactSuccess] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
@@ -144,17 +142,6 @@ const LandingPage = () => {
     setCheckout(prev => ({ ...prev, isOpen: false }));
   }
 
-  useEffect(() => {
-    api.get('/landing/banners').then(r => { if (r.data.data?.length) setBanners(r.data.data); }).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (banners.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [banners.length]);
 
 const handleContact = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,19 +166,7 @@ const handleContact = async (e: React.FormEvent) => {
 
       {/* Hero */}
       <section id="home" className="hero">
-        {banners.length > 0 && (
-          <div className="hero-carousel">
-            {banners.map((banner, i) => (
-              <div
-                key={banner.id}
-                className={`hero-carousel-slide${i === currentSlide ? ' active' : ''}`}
-                style={{ backgroundImage: `url(${banner.image_url})` }}
-              />
-            ))}
-          </div>
-        )}
-        <div className="hero-bg-pattern" />
-        <div className="hero-overlay" />
+        <WebGLShader asAbsolute />
 
         <div className="hero-content">
           <div className="hero-badge">Pré-vestibular</div>
@@ -213,17 +188,6 @@ const handleContact = async (e: React.FormEvent) => {
           </div>
         </div>
 
-        {banners.length > 1 && (
-          <div className="carousel-dots">
-            {banners.map((_, i) => (
-              <button
-                key={i}
-                className={`carousel-dot${i === currentSlide ? ' active' : ''}`}
-                onClick={() => setCurrentSlide(i)}
-              />
-            ))}
-          </div>
-        )}
         <WaveDivider to="bg" />
       </section>
 
