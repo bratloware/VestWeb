@@ -18,7 +18,7 @@ const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error, token } = useSelector((state: RootState) => state.auth);
-  const role = useSelector((state: RootState) => state.auth.student?.role);
+  const role = useSelector((state: RootState) => state.auth.user?.role);
 
   useEffect(() => {
     if (token && role) navigate(getRedirectPath(role));
@@ -28,7 +28,7 @@ const LoginPage = () => {
     e.preventDefault();
     const result = await dispatch(loginThunk({ enrollment, password }));
     if (loginThunk.fulfilled.match(result)) {
-      navigate(getRedirectPath(result.payload.student.role));
+      navigate(getRedirectPath(result.payload.user?.role ?? result.payload.student?.role));
     }
   };
 

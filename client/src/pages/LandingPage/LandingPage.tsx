@@ -6,11 +6,19 @@ import {
 } from 'lucide-react';
 import logo from '../../assets/images/logo.png';
 import LandingHeader from '../../components/LandingHeader';
+import { WebGLShader } from '../../components/ui/web-gl-shader';
 import CheckoutModal, { type PlanType, type BillingPeriod } from '../../components/CheckoutModal/CheckoutModal';
 import api from '../../api/api';
 import './LandingPage.css';
 
-interface Banner { id: number; image_url: string; title?: string; subtitle?: string; }
+
+const WaveDivider = ({ to, flip = false }: { to: 'bg' | 'white' | 'sidebar'; flip?: boolean }) => (
+  <div className={`wave-divider wave-to-${to}${flip ? ' wave-divider--flip' : ''}`} aria-hidden="true">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 L0,40 C480,0 960,0 1440,40 L1440,60 Z" />
+    </svg>
+  </div>
+);
 
 const features = [
   { icon: HelpCircle, title: 'Banco de Questões', desc: 'Milhares de questões de vestibulares anteriores organizadas por matéria e dificuldade.' },
@@ -23,7 +31,7 @@ const features = [
 
 const heroStats = [
   { target: 20, suffix: 'k+', label: 'Questões' },
-  { target: 100, suffix: '+', label: 'Vídeoaulas' },
+  { target: 100, suffix: '+', label: 'Videoaulas' },
   { target: 100, suffix: '+', label: 'Alunos' },
   { target: 95, suffix: '%', label: 'Aprovados' },
 ];
@@ -116,9 +124,7 @@ interface CheckoutState {
 }
 
 const LandingPage = () => {
-  const [banners, setBanners] = useState<Banner[]>([]);
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('anual');
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [contactSuccess, setContactSuccess] = useState(false);
   const [contactLoading, setContactLoading] = useState(false);
@@ -136,17 +142,6 @@ const LandingPage = () => {
     setCheckout(prev => ({ ...prev, isOpen: false }));
   }
 
-  useEffect(() => {
-    api.get('/landing/banners').then(r => { if (r.data.data?.length) setBanners(r.data.data); }).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (banners.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [banners.length]);
 
 const handleContact = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,19 +166,7 @@ const handleContact = async (e: React.FormEvent) => {
 
       {/* Hero */}
       <section id="home" className="hero">
-        {banners.length > 0 && (
-          <div className="hero-carousel">
-            {banners.map((banner, i) => (
-              <div
-                key={banner.id}
-                className={`hero-carousel-slide${i === currentSlide ? ' active' : ''}`}
-                style={{ backgroundImage: `url(${banner.image_url})` }}
-              />
-            ))}
-          </div>
-        )}
-        <div className="hero-bg-pattern" />
-        <div className="hero-overlay" />
+        <WebGLShader asAbsolute />
 
         <div className="hero-content">
           <div className="hero-badge">Pré-vestibular</div>
@@ -205,17 +188,7 @@ const handleContact = async (e: React.FormEvent) => {
           </div>
         </div>
 
-        {banners.length > 1 && (
-          <div className="carousel-dots">
-            {banners.map((_, i) => (
-              <button
-                key={i}
-                className={`carousel-dot${i === currentSlide ? ' active' : ''}`}
-                onClick={() => setCurrentSlide(i)}
-              />
-            ))}
-          </div>
-        )}
+        <WaveDivider to="bg" />
       </section>
 
       {/* Espaco Aluno */}
@@ -236,6 +209,7 @@ const handleContact = async (e: React.FormEvent) => {
             </div>
           ))}
         </div>
+        <WaveDivider to="white" flip />
       </section>
 
       {/* Sobre */}
@@ -273,6 +247,7 @@ const handleContact = async (e: React.FormEvent) => {
             </div>
           </div>
         </div>
+        <WaveDivider to="bg" />
       </section>
 
       {/* Metodologia */}
@@ -298,6 +273,7 @@ const handleContact = async (e: React.FormEvent) => {
             </div>
           ))}
         </div>
+        <WaveDivider to="white" flip />
       </section>
 
       {/* Planos */}
@@ -375,12 +351,12 @@ const handleContact = async (e: React.FormEvent) => {
         <div className="section-header">
           <div className="section-tag">Contato</div>
           <h2 className="section-title">Fale conosco</h2>
-          <p className="section-desc">Tem alguma dúvida? Nossa equipe esta pronta para ajudar.</p>
+          <p className="section-desc">Tem alguma dúvida? Nossa equipe está pronta para ajudar.</p>
         </div>
         <div className="contact-content">
           <div className="contact-info">
             <h3>Entre em contato</h3>
-            <p>Estamos disponivéis para tirar suas dúvidas sobre a plataforma, planos e muito mais. Não deixe para amanhã o que pode resolver hoje!</p>
+            <p>Estamos disponíveis para tirar suas dúvidas sobre a plataforma, planos e muito mais. Não deixe para amanhã o que pode resolver hoje!</p>
             <div className="contact-links">
               <a href="mailto:contato@bratloware.com" className="contact-link">
                 <div className="contact-link-icon"><Mail size={20} /></div>
@@ -392,7 +368,7 @@ const handleContact = async (e: React.FormEvent) => {
               </a>
               <div className="contact-link">
                 <div className="contact-link-icon"><MapPin size={20} /></div>
-                Brasilia, DF - Brasil
+                Brasília, DF - Brasil
               </div>
             </div>
           </div>
@@ -440,6 +416,7 @@ const handleContact = async (e: React.FormEvent) => {
             </form>
           </div>
         </div>
+        <WaveDivider to="sidebar" />
       </section>
 
       {/* Footer */}
@@ -459,11 +436,11 @@ const handleContact = async (e: React.FormEvent) => {
             </ul>
           </div>
           <div className="footer-links">
-            <h4>Links Uteis</h4>
+            <h4>Links Úteis</h4>
             <ul>
               <li><Link to="/login">Entrar</Link></li>
               <li><a href="#contato">Contato</a></li>
-              <li><a href="#">Politica de Privacidade</a></li>
+              <li><a href="#">Política de Privacidade</a></li>
               <li><a href="#">Termos de Uso</a></li>
             </ul>
           </div>

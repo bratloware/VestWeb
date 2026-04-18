@@ -6,7 +6,7 @@ import { RootState } from '../../store/store';
 import './SelectPlatform.css';
 
 const SelectPlatform = () => {
-  const { student } = useSelector((state: RootState) => state.auth);
+  const { user: student } = useSelector((state: RootState) => state.auth);
 
   return (
     <div className="select-platform">
@@ -39,7 +39,7 @@ const SelectPlatform = () => {
             <div className="platform-card-icon platform-card-icon-espaco">
               <GraduationCap size={36} />
             </div>
-            <div className="platform-card-badge" style={{ background: 'rgba(15,139,141,0.2)', color: '#4dd8da' }}>
+            <div className="platform-card-badge" style={{ background: 'rgba(99,102,241,0.2)', color: '#a5b4fc' }}>
               Sala de Aula
             </div>
             <h2>Espaço Aluno</h2>

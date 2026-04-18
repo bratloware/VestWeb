@@ -23,16 +23,18 @@ const ReviewCalendar = () => {
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
   const [events, setEvents] = useState<StudyEvent[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editEvent, setEditEvent] = useState<StudyEvent | null>(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [form, setForm] = useState({ title: '', date: '', start_time: '', end_time: '', type: 'study_block', topic_id: '' });
 
   const loadEvents = async () => {
+    setLoading(true);
     try {
       const res = await api.get(`/calendar/events?month=${currentMonth}&year=${currentYear}`);
       setEvents(res.data.data || []);
-    } catch { /* ignore */ }
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
   useEffect(() => { loadEvents(); }, [currentMonth, currentYear]);
@@ -118,6 +120,15 @@ const ReviewCalendar = () => {
       loadEvents();
     } catch { /* ignore */ }
   };
+
+  if (loading) return (
+    <div className="calendar-page">
+      <Sidebar />
+      <main className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner" />
+      </main>
+    </div>
+  );
 
   return (
     <div className="calendar-page">

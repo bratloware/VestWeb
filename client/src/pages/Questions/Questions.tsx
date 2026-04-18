@@ -1,13 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, Clock, ChevronRight, RotateCcw, PenLine, Trash2 } from 'lucide-react';
+import { Filter, ChevronRight, RotateCcw, PenLine, Trash2 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Questions.css';
-
-const QUESTION_TIME = 120;
 
 const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,7 +17,6 @@ const Questions = () => {
   const [answered, setAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [sessionId, setSessionId] = useState<number | null>(null);
-  const [timer, setTimer] = useState(QUESTION_TIME);
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [finished, setFinished] = useState(false);
   const [highlightMode, setHighlightMode] = useState(false);
@@ -31,22 +28,6 @@ const Questions = () => {
     dispatch(fetchVestibulares());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!answered && questions.length > 0 && !finished) {
-      setTimer(QUESTION_TIME);
-      const interval = setInterval(() => {
-        setTimer(prev => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [currentIndex, answered, questions.length, finished]);
-
   const handleSearch = async () => {
     dispatch(fetchQuestions({ ...filters, limit: 200 }));
     setCurrentIndex(0);
@@ -57,10 +38,10 @@ const Questions = () => {
     setScore({ correct: 0, total: 0 });
 
     try {
-      const res = await api.post('/simulations/1/start'); // practice mode
+      const res = await api.post('/questions/session');
       setSessionId(res.data.data.id);
     } catch {
-      setSessionId(1);
+      setSessionId(null);
     }
   };
 
@@ -80,7 +61,6 @@ const Questions = () => {
           session_id: sessionId,
           question_id: question.id,
           chosen_alternative_id: selectedAlt,
-          response_time_seconds: QUESTION_TIME - timer,
         });
       } catch { /* ignore */ }
     }
@@ -160,10 +140,36 @@ const Questions = () => {
     return parts;
   };
 
+  const preprocessStatement = (text: string): string => {
+    // Remove \r\n do PDF e colapsa espaços extras
+    text = text.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+
+    // Remove título duplicado no início (ex: "Título Título, continua...")
+    const words = text.split(' ');
+    for (let len = 3; len <= Math.min(12, Math.floor(words.length / 2)); len++) {
+      const firstPhrase = words.slice(0, len).join(' ');
+      const rest = words.slice(len).join(' ');
+      if (rest.startsWith(firstPhrase)) {
+        const nextChar = rest[firstPhrase.length];
+        if (!nextChar || /[,.\s;!?]/.test(nextChar)) {
+          text = rest;
+          break;
+        }
+      }
+    }
+
+    // Insere quebra de parágrafo antes de citações bibliográficas
+    // Padrão: SOBRENOME, I. ou SOBRENOME; após ponto final
+    text = text.replace(
+      /(\.)(\s+)([A-ZÁÉÍÓÚÂÊÎÔÛÃÕÀÈÌ]{2,},\s[A-Z]\.)/g,
+      '.\n\n$3'
+    );
+
+    return text.trim();
+  };
+
   const question: Question | undefined = questions[currentIndex];
   const progress = questions.length > 0 ? ((currentIndex) / questions.length) * 100 : 0;
-
-  const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 
   return (
     <div className="questions-page">
@@ -251,30 +257,17 @@ const Questions = () => {
               </div>
             ) : question ? (
               <div className="question-container">
-                <div className="question-progress">
-                  <div className={`question-timer${timer <= 30 ? ' warning' : ''}`}>
-                    <Clock size={16} />
-                    {formatTime(timer)}
-                  </div>
-                </div>
-
                 <div className="progress-bar">
                   <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
                 </div>
 
                 <div className="question-meta">
-                  {question.topic?.subject && (
-                    <span className="question-meta-tag question-meta-tag-subject">{question.topic.subject.name}</span>
+                  {question.subject && (
+                    <span className="question-meta-tag question-meta-tag-topic">{question.subject}</span>
                   )}
-                  {question.topic && (
-                    <span className="question-meta-tag question-meta-tag-topic">{question.topic.name}</span>
+                  {question.vestibular && (
+                    <span className="question-meta-tag question-meta-tag-vestibular">{question.vestibular}</span>
                   )}
-                  {question.subtopic && (
-                    <span className="question-meta-tag question-meta-tag-subtopic">{question.subtopic.name}</span>
-                  )}
-                  {question.vestibulares && question.vestibulares.length > 0 && question.vestibulares.map(v => (
-                    <span key={v.id} className="question-meta-tag question-meta-tag-vestibular">{v.name}</span>
-                  ))}
                   {question.year && (
                     <span className="question-meta-tag question-meta-tag-year">{question.year}</span>
                   )}
@@ -304,8 +297,12 @@ const Questions = () => {
                   className={`question-statement${highlightMode ? ' highlight-active' : ''}`}
                   onMouseUp={handleMouseUp}
                 >
-                  {renderWithHighlights(question.statement)}
+                  {renderWithHighlights(preprocessStatement(question.statement))}
                 </p>
+
+                {question.image_url && (
+                  <img src={question.image_url} alt="Imagem da questão" className="question-image" />
+                )}
 
                 {answered && (
                   <div className={`question-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>
@@ -317,7 +314,7 @@ const Questions = () => {
                 )}
 
                 <div className="alternatives-list">
-                  {question.alternatives.map((alt: Alternative) => {
+                  {[...question.alternatives].sort((a, b) => a.letter.localeCompare(b.letter)).map((alt: Alternative) => {
                     let cls = 'alternative-item';
                     if (alt.id === selectedAlt) cls += ' selected';
                     if (answered) {
@@ -332,7 +329,10 @@ const Questions = () => {
                         onClick={() => !answered && setSelectedAlt(alt.id)}
                       >
                         <div className="alternative-letter">{alt.letter}</div>
-                        <div className="alternative-text">{alt.text}</div>
+                        <div className="alternative-text">
+                          {alt.text}
+                          {alt.image_url && <img src={alt.image_url} alt={`Alternativa ${alt.letter}`} className="alternative-image" />}
+                        </div>
                       </div>
                     );
                   })}

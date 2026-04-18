@@ -76,7 +76,7 @@ const getYtThumb = (url: string) => {
 };
 
 const Home = () => {
-  const { student } = useSelector((state: RootState) => state.auth);
+  const { user: student } = useSelector((state: RootState) => state.auth);
   const [metrics, setMetrics] = useState<Metrics>({ total_answered: 0, accuracy: 0, rank: 0, streak: 0 });
   const [metricsLoaded, setMetricsLoaded] = useState(false);
   const [tip] = useState(tips[Math.floor(Math.random() * tips.length)]);
@@ -287,6 +287,15 @@ const Home = () => {
     if (hour < 18) return 'Boa tarde';
     return 'Boa noite';
   };
+
+  if (!metricsLoaded || !resumeLoaded) return (
+    <div className="home-page">
+      <Sidebar />
+      <main className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner" />
+      </main>
+    </div>
+  );
 
   return (
     <div className="home-page">

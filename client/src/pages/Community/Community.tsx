@@ -9,7 +9,7 @@ import './Community.css';
 const Community = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { posts, comments, ranking, loading } = useSelector((s: RootState) => s.community);
-  const { student } = useSelector((s: RootState) => s.auth);
+  const { user: student } = useSelector((s: RootState) => s.auth);
 
   const [postContent, setPostContent] = useState('');
   const [postImage, setPostImage] = useState('');

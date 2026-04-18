@@ -37,6 +37,7 @@ const Mentoring = () => {
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [form, setForm] = useState({ scheduled_at: '', notes: '' });
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [success, setSuccess] = useState(false);
 
   const loadData = async () => {
@@ -47,7 +48,7 @@ const Mentoring = () => {
       ]);
       setMentors(mentorsRes.data.data || []);
       setSessions(sessionsRes.data.data || []);
-    } catch { /* ignore */ }
+    } catch { /* ignore */ } finally { setPageLoading(false); }
   };
 
   useEffect(() => { loadData(); }, []);
@@ -79,6 +80,15 @@ const Mentoring = () => {
   };
 
   const getInitials = (name: string) => name ? name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase() : 'M';
+
+  if (pageLoading) return (
+    <div className="mentoring-page">
+      <Sidebar />
+      <main className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner" />
+      </main>
+    </div>
+  );
 
   return (
     <div className="mentoring-page">

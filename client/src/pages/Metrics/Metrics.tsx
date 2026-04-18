@@ -23,20 +23,32 @@ const Metrics = () => {
   const [overallAccuracy, setOverallAccuracy] = useState(0);
   const [subjects, setSubjects] = useState<SubjectStats[]>([]);
   const [recentSessions, setRecentSessions] = useState<SessionStat[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/gamification/points').then(r => setTotalPoints(r.data.data?.total_points || 0)).catch(() => {});
-    api.get('/gamification/streak').then(r => setStreak(r.data.data?.current_streak || 0)).catch(() => {});
-    api.get('/gamification/stats').then(r => {
-      setTotalAnswered(r.data.data?.total_answered || 0);
-      setOverallAccuracy(r.data.data?.accuracy || 0);
-    }).catch(() => {});
-    api.get('/gamification/subject-stats').then(r => setSubjects(r.data.data || [])).catch(() => {});
-    api.get('/gamification/recent-sessions').then(r => setRecentSessions(r.data.data || [])).catch(() => {});
+    Promise.all([
+      api.get('/gamification/points').then(r => setTotalPoints(r.data.data?.total_points || 0)),
+      api.get('/gamification/streak').then(r => setStreak(r.data.data?.current_streak || 0)),
+      api.get('/gamification/stats').then(r => {
+        setTotalAnswered(r.data.data?.total_answered || 0);
+        setOverallAccuracy(r.data.data?.accuracy || 0);
+      }),
+      api.get('/gamification/subject-stats').then(r => setSubjects(r.data.data || [])),
+      api.get('/gamification/recent-sessions').then(r => setRecentSessions(r.data.data || [])),
+    ]).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   const getAccuracyClass = (acc: number) => acc >= 70 ? 'high' : acc >= 50 ? 'medium' : 'low';
   const getSessionColor = (score: number) => score >= 70 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
+
+  if (loading) return (
+    <div className="metrics-page">
+      <Sidebar />
+      <main className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="spinner" />
+      </main>
+    </div>
+  );
 
   return (
     <div className="metrics-page">

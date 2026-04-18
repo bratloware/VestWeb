@@ -9,10 +9,10 @@ interface TeacherRouteProps {
 }
 
 const TeacherRoute = ({ children }: TeacherRouteProps) => {
-  const { token, student } = useSelector((state: RootState) => state.auth);
+  const { token, user } = useSelector((state: RootState) => state.auth);
 
   if (!token) return <Navigate to="/teacher/login" replace />;
-  if (!student || !isTeacherRole(student.role)) return <Navigate to="/select-platform" replace />;
+  if (!user || user.type !== 'teacher') return <Navigate to="/select-platform" replace />;
 
   return <>{children}</>;
 };

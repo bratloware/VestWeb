@@ -15,7 +15,7 @@ const TeacherLoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error, token } = useSelector((state: RootState) => state.auth);
-  const role = useSelector((state: RootState) => state.auth.student?.role);
+  const role = useSelector((state: RootState) => state.auth.user?.role);
 
   useEffect(() => {
     if (token && role && isTeacherRole(role)) navigate('/teacher/home');

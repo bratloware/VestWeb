@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Exam {
+  id          Int        @id @default(autoincrement())
+  year        Int        @unique
+  title       String
+  disciplines Json
+  languages   Json
+  questions   Question[]
+}
+
+model Question {
+  id                       Int           @id @default(autoincrement())
+  title                    String
+  index                    Int
+  year                     Int
+  discipline               String
+  language                 String?
+  context                  String?
+  files                    Json
+  correctAlternative       String
+  alternativesIntroduction String?
+  alternatives             Alternative[]
+  exam                     Exam          @relation(fields: [year], references: [year])
+
+  @@unique([year, index, language])
+}
+
+model Alternative {
+  id         Int      @id @default(autoincrement())
+  letter     String
+  text       String
+  file       String?
+  isCorrect  Boolean
+  questionId Int
+  question   Question @relation(fields: [questionId], references: [id])
+}

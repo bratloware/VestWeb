@@ -6,6 +6,7 @@ export interface Alternative {
   question_id: number;
   letter: 'A' | 'B' | 'C' | 'D' | 'E';
   text: string;
+  image_url?: string | null;
   is_correct: boolean;
 }
 
@@ -26,16 +27,18 @@ export interface Subtopic {
 export interface Question {
   id: number;
   statement: string;
-  topic_id: number;
-  subtopic_id?: number;
+  image_url?: string | null;
+  topic_id?: number;
   difficulty: 'easy' | 'medium' | 'hard';
   source?: string;
   year?: number;
   bank?: string;
+  correctAlternative?: string;
+  subject?: string;
+  subject_id?: number;
+  vestibular?: string;
+  vestibular_id?: number;
   alternatives: Alternative[];
-  topic?: { id: number; name: string; subject?: { id: number; name: string } };
-  subtopic?: Subtopic;
-  vestibulares?: Vestibular[];
 }
 
 export interface Subject {
