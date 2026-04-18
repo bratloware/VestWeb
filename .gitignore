@@ -32,6 +32,7 @@ coverage/
 # Editor / IDE
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 .DS_Store
@@ -54,3 +55,15 @@ pids/
 .yarn/unplugged
 .yarn/install-state.gz
 .pnp.*
+
+/server/data
+
+/client/public/images/enem
+
+server/data/enem_2022.json
+server/data/enem_2023.json
+server/data/enem_2024.json
+
+/enem-api
+
+/scriptsPython
