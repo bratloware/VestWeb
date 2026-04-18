@@ -11,7 +11,7 @@ const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { questions, subjects, vestibulares, loading } = useSelector((state: RootState) => state.questions);
 
-  const [filters, setFilters] = useState({ subject_id: '', difficulty: '', vestibular_id: '' });
+  const [filters, setFilters] = useState({ subject_id: '', difficulty: '', vestibular_id: '', with_image: '' });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAlt, setSelectedAlt] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -223,13 +223,26 @@ const Questions = () => {
               </select>
             </div>
 
+            <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+              <input
+                type="checkbox"
+                id="with_image"
+                checked={filters.with_image === '1'}
+                onChange={e => setFilters({ ...filters, with_image: e.target.checked ? '1' : '' })}
+                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+              />
+              <label htmlFor="with_image" style={{ marginBottom: 0, cursor: 'pointer', fontSize: '14px' }}>
+                Só questões com imagem
+              </label>
+            </div>
+
             <button className="filter-btn" onClick={handleSearch} disabled={loading}>
               {loading ? 'Buscando...' : 'Buscar questões'}
             </button>
             {Object.values(filters).some(v => v !== '') && (
               <button
                 className="filter-clear-btn"
-                onClick={() => setFilters({ subject_id: '', difficulty: '', vestibular_id: '' })}
+                onClick={() => setFilters({ subject_id: '', difficulty: '', vestibular_id: '', with_image: '' })}
               >
                 Limpar filtros
               </button>
@@ -301,7 +314,12 @@ const Questions = () => {
                 </p>
 
                 {question.image_url && (
-                  <img src={question.image_url} alt="Imagem da questão" className="question-image" />
+                  <div style={{ marginBottom: '16px' }}>
+                    <img src={question.image_url} alt="Imagem da questão" className="question-image" style={{ marginBottom: '4px' }} />
+                    <p style={{ fontSize: '11px', color: 'var(--text-secondary)', textAlign: 'center', margin: 0 }}>
+                      [{question.year} — {question.image_url.split('/').pop()}]
+                    </p>
+                  </div>
                 )}
 
                 {answered && (
