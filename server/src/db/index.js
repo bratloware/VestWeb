@@ -15,12 +15,14 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   port: parseInt(DB_PORT, 10),
   dialect: 'postgres',
   logging: NODE_ENV === 'development' ? console.log : false,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+  ...(NODE_ENV === 'production' && {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
-  },
+  }),
   pool: {
     max: 5,
     min: 0,

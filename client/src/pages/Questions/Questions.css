@@ -369,6 +369,37 @@
   margin-bottom: 4px;
 }
 
+.questions-loading {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 80px 40px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.questions-loading p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.questions-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .questions-empty {
   background: var(--white);
   border-radius: var(--radius-xl);

@@ -44,7 +44,7 @@ const QUESTION_SELECT = `
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, vestibular_id, year, difficulty, limit = 20, offset = 0 } = req.query;
+    const { subject_id, vestibular_id, year, difficulty, with_image, limit = 20, offset = 0 } = req.query;
 
     const conditions = [];
     const replacements = { limit: parseInt(limit), offset: parseInt(offset) };
@@ -67,6 +67,10 @@ export const getAll = async (req, res) => {
     if (difficulty) {
       conditions.push(`q.difficulty = :difficulty`);
       replacements.difficulty = difficulty;
+    }
+
+    if (with_image === '1') {
+      conditions.push(`q.image_url IS NOT NULL`);
     }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
