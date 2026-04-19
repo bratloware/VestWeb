@@ -250,7 +250,12 @@ const Questions = () => {
           </div>
 
           <div>
-            {finished ? (
+            {loading ? (
+              <div className="questions-loading">
+                <div className="questions-spinner" />
+                <p>Carregando questões...</p>
+              </div>
+            ) : finished ? (
               <div className="question-container">
                 <div className="question-result">
                   <span className="result-score">{Math.round((score.correct / score.total) * 100)}%</span>
