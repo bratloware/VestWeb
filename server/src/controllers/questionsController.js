@@ -77,7 +77,7 @@ export const getAll = async (req, res) => {
 
     const [questions, countRows] = await Promise.all([
       sequelize.query(
-        `${QUESTION_SELECT} ${where} GROUP BY q.id, s.id, v.id ORDER BY RANDOM() LIMIT :limit OFFSET :offset`,
+        `${QUESTION_SELECT} ${where} GROUP BY q.id, q.statement, q.image_url, q.year, q.difficulty, q.topic_id, s.id, s.name, v.id, v.name ORDER BY RANDOM() LIMIT :limit OFFSET :offset`,
         { replacements, type: QueryTypes.SELECT },
       ),
       sequelize.query(
