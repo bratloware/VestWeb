@@ -125,10 +125,11 @@
 
 .sidebar-nav-item.active,
 .sidebar-nav-item.active:hover {
-  color: var(--primary);
-  background: linear-gradient(90deg, rgba(99,102,241,0.28) 0%, rgba(99,102,241,0.04) 100%);
+  color: #14b8a6;
+  background: rgba(20, 184, 166, 0.10);
   font-weight: 600;
   transform: none;
+  box-shadow: inset 3px 0 0 0 #14b8a6;
 }
 
 .sidebar-nav-item svg {
@@ -252,8 +253,8 @@
 }
 
 .sidebar.collapsed .sidebar-nav-item.active {
-  border-left: none;
-  background: rgba(99,102,241,0.2);
+  box-shadow: none;
+  background: rgba(20, 184, 166, 0.15);
 }
 
 .sidebar.collapsed .sidebar-footer {

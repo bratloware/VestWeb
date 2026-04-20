@@ -69,7 +69,7 @@ const Sidebar = ({ navItems = defaultNavItems, roleLabel }: SidebarProps) => {
     <>
       {open && <div className="sidebar-overlay" onClick={() => setOpen(false)} />}
 
-      <button className="sidebar-mobile-toggle" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+      <button className="sidebar-mobile-toggle" onClick={() => setOpen(!open)} aria-label={open ? 'Fechar menu' : 'Abrir menu'}>
         {open ? <X size={22} /> : <Menu size={22} />}
       </button>
 
