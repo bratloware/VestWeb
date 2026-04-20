@@ -318,6 +318,12 @@ const Questions = () => {
                   {renderWithHighlights(preprocessStatement(question.statement))}
                 </p>
 
+                {question.reference && (
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', fontStyle: 'italic', margin: '4px 0 12px' }}>
+                    Disponível em: {question.reference}
+                  </p>
+                )}
+
                 {question.image_url && (
                   <div style={{ marginBottom: '16px' }}>
                     <img src={question.image_url} alt="Imagem da questão" className="question-image" style={{ marginBottom: '4px' }} />

@@ -34,6 +34,7 @@ export interface Question {
   year?: number;
   bank?: string;
   correctAlternative?: string;
+  reference?: string | null;
   subject?: string;
   subject_id?: number;
   vestibular?: string;

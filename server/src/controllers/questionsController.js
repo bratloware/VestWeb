@@ -10,6 +10,7 @@ const QUESTION_SELECT = `
     q.id,
     q.statement,
     q.image_url,
+    q.reference,
     q.year,
     q.difficulty,
     q.topic_id,
