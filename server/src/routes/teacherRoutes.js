@@ -20,13 +20,14 @@ import {
 const router = Router();
 
 router.use(authMiddleware);
+
+router.get('/announcements/feed', getAnnouncementsFeed);
+
 router.use(requireTeacher);
 
 router.get('/profile', getProfile);
 router.get('/insights', getInsights);
 router.get('/activity', getActivity);
-
-router.get('/announcements/feed', getAnnouncementsFeed);
 router.get('/announcements', getMyAnnouncements);
 router.post('/announcements', createAnnouncement);
 router.delete('/announcements/:id', deleteAnnouncement);
