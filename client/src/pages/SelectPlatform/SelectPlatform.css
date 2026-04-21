@@ -1,9 +1,5 @@
 .select-platform {
   min-height: 100vh;
-  background-image: url('../../assets/images/bg-select-platform.jpg');
-  background-size: cover;  
-  background-position: center;
-  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,10 +8,24 @@
   overflow: hidden;
 }
 
+/* LCP image — rendered as <img> in JSX with fetchpriority="high" */
+.select-platform-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
 .select-platform-bg {
   position: absolute;
   inset: 0;
-  background: rgba(13, 27, 42, 0.7);
+  background: rgba(7, 15, 26, 0.78);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   pointer-events: none;
 }
 
@@ -31,7 +41,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.88);  /* was 0.7 — bumped for WCAG AA */
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -62,13 +72,19 @@
   font-size: clamp(28px, 4vw, 36px);
   font-weight: 800;
   color: white;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
 }
 
-.select-platform-inner p {
+.select-platform-inner > p {
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.78);
   margin-bottom: 48px;
+  font-weight: 400;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
 }
 
 .select-platform-cards {
@@ -78,27 +94,94 @@
 }
 
 .platform-card {
-  background: rgba(9, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-lg);
   padding: 40px 36px;
   text-align: center;
   cursor: pointer;
-  transition: var(--transition);
-  backdrop-filter: blur(10px);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   text-decoration: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  /* The entire card is the click target — button is decorative */
+  position: relative;
 }
 
 .platform-card:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.13);
   border-color: var(--primary);
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--primary);
   color: white;
+}
+
+.platform-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.platform-card-flix:hover {
+  border-color: #ef4444;
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.5), 0 0 0 1px #ef4444;
+}
+
+.platform-card-flix:focus-visible {
+  outline-color: #ef4444;
+}
+
+/* Netflix teaser overlay — fades in on card hover */
+.platform-card-flix::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 28%, transparent 72%, rgba(0, 0, 0, 0.65) 100%),
+    linear-gradient(135deg, rgba(220, 38, 38, 0.18) 0%, transparent 55%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.platform-card-flix:hover::before {
+  opacity: 1;
+}
+
+/* Keep card content above the pseudo-element overlay */
+.platform-card-flix > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Espaço Aluno teaser — same cinematic effect, indigo wash */
+.platform-card-espaco::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0%, transparent 28%, transparent 72%, rgba(0, 0, 0, 0.65) 100%),
+    linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, transparent 55%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.platform-card-espaco:hover::before {
+  opacity: 1;
+}
+
+.platform-card-espaco > * {
+  position: relative;
+  z-index: 1;
 }
 
 .platform-card-icon {
@@ -140,28 +223,55 @@
 }
 
 .platform-card-btn {
-  background: var(--primary);
-  color: white;
+  /* Ghost by default — signals the card is the unit, not just the button */
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   padding: 10px 28px;
   border-radius: var(--radius);
   font-size: 14px;
   font-weight: 700;
-  transition: var(--transition);
+  transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
   margin-top: 8px;
+  pointer-events: none; /* card <Link> is the real click target */
 }
 
 .platform-card:hover .platform-card-btn {
-  background: var(--primary-dark);
-  transform: scale(1.05);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  transform: scale(1.04);
+}
+
+.platform-card-btn-red {
+  /* inherits ghost base */
+}
+
+.platform-card-flix:hover .platform-card-btn-red {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  border-color: #dc2626;
+  color: white;
+  transform: scale(1.04);
 }
 
 .platform-card-badge {
-  background: rgba(220, 38, 38, 0.2);
-  color: #f87171;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.platform-card-badge-red {
+  background: rgba(220, 38, 38, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.platform-card-badge-indigo {
+  background: rgba(99, 102, 241, 0.2);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.35);
 }
 
 @media (max-width: 600px) {
