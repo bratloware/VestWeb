@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  LayoutDashboard, HelpCircle, ClipboardList, Play,
+  LayoutDashboard, HelpCircle, ClipboardList,
   Calendar, BarChart2, Users, MessageCircle,
-  Settings, LogOut, Menu, X, LucideIcon, Sun, Moon, Layers,
+  Settings, LogOut, Menu, X, LucideIcon, Sun, Moon,
   ChevronLeft, ChevronRight, PenLine,
 } from 'lucide-react';
 import logo from '../assets/images/logo.png';
@@ -26,10 +26,8 @@ export interface NavItem {
 const defaultNavItems: NavItem[] = [
   { label: 'Home', icon: LayoutDashboard, to: '/classroom/home' },
   { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
-  { label: 'Flashcards', icon: Layers, to: '/classroom/flashcards' },
   { label: 'Redação', icon: PenLine, to: '/classroom/essay' },
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
-  { label: 'VestWebFlix', icon: Play, to: '/VestWebFlix' },
   { label: 'Calendário', icon: Calendar, to: '/classroom/review-calendar' },
   { label: 'Métricas', icon: BarChart2, to: '/classroom/metrics' },
   { label: 'Comunidade', icon: Users, to: '/classroom/community' },

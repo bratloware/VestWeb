@@ -89,7 +89,7 @@ const TeacherQuestions = () => {
     setLoading(true);
     try {
       const [qRes, sRes, tRes] = await Promise.all([
-        api.get('/questions?limit=1000'),
+        api.get('/questions?limit=9999'),
         api.get('/questions/subjects'),
         api.get('/questions/topics'),
       ]);

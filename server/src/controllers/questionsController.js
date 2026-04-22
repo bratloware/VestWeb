@@ -35,7 +35,7 @@ const QUESTION_SELECT = `
   FROM questions q
   LEFT JOIN alternatives a ON a.question_id = q.id
   LEFT JOIN topics t ON t.id = q.topic_id
-  LEFT JOIN subjects s ON s.id = t.subject_id
+  LEFT JOIN subjects s ON s.id = COALESCE(t.subject_id, q.subject_id)
   LEFT JOIN question_vestibulares qv2 ON qv2.question_id = q.id
   LEFT JOIN vestibulares v ON v.id = qv2.vestibular_id
 `;
@@ -70,7 +70,7 @@ export const getAll = async (req, res) => {
     }
 
     if (with_image === '1') {
-      conditions.push(`q.image_url IS NOT NULL`);
+      conditions.push(`q.image_url IS NOT NULL AND q.image_url <> ''`);
     }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -84,7 +84,7 @@ export const getAll = async (req, res) => {
         `SELECT COUNT(DISTINCT q.id) AS count
          FROM questions q
          LEFT JOIN topics t ON t.id = q.topic_id
-         LEFT JOIN subjects s ON s.id = t.subject_id
+         LEFT JOIN subjects s ON s.id = COALESCE(t.subject_id, q.subject_id)
          LEFT JOIN question_vestibulares qv2 ON qv2.question_id = q.id
          LEFT JOIN vestibulares v ON v.id = qv2.vestibular_id
          ${where}`,

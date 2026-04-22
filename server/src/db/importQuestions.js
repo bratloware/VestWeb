@@ -7,30 +7,25 @@
  *   node src/db/importQuestions.js                        (usa data/questions-sample.json)
  *   node src/db/importQuestions.js data/minhas-questoes.json
  *
- * Formato esperado do JSON:
- * [
- *   {
- *     "statement": "Texto da questão",
- *     "topic": "Nome do tópico (deve existir no banco)",
- *     "difficulty": "easy" | "medium" | "hard",
- *     "source": "ENEM",       (opcional)
- *     "year": 2023,           (opcional)
- *     "bank": "INEP",         (opcional)
- *     "alternatives": [
- *       { "letter": "A", "text": "...", "is_correct": false },
- *       { "letter": "B", "text": "...", "is_correct": true  },
- *       { "letter": "C", "text": "...", "is_correct": false },
- *       { "letter": "D", "text": "...", "is_correct": false },
- *       { "letter": "E", "text": "...", "is_correct": false }
- *     ]
- *   }
- * ]
+ * Formatos aceitos:
+ *
+ * Formato A (legado) — usa nome do tópico:
+ * { "statement": "...", "topic": "Eletroquímica", "difficulty": "medium", "alternatives": [...] }
+ *
+ * Formato B (novo) — usa subject.name + topic_id:
+ * { "statement": "...", "subject": { "id": 2, "name": "Química" }, "topic_id": 1,
+ *   "difficulty": "medium", "source": "ENEM", "year": 2010, "bank": "ENEM",
+ *   "image_url": "...", "number": 63, "reference": "...", "alternatives": [...] }
+ *
+ * No formato B, o script verifica se o topic_id pertence ao subject correto.
+ * Se não pertencer, usa o tópico genérico daquele subject (ex: "Química").
  */
 
 import 'dotenv/config';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { QueryTypes } from 'sequelize';
 import sequelize from './index.js';
 import { Topic, Question, Alternative } from './models/index.js';
 
@@ -42,13 +37,17 @@ const inputFile = process.argv[2]
   : resolve(__dirname, '../../data/questions-sample.json');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-const BATCH_SIZE = 100; // questões por lote de insert
+const BATCH_SIZE = 100;
 const VALID_DIFFICULTIES = ['easy', 'medium', 'hard'];
 
-function validate(q, index) {
+function validate(q) {
   const errors = [];
-  if (!q.statement?.trim())           errors.push('statement vazio');
-  if (!q.topic?.trim())               errors.push('topic vazio');
+  if (!q.statement?.trim()) errors.push('statement vazio');
+
+  const hasLegacyTopic  = !!q.topic?.trim();
+  const hasNewSubject   = !!q.subject?.name?.trim();
+  if (!hasLegacyTopic && !hasNewSubject) errors.push('informe "topic" (nome) ou "subject.name"');
+
   if (!VALID_DIFFICULTIES.includes(q.difficulty)) errors.push(`difficulty inválido: "${q.difficulty}"`);
   if (!Array.isArray(q.alternatives) || q.alternatives.length !== 5)
     errors.push('alternatives deve ter exatamente 5 itens');
