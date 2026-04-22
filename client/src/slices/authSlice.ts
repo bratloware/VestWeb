@@ -111,6 +111,11 @@ const authSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
+    updateUser(state, action: PayloadAction<Partial<AuthUser>>) {
+      if (!state.user) return;
+      state.user = { ...state.user, ...action.payload };
+      localStorage.setItem('VestWeb_user', JSON.stringify(state.user));
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -148,5 +153,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, clearAuth, setError, setLoading } = authSlice.actions;
+export const { setCredentials, clearAuth, setError, setLoading, updateUser } = authSlice.actions;
 export default authSlice.reducer;

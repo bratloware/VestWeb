@@ -106,7 +106,7 @@ export const getById = async (req, res) => {
   try {
     const { id } = req.params;
     const [question] = await sequelize.query(
-      `${QUESTION_SELECT} WHERE q.id = :id GROUP BY q.id`,
+      `${QUESTION_SELECT} WHERE q.id = :id GROUP BY q.id, s.id, s.name, v.id, v.name`,
       { replacements: { id: parseInt(id) }, type: QueryTypes.SELECT },
     );
     if (!question) return res.status(404).json({ message: 'Question not found' });

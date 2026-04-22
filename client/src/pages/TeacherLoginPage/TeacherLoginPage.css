@@ -98,17 +98,22 @@
 
 /* Right side */
 .teacher-login-right {
-  width: 480px;
+  width: 520px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 60px 48px;
+  padding: 48px 40px;
   background: var(--bg);
 }
 
 .teacher-login-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 40px;
 }
 
 .teacher-login-card-logo {
@@ -154,7 +159,7 @@
   color: white;
   border: none;
   border-radius: var(--radius);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
@@ -173,7 +178,7 @@
 }
 
 .teacher-login-error {
-  background: #fee2e2;
+  background: #fff5f5;
   color: #dc2626;
   padding: 12px 16px;
   border-radius: var(--radius);
@@ -181,6 +186,7 @@
   margin-bottom: 16px;
   text-align: center;
   border: 1px solid #fca5a5;
+  border-left: 4px solid #ef4444;
 }
 
 .teacher-login-divider {
@@ -234,13 +240,17 @@
   color: var(--teacher-accent);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .teacher-login-left {
     display: none;
   }
 
   .teacher-login-right {
     width: 100%;
-    padding: 40px 24px;
+    padding: 40px 20px;
+  }
+
+  .teacher-login-card {
+    padding: 32px 24px;
   }
 }

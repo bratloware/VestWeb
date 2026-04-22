@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { User, Lock, Bell, Shield } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { User, Lock, Bell, Shield, Camera } from 'lucide-react';
 import TeacherSidebar from '../../components/TeacherSidebar';
 import api from '../../api/api';
 import { RootState } from '../../store/store';
+import { updateUser } from '../../slices/authSlice';
 import { getInitials } from '../../utils/stringUtils';
+import AvatarPicker from '../../components/AvatarPicker/AvatarPicker';
 import '../../pages/Settings/Settings.css';
 
 const TeacherSettings = () => {
+  const dispatch = useDispatch();
   const { user: student } = useSelector((s: RootState) => s.auth);
   const [activeSection, setActiveSection] = useState<'profile' | 'password' | 'notifications' | 'privacy'>('profile');
 
@@ -27,7 +30,33 @@ const TeacherSettings = () => {
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
+
+  const handleAvatarSave = async (avatarUrl: string, file?: File) => {
+    try {
+      if (file) {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        const res = await api.post('/auth/avatar', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        const url = res.data.data.avatar_url;
+        dispatch(updateUser({ avatar_url: url }));
+        setProfileForm(prev => ({ ...prev, avatar_url: url }));
+      } else {
+        await api.put('/auth/me', { ...profileForm, avatar_url: avatarUrl });
+        dispatch(updateUser({ avatar_url: avatarUrl }));
+        setProfileForm(prev => ({ ...prev, avatar_url: avatarUrl }));
+      }
+      setShowAvatarPicker(false);
+      setProfileMsg({ type: 'success', text: 'Foto atualizada com sucesso!' });
+      setTimeout(() => setProfileMsg(null), 4000);
+    } catch {
+      setProfileMsg({ type: 'error', text: 'Erro ao atualizar foto. Tente novamente.' });
+      setTimeout(() => setProfileMsg(null), 4000);
+    }
+  };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +64,7 @@ const TeacherSettings = () => {
     setProfileMsg(null);
     try {
       await api.put('/auth/me', profileForm);
+      dispatch(updateUser(profileForm));
       setProfileMsg({ type: 'success', text: 'Perfil atualizado com sucesso!' });
     } catch {
       setProfileMsg({ type: 'error', text: 'Erro ao atualizar perfil. Tente novamente.' });
@@ -76,6 +106,14 @@ const TeacherSettings = () => {
   return (
     <div className="teacher-layout">
       <TeacherSidebar />
+      {showAvatarPicker && (
+        <AvatarPicker
+          currentAvatar={profileForm.avatar_url}
+          name={profileForm.name}
+          onSave={handleAvatarSave}
+          onClose={() => setShowAvatarPicker(false)}
+        />
+      )}
       <main className="teacher-main">
         <div style={{ padding: '32px' }}>
         <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Configurações</h1>
@@ -101,26 +139,42 @@ const TeacherSettings = () => {
                 <p className="settings-desc">Atualize suas informações pessoais e foto de perfil.</p>
 
                 <div className="avatar-section">
-                  <div className="avatar-large">
-                    {profileForm.avatar_url ? (
-                      <img src={profileForm.avatar_url} alt="Avatar" onError={e => (e.currentTarget.style.display = 'none')} />
-                    ) : (
-                      getInitials(profileForm.name)
-                    )}
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <div className="avatar-large">
+                      {profileForm.avatar_url ? (
+                        <img src={profileForm.avatar_url} alt="Avatar" onError={e => (e.currentTarget.style.display = 'none')} />
+                      ) : (
+                        getInitials(profileForm.name)
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowAvatarPicker(true)}
+                      style={{
+                        position: 'absolute', bottom: 0, right: 0,
+                        width: 32, height: 32, borderRadius: '50%',
+                        background: 'var(--primary)', border: '2px solid var(--white)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', color: 'white',
+                      }}
+                      title="Alterar foto de perfil"
+                      aria-label="Alterar foto de perfil"
+                    >
+                      <Camera size={15} />
+                    </button>
                   </div>
                   <div className="avatar-info">
                     <h3>{student?.name}</h3>
                     <p>Matrícula: {student?.enrollment}</p>
-                    <div className="form-group" style={{ marginBottom: 0 }}>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="URL da foto de perfil"
-                        value={profileForm.avatar_url}
-                        onChange={e => setProfileForm({ ...profileForm, avatar_url: e.target.value })}
-                        style={{ fontSize: '13px' }}
-                      />
-                    </div>
+                    <button
+                      type="button"
+                      className="teacher-quick-btn"
+                      style={{ fontSize: '13px', padding: '7px 14px' }}
+                      onClick={() => setShowAvatarPicker(true)}
+                    >
+                      <Camera size={14} />
+                      Alterar foto de perfil
+                    </button>
                   </div>
                 </div>
 

@@ -844,7 +844,6 @@
   justify-content: center;
   box-shadow: var(--shadow-lg);
   color: white;
-  font-size: 26px;
   z-index: 90;
   text-decoration: none;
   transition: var(--transition);

@@ -1,6 +1,6 @@
 import { Student, Session, Teacher, TeacherSession } from '../db/models/index.js';
 import { generateToken } from '../services/jwtService.js';
-import { comparePassword } from '../services/hashService.js';
+import { comparePassword, hashPassword } from '../services/hashService.js';
 
 export const login = async (req, res) => {
   try {
@@ -72,6 +72,61 @@ export const me = async (req, res) => {
   try {
     return res.json({ message: 'User data', data: req.user });
   } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const uploadAvatar = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'Nenhum arquivo enviado' });
+
+    const Model = req.user.type === 'teacher' ? Teacher : Student;
+    const record = await Model.findByPk(req.user.id);
+    if (!record) return res.status(404).json({ message: 'User not found' });
+
+    const base64 = req.file.buffer.toString('base64');
+    const avatar_url = `data:${req.file.mimetype};base64,${base64}`;
+    await record.update({ avatar_url });
+    return res.json({ message: 'Avatar updated', data: { avatar_url } });
+  } catch (error) {
+    console.error('uploadAvatar error:', error);
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const updateMe = async (req, res) => {
+  try {
+    const { name, email, avatar_url } = req.body;
+    const Model = req.user.type === 'teacher' ? Teacher : Student;
+    const record = await Model.findByPk(req.user.id);
+    if (!record) return res.status(404).json({ message: 'User not found' });
+
+    await record.update({ name, email, avatar_url });
+    return res.json({ message: 'Profile updated', data: record });
+  } catch (error) {
+    console.error('updateMe error:', error);
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const { current_password, new_password } = req.body;
+    if (!current_password || !new_password) {
+      return res.status(400).json({ message: 'current_password e new_password são obrigatórios' });
+    }
+    const Model = req.user.type === 'teacher' ? Teacher : Student;
+    const record = await Model.findByPk(req.user.id);
+    if (!record) return res.status(404).json({ message: 'User not found' });
+
+    const isMatch = await comparePassword(current_password, record.password_hash);
+    if (!isMatch) return res.status(401).json({ message: 'Senha atual incorreta' });
+
+    const password_hash = await hashPassword(new_password);
+    await record.update({ password_hash });
+    return res.json({ message: 'Password updated' });
+  } catch (error) {
+    console.error('changePassword error:', error);
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };

@@ -198,13 +198,17 @@ export const getInsights = async (req, res) => {
     const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
     if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
 
-    // Pending doubts
+    // Period filter: today | 7d | 30d (default: 7d)
+    const period = req.query.period ?? '7d';
+    const msMap = { today: 24 * 60 * 60 * 1000, '7d': 7 * 24 * 60 * 60 * 1000, '30d': 30 * 24 * 60 * 60 * 1000 };
+    const since = new Date(Date.now() - (msMap[period] ?? msMap['7d']));
+
+    // Pending doubts — always all-time (unanswered = needs attention regardless of age)
     const pendingDoubts = await StudentDoubt.count({
       where: { mentor_id: mentor.id, answered: false },
     });
 
-    // Active students in last 24h watching this teacher's videos
-    const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    // Active students watching this teacher's videos within the selected period
     const myVideos = await Video.findAll({
       where: { created_by: req.user.id },
       attributes: ['id'],
@@ -216,7 +220,7 @@ export const getInsights = async (req, res) => {
       const rows = await VideoProgress.findAll({
         where: {
           video_id: { [Op.in]: myVideoIds },
-          updated_at: { [Op.gte]: since24h },
+          updated_at: { [Op.gte]: since },
         },
         attributes: ['student_id'],
         group: ['student_id'],
@@ -224,9 +228,14 @@ export const getInsights = async (req, res) => {
       activeStudents = rows.length;
     }
 
-    // Average rating from done sessions
+    // Average rating from done sessions within the selected period
     const doneSessions = await MentoringSession.findAll({
-      where: { mentor_id: mentor.id, status: 'done', rating: { [Op.not]: null } },
+      where: {
+        mentor_id: mentor.id,
+        status: 'done',
+        rating: { [Op.not]: null },
+        updated_at: { [Op.gte]: since },
+      },
       attributes: ['rating'],
     });
     const avgRating = doneSessions.length > 0
