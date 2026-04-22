@@ -9,8 +9,11 @@ const Mentor = sequelize.define('Mentor', {
   },
   student_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    unique: true,
+    allowNull: true,
+  },
+  teacher_id: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
   bio: {
     type: DataTypes.TEXT,

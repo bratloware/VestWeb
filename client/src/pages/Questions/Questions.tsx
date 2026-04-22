@@ -1,11 +1,177 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, ChevronRight, RotateCcw, PenLine, Trash2 } from 'lucide-react';
+import { Filter, ChevronRight, RotateCcw, PenLine, Trash2, Flag, X, Send, CheckCircle } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Questions.css';
+
+// ── Report types ──────────────────────────────────────────────────────────────
+
+const REPORT_TYPES = [
+  { value: 'wrong_answer',       label: 'Gabarito incorreto' },
+  { value: 'typo',               label: 'Erro de digitação/ortografia' },
+  { value: 'image_missing',      label: 'Imagem ausente ou corrompida' },
+  { value: 'unclear_statement',  label: 'Enunciado confuso ou incompleto' },
+  { value: 'wrong_subject',      label: 'Disciplina/assunto incorreto' },
+  { value: 'other',              label: 'Outro' },
+] as const;
+
+type ReportType = typeof REPORT_TYPES[number]['value'];
+type ReportState = 'idle' | 'loading' | 'success';
+
+interface ReportModalProps {
+  questionId: number;
+  onClose: () => void;
+}
+
+const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
+  const [errorType, setErrorType] = useState<ReportType | ''>('');
+  const [description, setDescription] = useState('');
+  const [state, setState] = useState<ReportState>('idle');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!errorType) { setError('Selecione o tipo de erro.'); return; }
+    setState('loading');
+    setError('');
+    try {
+      await api.post(`/questions/${questionId}/report`, { error_type: errorType, description: description.trim() || undefined });
+      setState('success');
+    } catch {
+      setState('idle');
+      setError('Erro ao enviar. Tente novamente.');
+    }
+  };
+
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 200,
+        background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(2px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+      }}
+      onClick={state !== 'success' ? onClose : undefined}
+    >
+      <div
+        style={{
+          background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18,
+          padding: 28, maxWidth: 440, width: '100%',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.25)',
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        {state === 'success' ? (
+          <div style={{ textAlign: 'center', padding: '16px 0' }}>
+            <CheckCircle size={48} color="#22c55e" style={{ marginBottom: 16 }} />
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>
+              Report enviado!
+            </h3>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
+              Obrigado por nos ajudar a melhorar nossa aplicação. Nossa equipe irá analisar e corrigir o erro em breve.
+            </p>
+            <button
+              onClick={onClose}
+              style={{
+                padding: '10px 28px', borderRadius: 10, border: 'none',
+                background: 'var(--primary)', color: 'white',
+                fontWeight: 700, fontSize: 14, cursor: 'pointer',
+              }}
+            >
+              Continuar respondendo
+            </button>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Flag size={18} color="#ef4444" />
+                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: 'var(--text)' }}>Reportar erro na questão</h3>
+              </div>
+              <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', padding: 4 }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
+                Selecione o tipo de erro encontrado:
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 18 }}>
+                {REPORT_TYPES.map(t => (
+                  <label
+                    key={t.value}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '10px 14px', borderRadius: 10, cursor: 'pointer',
+                      border: `1.5px solid ${errorType === t.value ? 'var(--primary)' : 'var(--border)'}`,
+                      background: errorType === t.value ? 'rgba(99,102,241,0.07)' : 'var(--bg-secondary)',
+                      transition: 'border-color 0.15s, background 0.15s',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="error_type"
+                      value={t.value}
+                      checked={errorType === t.value}
+                      onChange={() => { setErrorType(t.value); setError(''); }}
+                      style={{ accentColor: 'var(--primary)', width: 16, height: 16, flexShrink: 0 }}
+                    />
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{t.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              <div style={{ marginBottom: 18 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                  Detalhes adicionais <span style={{ color: 'var(--text-secondary)', fontWeight: 400 }}>(opcional)</span>
+                </label>
+                <textarea
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  placeholder="Descreva o erro com mais detalhes..."
+                  rows={3}
+                  maxLength={500}
+                  style={{
+                    width: '100%', padding: '10px 12px', borderRadius: 8,
+                    border: '1.5px solid var(--border)', background: 'var(--bg)',
+                    color: 'var(--text)', fontSize: 13, resize: 'vertical',
+                    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              {error && (
+                <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12, fontWeight: 600 }}>{error}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={state === 'loading' || !errorType}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  padding: '12px', borderRadius: 10, border: 'none',
+                  background: !errorType ? 'var(--border)' : 'var(--primary)',
+                  color: !errorType ? 'var(--text-secondary)' : 'white',
+                  fontWeight: 700, fontSize: 14,
+                  cursor: !errorType || state === 'loading' ? 'not-allowed' : 'pointer',
+                  opacity: state === 'loading' ? 0.7 : 1,
+                  transition: 'background 0.15s',
+                }}
+              >
+                <Send size={15} />
+                {state === 'loading' ? 'Enviando...' : 'Enviar report'}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +187,7 @@ const Questions = () => {
   const [finished, setFinished] = useState(false);
   const [highlightMode, setHighlightMode] = useState(false);
   const [highlights, setHighlights] = useState<{ start: number; end: number }[]>([]);
+  const [reportOpen, setReportOpen] = useState(false);
   const statementRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
@@ -86,8 +253,8 @@ const Questions = () => {
     setScore({ correct: 0, total: 0 });
   };
 
-  // Clear highlights when question changes
-  useEffect(() => { setHighlights([]); }, [currentIndex]);
+  // Clear highlights and close report modal when question changes
+  useEffect(() => { setHighlights([]); setReportOpen(false); }, [currentIndex]);
 
   const getTextOffset = (container: HTMLElement, node: Node, offset: number): number => {
     let total = 0;
@@ -275,6 +442,8 @@ const Questions = () => {
               </div>
             ) : question ? (
               <div className="question-container">
+                {reportOpen && <ReportModal questionId={question.id} onClose={() => setReportOpen(false)} />}
+
                 <div className="progress-bar">
                   <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
                 </div>
@@ -361,7 +530,7 @@ const Questions = () => {
                   })}
                 </div>
 
-                <div className="question-actions">
+                <div className="question-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   {!answered ? (
                     <button
                       className="btn-primary"
@@ -376,6 +545,23 @@ const Questions = () => {
                       <ChevronRight size={16} />
                     </button>
                   )}
+                  <button
+                    onClick={() => setReportOpen(true)}
+                    title="Reportar erro nesta questão"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      padding: '9px 14px', borderRadius: 9,
+                      border: '1.5px solid var(--border)', background: 'transparent',
+                      color: 'var(--text-secondary)', fontSize: 13, fontWeight: 600,
+                      cursor: 'pointer', transition: 'border-color 0.15s, color 0.15s',
+                      flexShrink: 0,
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#ef4444'; (e.currentTarget as HTMLButtonElement).style.color = '#ef4444'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)'; }}
+                  >
+                    <Flag size={14} />
+                    Reportar erro
+                  </button>
                 </div>
               </div>
             ) : null}

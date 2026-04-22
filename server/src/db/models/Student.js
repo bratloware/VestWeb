@@ -51,6 +51,11 @@ const Student = sequelize.define('Student', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+  },
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

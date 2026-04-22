@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
   getAll, getById, createQuestion, updateQuestion, deleteQuestion,
   getSubjects, getTopics, getVestibulares, getYears,
-  setTargetVestibular, submitAnswer, startPracticeSession,
+  setTargetVestibular, submitAnswer, startPracticeSession, reportQuestion,
 } from '../controllers/questionsController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 
@@ -20,5 +20,6 @@ router.delete('/:id', authMiddleware, deleteQuestion);
 router.post('/session', authMiddleware, startPracticeSession);
 router.post('/answer', authMiddleware, submitAnswer);
 router.post('/target-vestibular', authMiddleware, setTargetVestibular);
+router.post('/:id/report', authMiddleware, reportQuestion);
 
 export default router;

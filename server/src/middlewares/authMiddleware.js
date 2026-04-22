@@ -18,6 +18,7 @@ const authMiddleware = async (req, res, next) => {
     } else {
       const student = await Student.findByPk(decoded.id);
       if (!student) return res.status(401).json({ message: 'User not found' });
+      if (student.active === false) return res.status(403).json({ message: 'Conta desativada. Entre em contato com o suporte.' });
       req.user = { ...student.toJSON(), type: 'student' };
     }
 

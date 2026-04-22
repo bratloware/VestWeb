@@ -28,6 +28,7 @@ import StudentDoubt from './StudentDoubt.js';
 import Announcement from './Announcement.js';
 import Like from './Like.js';
 import Report from './Report.js';
+import QuestionReport from './QuestionReport.js';
 import Points from './Points.js';
 import Badge from './Badge.js';
 import StudentBadge from './StudentBadge.js';
@@ -159,6 +160,12 @@ Post.hasMany(Report, { foreignKey: 'post_id', as: 'reports' });
 Report.belongsTo(Post, { foreignKey: 'post_id', as: 'post' });
 Report.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 
+// QuestionReport
+Question.hasMany(QuestionReport, { foreignKey: 'question_id', as: 'questionReports' });
+QuestionReport.belongsTo(Question, { foreignKey: 'question_id', as: 'question' });
+Student.hasMany(QuestionReport, { foreignKey: 'student_id', as: 'questionReports' });
+QuestionReport.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
+
 Comment.hasMany(Comment, { foreignKey: 'parent_id', as: 'replies' });
 Comment.belongsTo(Comment, { foreignKey: 'parent_id', as: 'parent' });
 
@@ -170,6 +177,9 @@ StudentBadge.belongsTo(Badge, { foreignKey: 'badge_id', as: 'badge' });
 
 Teacher.hasMany(TeacherSession, { foreignKey: 'teacher_id', as: 'sessions' });
 TeacherSession.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
+
+Teacher.hasOne(Mentor, { foreignKey: 'teacher_id', as: 'mentorProfile' });
+Mentor.belongsTo(Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
 
 export {
   Student,
@@ -208,4 +218,5 @@ export {
   Streak,
   Subscription,
   PendingStudent,
+  QuestionReport,
 };

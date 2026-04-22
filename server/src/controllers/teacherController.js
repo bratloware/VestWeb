@@ -1,6 +1,14 @@
 import { Op } from 'sequelize';
 import { Mentor, MentoringSession, Student, Question, Alternative, Topic, Subject, Video, VideoProgress, StudentDoubt, Post, Comment, Announcement } from '../db/models/index.js';
 
+// Builds the Mentor where clause based on auth type:
+// - Teacher model users (TeacherLoginPage) → teacher_id
+// - Student-role users (seeded teachers) → student_id
+const mentorWhere = (req) =>
+  req.user.type === 'teacher'
+    ? { teacher_id: req.user.id }
+    : { student_id: req.user.id };
+
 export const getProfile = async (req, res) => {
   try {
     const mentor = await Mentor.findOne({
@@ -15,8 +23,7 @@ export const getProfile = async (req, res) => {
 
 export const getMySessions = async (req, res) => {
   try {
-    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
-    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+    const [mentor] = await Mentor.findOrCreate({ where: mentorWhere(req), defaults: { bio: null, specialties: null } });
 
     const sessions = await MentoringSession.findAll({
       where: { mentor_id: mentor.id },
@@ -117,8 +124,7 @@ export const updateQuestion = async (req, res) => {
 
 export const getActivity = async (req, res) => {
   try {
-    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
-    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+    const [mentor] = await Mentor.findOrCreate({ where: mentorWhere(req), defaults: { bio: null, specialties: null } });
 
     // 1. Recent mentoring session bookings
     const recentSessions = await MentoringSession.findAll({
@@ -195,8 +201,7 @@ export const getActivity = async (req, res) => {
 
 export const getInsights = async (req, res) => {
   try {
-    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
-    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+    const [mentor] = await Mentor.findOrCreate({ where: mentorWhere(req), defaults: { bio: null, specialties: null } });
 
     // Period filter: today | 7d | 30d (default: 7d)
     const period = req.query.period ?? '7d';
@@ -294,8 +299,7 @@ export const deleteQuestion = async (req, res) => {
 
 export const getMyAnnouncements = async (req, res) => {
   try {
-    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
-    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+    const [mentor] = await Mentor.findOrCreate({ where: mentorWhere(req), defaults: { bio: null, specialties: null } });
 
     const announcements = await Announcement.findAll({
       where: { mentor_id: mentor.id },
@@ -309,8 +313,7 @@ export const getMyAnnouncements = async (req, res) => {
 
 export const createAnnouncement = async (req, res) => {
   try {
-    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
-    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+    const [mentor] = await Mentor.findOrCreate({ where: mentorWhere(req), defaults: { bio: null, specialties: null } });
 
     const { content, expires_at } = req.body;
     if (!content?.trim()) return res.status(400).json({ message: 'Conteúdo obrigatório' });
@@ -328,8 +331,7 @@ export const createAnnouncement = async (req, res) => {
 
 export const deleteAnnouncement = async (req, res) => {
   try {
-    const mentor = await Mentor.findOne({ where: { student_id: req.user.id } });
-    if (!mentor) return res.status(404).json({ message: 'Perfil de mentor não encontrado' });
+    const [mentor] = await Mentor.findOrCreate({ where: mentorWhere(req), defaults: { bio: null, specialties: null } });
 
     const announcement = await Announcement.findByPk(req.params.id);
     if (!announcement) return res.status(404).json({ message: 'Aviso não encontrado' });

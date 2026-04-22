@@ -1,7 +1,9 @@
-import { LayoutDashboard, HelpCircle, MessageCircle, Settings, Play } from 'lucide-react';
+import { LayoutDashboard, HelpCircle, MessageCircle, Settings, Play, ShieldCheck } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 import Sidebar, { NavItem } from './Sidebar';
 
-const teacherNavItems: NavItem[] = [
+const baseItems: NavItem[] = [
   { label: 'Home', icon: LayoutDashboard, to: '/teacher/home' },
   { label: 'Questões', icon: HelpCircle, to: '/teacher/questions' },
   { label: 'VestWebFlix', icon: Play, to: '/teacher/VestWebFlix' },
@@ -9,8 +11,12 @@ const teacherNavItems: NavItem[] = [
   { label: 'Configurações', icon: Settings, to: '/teacher/settings' },
 ];
 
-const TeacherSidebar = () => (
-  <Sidebar navItems={teacherNavItems} roleLabel="Professor" />
-);
+const adminItem: NavItem = { label: 'Área Admin', icon: ShieldCheck, to: '/teacher/admin' };
+
+const TeacherSidebar = () => {
+  const { user } = useSelector((state: RootState) => state.auth);
+  const navItems = user?.role === 'admin' ? [...baseItems, adminItem] : baseItems;
+  return <Sidebar navItems={navItems} roleLabel="Professor" />;
+};
 
 export default TeacherSidebar;

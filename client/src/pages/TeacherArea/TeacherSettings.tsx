@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { User, Lock, Bell, Shield, Camera } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  User, Lock, Bell, Shield, Camera, Check, Loader2, Eye, EyeOff,
+} from 'lucide-react';
 import TeacherSidebar from '../../components/TeacherSidebar';
 import api from '../../api/api';
 import { RootState } from '../../store/store';
@@ -9,318 +14,372 @@ import { getInitials } from '../../utils/stringUtils';
 import AvatarPicker from '../../components/AvatarPicker/AvatarPicker';
 import '../../pages/Settings/Settings.css';
 
+// ─── Schemas ─────────────────────────────────────────────────────────────────
+
+const profileSchema = z.object({
+  name: z.string().min(3, 'Nome deve ter ao menos 3 caracteres'),
+  email: z.string().email('E-mail inválido'),
+});
+
+const passwordSchema = z
+  .object({
+    current_password: z.string().min(1, 'Informe a senha atual'),
+    new_password: z.string().min(6, 'Mínimo de 6 caracteres'),
+    confirm_password: z.string().min(1, 'Confirme a nova senha'),
+  })
+  .refine(d => d.new_password === d.confirm_password, {
+    message: 'As senhas não coincidem',
+    path: ['confirm_password'],
+  });
+
+type ProfileValues = z.infer<typeof profileSchema>;
+type PasswordValues = z.infer<typeof passwordSchema>;
+type Section = 'profile' | 'password' | 'notifications' | 'privacy';
+type SaveState = 'idle' | 'loading' | 'success' | 'error';
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+const FieldError = ({ message }: { message?: string }) =>
+  message ? <span className="field-error" role="alert">{message}</span> : null;
+
+const SaveButton = ({ state, dirty, label = 'Salvar alterações' }: { state: SaveState; dirty: boolean; label?: string }) => (
+  <button
+    type="submit"
+    className={`btn-save${state === 'success' ? ' success' : state === 'error' ? ' error' : ''}`}
+    disabled={!dirty || state === 'loading'}
+    aria-busy={state === 'loading'}
+  >
+    {state === 'loading' && <Loader2 size={16} className="spin" />}
+    {state === 'success' && <Check size={16} />}
+    {state === 'loading' ? 'Salvando...' : state === 'success' ? 'Salvo!' : label}
+  </button>
+);
+
+const usePasswordToggle = () => {
+  const [visible, setVisible] = useState(false);
+  return { visible, toggle: () => setVisible(v => !v), type: visible ? 'text' : 'password' } as const;
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
 const TeacherSettings = () => {
   const dispatch = useDispatch();
-  const { user: student } = useSelector((s: RootState) => s.auth);
-  const [activeSection, setActiveSection] = useState<'profile' | 'password' | 'notifications' | 'privacy'>('profile');
-
-  const [profileForm, setProfileForm] = useState({
-    name: student?.name || '',
-    email: student?.email || '',
-    avatar_url: student?.avatar_url || '',
-  });
-
-  const [passwordForm, setPasswordForm] = useState({
-    current_password: '',
-    new_password: '',
-    confirm_password: '',
-  });
-
-  const [profileMsg, setProfileMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [profileLoading, setProfileLoading] = useState(false);
-  const [passwordLoading, setPasswordLoading] = useState(false);
+  const { user } = useSelector((s: RootState) => s.auth);
+  const [activeSection, setActiveSection] = useState<Section>('profile');
+  const [profileState, setProfileState] = useState<SaveState>('idle');
+  const [passwordState, setPasswordState] = useState<SaveState>('idle');
+  const [profileError, setProfileError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
+  const current = usePasswordToggle();
+  const next = usePasswordToggle();
+  const confirm = usePasswordToggle();
+
+  const profile = useForm<ProfileValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: { name: user?.name || '', email: user?.email || '' },
+    mode: 'onChange',
+  });
+
+  const pwd = useForm<PasswordValues>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: { current_password: '', new_password: '', confirm_password: '' },
+    mode: 'onChange',
+  });
 
   const handleAvatarSave = async (avatarUrl: string, file?: File) => {
     try {
       if (file) {
         const formData = new FormData();
         formData.append('avatar', file);
-        const res = await api.post('/auth/avatar', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        const url = res.data.data.avatar_url;
-        dispatch(updateUser({ avatar_url: url }));
-        setProfileForm(prev => ({ ...prev, avatar_url: url }));
+        const res = await api.post('/auth/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        dispatch(updateUser({ avatar_url: res.data.data.avatar_url }));
       } else {
-        await api.put('/auth/me', { ...profileForm, avatar_url: avatarUrl });
+        await api.put('/auth/me', { ...profile.getValues(), avatar_url: avatarUrl });
         dispatch(updateUser({ avatar_url: avatarUrl }));
-        setProfileForm(prev => ({ ...prev, avatar_url: avatarUrl }));
       }
       setShowAvatarPicker(false);
-      setProfileMsg({ type: 'success', text: 'Foto atualizada com sucesso!' });
-      setTimeout(() => setProfileMsg(null), 4000);
     } catch {
-      setProfileMsg({ type: 'error', text: 'Erro ao atualizar foto. Tente novamente.' });
-      setTimeout(() => setProfileMsg(null), 4000);
+      setProfileError('Erro ao atualizar foto. Tente novamente.');
+      setTimeout(() => setProfileError(''), 4000);
     }
   };
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setProfileLoading(true);
-    setProfileMsg(null);
+  const onSaveProfile = async (data: ProfileValues) => {
+    setProfileState('loading');
+    setProfileError('');
     try {
-      await api.put('/auth/me', profileForm);
-      dispatch(updateUser(profileForm));
-      setProfileMsg({ type: 'success', text: 'Perfil atualizado com sucesso!' });
+      await api.put('/auth/me', data);
+      dispatch(updateUser(data));
+      setProfileState('success');
+      profile.reset(data);
+      setTimeout(() => setProfileState('idle'), 2500);
     } catch {
-      setProfileMsg({ type: 'error', text: 'Erro ao atualizar perfil. Tente novamente.' });
+      setProfileState('error');
+      setProfileError('Erro ao atualizar perfil. Tente novamente.');
+      setTimeout(() => setProfileState('idle'), 3000);
     }
-    setProfileLoading(false);
-    setTimeout(() => setProfileMsg(null), 4000);
   };
 
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwordForm.new_password !== passwordForm.confirm_password) {
-      setPasswordMsg({ type: 'error', text: 'As senhas não coincidem.' });
-      return;
-    }
-    if (passwordForm.new_password.length < 6) {
-      setPasswordMsg({ type: 'error', text: 'A nova senha deve ter pelo menos 6 caracteres.' });
-      return;
-    }
-    setPasswordLoading(true);
-    setPasswordMsg(null);
+  const onChangePassword = async (data: PasswordValues) => {
+    setPasswordState('loading');
+    setPasswordError('');
     try {
-      await api.put('/auth/change-password', passwordForm);
-      setPasswordMsg({ type: 'success', text: 'Senha alterada com sucesso!' });
-      setPasswordForm({ current_password: '', new_password: '', confirm_password: '' });
+      await api.put('/auth/change-password', data);
+      setPasswordState('success');
+      pwd.reset();
+      setTimeout(() => setPasswordState('idle'), 2500);
     } catch {
-      setPasswordMsg({ type: 'error', text: 'Erro ao alterar senha. Verifique sua senha atual.' });
+      setPasswordState('error');
+      setPasswordError('Erro ao alterar senha. Verifique a senha atual.');
+      setTimeout(() => setPasswordState('idle'), 3000);
     }
-    setPasswordLoading(false);
-    setTimeout(() => setPasswordMsg(null), 4000);
   };
 
   const navItems = [
-    { id: 'profile', label: 'Perfil', icon: User },
-    { id: 'password', label: 'Senha', icon: Lock },
-    { id: 'notifications', label: 'Notificações', icon: Bell },
-    { id: 'privacy', label: 'Privacidade', icon: Shield },
+    { id: 'profile' as Section, label: 'Perfil', icon: User },
+    { id: 'password' as Section, label: 'Senha', icon: Lock },
+    { id: 'notifications' as Section, label: 'Notificações', icon: Bell },
+    { id: 'privacy' as Section, label: 'Privacidade', icon: Shield },
   ];
+
+  const currentAvatar = user?.avatar_url || '';
+  const currentName = user?.name || '';
 
   return (
     <div className="teacher-layout">
       <TeacherSidebar />
       {showAvatarPicker && (
         <AvatarPicker
-          currentAvatar={profileForm.avatar_url}
-          name={profileForm.name}
+          currentAvatar={currentAvatar}
+          name={currentName}
           onSave={handleAvatarSave}
           onClose={() => setShowAvatarPicker(false)}
         />
       )}
       <main className="teacher-main">
         <div style={{ padding: '32px' }}>
-        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Configurações</h1>
+          <h1 className="settings-title">Configurações</h1>
 
-        <div className="settings-layout">
-          <div className="settings-nav">
-            {navItems.map(item => (
-              <button
-                key={item.id}
-                className={`settings-nav-item${activeSection === item.id ? ' active' : ''}`}
-                onClick={() => setActiveSection(item.id as any)}
-              >
-                <item.icon size={17} />
-                {item.label}
-              </button>
-            ))}
-          </div>
+          <div className="settings-layout">
+            <nav className="settings-nav" aria-label="Seções de configurações">
+              {navItems.map(item => (
+                <button
+                  key={item.id}
+                  className={`settings-nav-item${activeSection === item.id ? ' active' : ''}`}
+                  onClick={() => setActiveSection(item.id)}
+                  aria-current={activeSection === item.id ? 'page' : undefined}
+                >
+                  <item.icon size={16} strokeWidth={1.75} />
+                  {item.label}
+                </button>
+              ))}
+            </nav>
 
-          <div>
-            {activeSection === 'profile' && (
-              <div className="settings-section">
-                <h2>Informações do perfil</h2>
-                <p className="settings-desc">Atualize suas informações pessoais e foto de perfil.</p>
+            <div className="settings-content">
+              {/* ── Profile ── */}
+              {activeSection === 'profile' && (
+                <div className="settings-section">
+                  <div className="settings-section-header">
+                    <h2>Informações do perfil</h2>
+                    <p className="settings-desc">Atualize suas informações pessoais e foto de perfil.</p>
+                  </div>
 
-                <div className="avatar-section">
-                  <div style={{ position: 'relative', display: 'inline-block' }}>
-                    <div className="avatar-large">
-                      {profileForm.avatar_url ? (
-                        <img src={profileForm.avatar_url} alt="Avatar" onError={e => (e.currentTarget.style.display = 'none')} />
-                      ) : (
-                        getInitials(profileForm.name)
-                      )}
+                  <div className="avatar-section">
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <div className="avatar-large">
+                        {currentAvatar ? (
+                          <img src={currentAvatar} alt="Avatar" onError={e => (e.currentTarget.style.display = 'none')} />
+                        ) : (
+                          getInitials(currentName)
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="avatar-camera-btn"
+                        onClick={() => setShowAvatarPicker(true)}
+                        aria-label="Alterar foto de perfil"
+                        title="Alterar foto de perfil"
+                      >
+                        <Camera size={15} />
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowAvatarPicker(true)}
-                      style={{
-                        position: 'absolute', bottom: 0, right: 0,
-                        width: 32, height: 32, borderRadius: '50%',
-                        background: 'var(--primary)', border: '2px solid var(--white)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        cursor: 'pointer', color: 'white',
-                      }}
-                      title="Alterar foto de perfil"
-                      aria-label="Alterar foto de perfil"
-                    >
-                      <Camera size={15} />
-                    </button>
+                    <div className="avatar-info">
+                      <h3>{currentName}</h3>
+                      <p>Matrícula: {user?.enrollment}</p>
+                      <button
+                        type="button"
+                        className="btn-save"
+                        style={{ fontSize: '13px', padding: '7px 14px' }}
+                        onClick={() => setShowAvatarPicker(true)}
+                      >
+                        <Camera size={14} />
+                        Alterar foto de perfil
+                      </button>
+                    </div>
                   </div>
-                  <div className="avatar-info">
-                    <h3>{student?.name}</h3>
-                    <p>Matrícula: {student?.enrollment}</p>
-                    <button
-                      type="button"
-                      className="teacher-quick-btn"
-                      style={{ fontSize: '13px', padding: '7px 14px' }}
-                      onClick={() => setShowAvatarPicker(true)}
-                    >
-                      <Camera size={14} />
-                      Alterar foto de perfil
-                    </button>
-                  </div>
+
+                  <form onSubmit={profile.handleSubmit(onSaveProfile)} noValidate>
+                    <div className="settings-form-grid">
+                      <div className="form-group">
+                        <label htmlFor="teacher-profile-name" className="form-label">Nome completo</label>
+                        <input
+                          id="teacher-profile-name"
+                          type="text"
+                          className={`form-control${profile.formState.errors.name ? ' input-error' : ''}`}
+                          {...profile.register('name')}
+                          autoComplete="name"
+                        />
+                        <FieldError message={profile.formState.errors.name?.message} />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="teacher-profile-email" className="form-label">E-mail</label>
+                        <input
+                          id="teacher-profile-email"
+                          type="email"
+                          className={`form-control${profile.formState.errors.email ? ' input-error' : ''}`}
+                          {...profile.register('email')}
+                          autoComplete="email"
+                        />
+                        <FieldError message={profile.formState.errors.email?.message} />
+                      </div>
+                    </div>
+                    <div className="settings-actions">
+                      <SaveButton state={profileState} dirty={profile.formState.isDirty} />
+                      {profileError && <span className="inline-error">{profileError}</span>}
+                    </div>
+                  </form>
                 </div>
+              )}
 
-                <form onSubmit={handleSaveProfile}>
-                  <div className="settings-form-grid">
-                    <div className="form-group">
-                      <label>Nome completo</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={profileForm.name}
-                        onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>E-mail</label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        value={profileForm.email}
-                        onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
-                        required
-                      />
-                    </div>
+              {/* ── Password ── */}
+              {activeSection === 'password' && (
+                <div className="settings-section">
+                  <div className="settings-section-header">
+                    <h2>Alterar senha</h2>
+                    <p className="settings-desc">Mantenha sua conta segura com uma senha forte.</p>
                   </div>
 
-                  <button type="submit" className="btn-primary" disabled={profileLoading} style={{ fontSize: '14px' }}>
-                    {profileLoading ? 'Salvando...' : 'Salvar alterações'}
-                  </button>
-
-                  {profileMsg && (
-                    <div className={profileMsg.type === 'success' ? 'settings-success' : 'settings-error'}>
-                      {profileMsg.text}
-                    </div>
-                  )}
-                </form>
-              </div>
-            )}
-
-            {activeSection === 'password' && (
-              <div className="settings-section">
-                <h2>Alterar senha</h2>
-                <p className="settings-desc">Mantenha sua conta segura com uma senha forte.</p>
-
-                <form onSubmit={handleChangePassword}>
-                  <div className="form-group">
-                    <label>Senha atual</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      value={passwordForm.current_password}
-                      onChange={e => setPasswordForm({ ...passwordForm, current_password: e.target.value })}
-                      required
-                      placeholder="Digite sua senha atual"
-                    />
-                  </div>
-                  <div className="settings-form-grid">
+                  <form onSubmit={pwd.handleSubmit(onChangePassword)} noValidate>
                     <div className="form-group">
-                      <label>Nova senha</label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        value={passwordForm.new_password}
-                        onChange={e => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
-                        required
-                        placeholder="Mínimo 6 caracteres"
-                        minLength={6}
-                      />
+                      <label htmlFor="teacher-current-pwd" className="form-label">Senha atual</label>
+                      <div className="input-password-wrap">
+                        <input
+                          id="teacher-current-pwd"
+                          type={current.type}
+                          className={`form-control${pwd.formState.errors.current_password ? ' input-error' : ''}`}
+                          placeholder="Digite sua senha atual"
+                          {...pwd.register('current_password')}
+                          autoComplete="current-password"
+                        />
+                        <button type="button" className="pwd-toggle" onClick={current.toggle} aria-label="Mostrar senha atual" tabIndex={-1}>
+                          {current.visible ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                      <FieldError message={pwd.formState.errors.current_password?.message} />
                     </div>
-                    <div className="form-group">
-                      <label>Confirmar nova senha</label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        value={passwordForm.confirm_password}
-                        onChange={e => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })}
-                        required
-                        placeholder="Repita a nova senha"
-                      />
+
+                    <div className="settings-form-grid">
+                      <div className="form-group">
+                        <label htmlFor="teacher-new-pwd" className="form-label">Nova senha</label>
+                        <div className="input-password-wrap">
+                          <input
+                            id="teacher-new-pwd"
+                            type={next.type}
+                            className={`form-control${pwd.formState.errors.new_password ? ' input-error' : ''}`}
+                            placeholder="Mínimo 6 caracteres"
+                            {...pwd.register('new_password')}
+                            autoComplete="new-password"
+                          />
+                          <button type="button" className="pwd-toggle" onClick={next.toggle} aria-label="Mostrar nova senha" tabIndex={-1}>
+                            {next.visible ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                        <FieldError message={pwd.formState.errors.new_password?.message} />
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="teacher-confirm-pwd" className="form-label">Confirmar nova senha</label>
+                        <div className="input-password-wrap">
+                          <input
+                            id="teacher-confirm-pwd"
+                            type={confirm.type}
+                            className={`form-control${pwd.formState.errors.confirm_password ? ' input-error' : ''}`}
+                            placeholder="Repita a nova senha"
+                            {...pwd.register('confirm_password')}
+                            autoComplete="new-password"
+                          />
+                          <button type="button" className="pwd-toggle" onClick={confirm.toggle} aria-label="Mostrar confirmação" tabIndex={-1}>
+                            {confirm.visible ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                        <FieldError message={pwd.formState.errors.confirm_password?.message} />
+                      </div>
                     </div>
+
+                    <div className="settings-actions">
+                      <SaveButton state={passwordState} dirty={pwd.formState.isDirty} label="Alterar senha" />
+                      {passwordError && <span className="inline-error">{passwordError}</span>}
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* ── Notifications ── */}
+              {activeSection === 'notifications' && (
+                <div className="settings-section">
+                  <div className="settings-section-header">
+                    <h2>Notificações</h2>
+                    <p className="settings-desc">Configure como você deseja receber notificações.</p>
                   </div>
-
-                  <button type="submit" className="btn-primary" disabled={passwordLoading} style={{ fontSize: '14px' }}>
-                    {passwordLoading ? 'Alterando...' : 'Alterar senha'}
-                  </button>
-
-                  {passwordMsg && (
-                    <div className={passwordMsg.type === 'success' ? 'settings-success' : 'settings-error'}>
-                      {passwordMsg.text}
+                  {[
+                    { label: 'Novas sessões de mentoria', desc: 'Receba avisos quando um aluno agendar uma sessão.' },
+                    { label: 'Lembretes de sessões', desc: 'Lembretes para sessões confirmadas no seu calendário.' },
+                    { label: 'Atualizações de questões', desc: 'Notificações sobre o desempenho dos alunos nas suas questões.' },
+                    { label: 'Mensagens da plataforma', desc: 'Avisos administrativos e novidades do sistema.' },
+                  ].map((item, i) => (
+                    <div key={i} className="toggle-row">
+                      <div>
+                        <div className="toggle-label">{item.label}</div>
+                        <div className="toggle-desc">{item.desc}</div>
+                      </div>
+                      <label className="toggle-switch" aria-label={item.label}>
+                        <input type="checkbox" defaultChecked={i < 2} />
+                        <span className="toggle-track" />
+                      </label>
                     </div>
-                  )}
-                </form>
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
 
-            {activeSection === 'notifications' && (
-              <div className="settings-section">
-                <h2>Notificações</h2>
-                <p className="settings-desc">Configure como você deseja receber notificações.</p>
-                {[
-                  { label: 'Novas sessões de mentoria', desc: 'Receba avisos quando um aluno agendar uma sessão.' },
-                  { label: 'Lembretes de sessões', desc: 'Lembretes para sessões confirmadas no seu calendário.' },
-                  { label: 'Atualizações de questões', desc: 'Notificações sobre o desempenho dos alunos nas suas questões.' },
-                  { label: 'Mensagens da plataforma', desc: 'Avisos administrativos e novidades do sistema.' },
-                ].map((item, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
-                    <div>
-                      <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>{item.label}</div>
-                      <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item.desc}</div>
-                    </div>
-                    <label style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
-                      <input type="checkbox" defaultChecked={i < 2} style={{ opacity: 0, width: 0, height: 0 }} />
-                      <span style={{ position: 'absolute', cursor: 'pointer', inset: 0, background: i < 2 ? 'var(--primary)' : '#ccc', borderRadius: '24px', transition: '0.3s' }} />
-                    </label>
+              {/* ── Privacy ── */}
+              {activeSection === 'privacy' && (
+                <div className="settings-section">
+                  <div className="settings-section-header">
+                    <h2>Privacidade e segurança</h2>
+                    <p className="settings-desc">Gerencie as configurações de privacidade da sua conta.</p>
                   </div>
-                ))}
-              </div>
-            )}
-
-            {activeSection === 'privacy' && (
-              <div className="settings-section">
-                <h2>Privacidade e segurança</h2>
-                <p className="settings-desc">Gerencie as configurações de privacidade da sua conta.</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {[
                     { label: 'Perfil público para alunos', desc: 'Alunos podem ver seu perfil e informações de contato.' },
                     { label: 'Mostrar disponibilidade', desc: 'Sua disponibilidade para mentoria fica visível na plataforma.' },
                     { label: 'Permitir mensagens diretas', desc: 'Alunos podem enviar mensagens diretamente para você.' },
                   ].map((item, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
+                    <div key={i} className="toggle-row">
                       <div>
-                        <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>{item.label}</div>
-                        <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{item.desc}</div>
+                        <div className="toggle-label">{item.label}</div>
+                        <div className="toggle-desc">{item.desc}</div>
                       </div>
-                      <label style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
-                        <input type="checkbox" defaultChecked={i < 2} style={{ opacity: 0, width: 0, height: 0 }} />
-                        <span style={{ position: 'absolute', cursor: 'pointer', inset: 0, background: i < 2 ? 'var(--primary)' : '#ccc', borderRadius: '24px', transition: '0.3s' }} />
+                      <label className="toggle-switch" aria-label={item.label}>
+                        <input type="checkbox" defaultChecked={i < 2} />
+                        <span className="toggle-track" />
                       </label>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
         </div>
       </main>
     </div>

@@ -94,7 +94,7 @@ const TeacherHome = () => {
       <main className="teacher-main">
         <div className="teacher-home">
           <div className="teacher-home-greeting">
-            <h1>{getGreeting()}, {firstName}!</h1>
+            <h1>{getGreeting()}, <span>{firstName}</span>!</h1>
             <p>Aqui está um resumo da sua área.</p>
           </div>
 

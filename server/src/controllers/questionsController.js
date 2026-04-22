@@ -1,5 +1,5 @@
 import { QueryTypes } from 'sequelize';
-import { Answer, Points, Streak, Question, Alternative } from '../db/models/index.js';
+import { Answer, Points, Streak, Question, Alternative, QuestionReport } from '../db/models/index.js';
 import sequelize from '../db/index.js';
 
 
@@ -342,6 +342,35 @@ export const deleteQuestion = async (req, res) => {
     if (!question) return res.status(404).json({ message: 'Question not found' });
     await question.destroy();
     return res.json({ message: 'Question deleted' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+
+// ── Report question error ──────────────────────────────────────────────────────
+
+export const reportQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { error_type, description } = req.body;
+
+    const VALID_TYPES = ['wrong_answer', 'typo', 'image_missing', 'unclear_statement', 'wrong_subject', 'other'];
+    if (!error_type || !VALID_TYPES.includes(error_type)) {
+      return res.status(400).json({ message: 'Tipo de erro inválido.' });
+    }
+
+    const question = await Question.findByPk(id);
+    if (!question) return res.status(404).json({ message: 'Questão não encontrada.' });
+
+    await QuestionReport.create({
+      question_id: id,
+      student_id: req.user.id,
+      error_type,
+      description: description?.trim() || null,
+    });
+
+    return res.status(201).json({ message: 'Obrigado por nos ajudar a melhorar nossa aplicação' });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
