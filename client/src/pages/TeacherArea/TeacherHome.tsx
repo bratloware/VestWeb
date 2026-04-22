@@ -8,18 +8,20 @@ import QuickActions from '../../components/dashboard/QuickActions';
 import Announcements from '../../components/dashboard/Announcements';
 import UpcomingSessions from '../../components/dashboard/UpcomingSessions';
 import ImpactMetrics from '../../components/dashboard/ImpactMetrics';
-import type { SessionSummary, UpcomingSession, ActivityEvent, InsightsData, AnnouncementItem } from '../../components/dashboard/types';
+import type { SessionSummary, UpcomingSession, ActivityEvent, InsightsData, AnnouncementItem, InsightPeriod } from '../../components/dashboard/types';
 import './TeacherHome.css';
 
 const TeacherHome = () => {
   const { user: student } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(true);
+  const [insightsLoading, setInsightsLoading] = useState(false);
   const [questionCount, setQuestionCount] = useState(0);
   const [sessions, setSessions] = useState<SessionSummary>({ total: 0, pending: 0, confirmed: 0, done: 0 });
   const [upcoming, setUpcoming] = useState<UpcomingSession[]>([]);
   const [insights, setInsights] = useState<InsightsData | null>(null);
   const [activity, setActivity] = useState<ActivityEvent[]>([]);
   const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([]);
+  const [period, setPeriod] = useState<InsightPeriod>('7d');
 
   useEffect(() => {
     const load = async () => {
@@ -27,7 +29,7 @@ const TeacherHome = () => {
         const [qRes, sRes, iRes, aRes, annRes] = await Promise.all([
           api.get('/teacher/questions'),
           api.get('/teacher/sessions'),
-          api.get('/teacher/insights'),
+          api.get(`/teacher/insights?period=${period}`),
           api.get('/teacher/activity'),
           api.get('/teacher/announcements'),
         ]);
@@ -58,6 +60,15 @@ const TeacherHome = () => {
     load();
   }, []);
 
+  useEffect(() => {
+    if (loading) return;
+    setInsightsLoading(true);
+    api.get(`/teacher/insights?period=${period}`)
+      .then(res => setInsights(res.data.data))
+      .catch(() => {})
+      .finally(() => setInsightsLoading(false));
+  }, [period]);
+
   const handleAddAnnouncement = useCallback(async (content: string) => {
     const res = await api.post('/teacher/announcements', { content });
     setAnnouncements(prev => [res.data.data, ...prev]);
@@ -87,19 +98,26 @@ const TeacherHome = () => {
             <p>Aqui está um resumo da sua área.</p>
           </div>
 
-          <StatsGrid questionCount={questionCount} sessions={sessions} loading={loading} />
-          <QuickActions />
-
-          <div className="teacher-dashboard-grid">
-            <div className="teacher-dashboard-left">
+          <div className="teacher-home-grid">
+            <div className="teacher-home-left">
+              <StatsGrid questionCount={questionCount} sessions={sessions} loading={loading} />
+              <QuickActions />
               <Announcements
                 announcements={announcements}
                 onAdd={handleAddAnnouncement}
                 onDelete={handleDeleteAnnouncement}
+                loading={loading}
               />
               <UpcomingSessions upcoming={upcoming} loading={loading} />
             </div>
-            <ImpactMetrics insights={insights} activity={activity} loading={loading} />
+            <ImpactMetrics
+              insights={insights}
+              activity={activity}
+              loading={loading}
+              insightsLoading={insightsLoading}
+              period={period}
+              onPeriodChange={setPeriod}
+            />
           </div>
         </div>
       </main>

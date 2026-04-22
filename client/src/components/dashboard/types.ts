@@ -1,3 +1,5 @@
+export type InsightPeriod = 'today' | '7d' | '30d';
+
 export interface SessionSummary {
   total: number;
   pending: number;

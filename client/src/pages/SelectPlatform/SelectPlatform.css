@@ -11,11 +11,12 @@
 /* LCP image — rendered as <img> in JSX with fetchpriority="high" */
 .select-platform-hero-img {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
   object-fit: cover;
-  object-position: center;
+  object-position: center 40%;
+  filter: blur(8px);
   pointer-events: none;
   user-select: none;
 }
@@ -23,9 +24,15 @@
 .select-platform-bg {
   position: absolute;
   inset: 0;
-  background: rgba(7, 15, 26, 0.78);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  /* Warm-dark gradient: lets bokeh from shallow DoF photo breathe in the upper portion,
+     crushes to near-black at the bottom for text legibility */
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(8, 5, 3, 0.62) 0%,
+      rgba(10, 6, 4, 0.70) 40%,
+      rgba(6, 4, 2, 0.82) 100%
+    );
   pointer-events: none;
 }
 

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Video, BookOpen, Calendar } from 'lucide-react';
+import { Video, PenLine, CalendarPlus } from 'lucide-react';
 
 const QuickActions = () => (
   <div className="teacher-quick-actions">
@@ -9,11 +9,11 @@ const QuickActions = () => (
       Nova Aula
     </Link>
     <Link to="/teacher/questions" className="teacher-quick-btn">
-      <BookOpen size={16} />
+      <PenLine size={16} />
       Criar Questão
     </Link>
     <Link to="/teacher/sessions" className="teacher-quick-btn">
-      <Calendar size={16} />
+      <CalendarPlus size={16} />
       Abrir Agenda
     </Link>
   </div>

@@ -1,12 +1,27 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertCircle, Users, Star, PlayCircle, Video, Clock } from 'lucide-react';
-import type { InsightsData, ActivityEvent } from './types';
+import type { InsightsData, ActivityEvent, InsightPeriod } from './types';
+
+const PERIODS: { value: InsightPeriod; label: string }[] = [
+  { value: 'today', label: 'Hoje' },
+  { value: '7d',    label: '7 dias' },
+  { value: '30d',   label: '30 dias' },
+];
+
+const periodLabel: Record<InsightPeriod, string> = {
+  today: 'hoje',
+  '7d':  'últimos 7 dias',
+  '30d': 'últimos 30 dias',
+};
 
 interface Props {
   insights: InsightsData | null;
   activity: ActivityEvent[];
   loading: boolean;
+  insightsLoading?: boolean;
+  period: InsightPeriod;
+  onPeriodChange: (p: InsightPeriod) => void;
 }
 
 const getInitials = (name: string) =>
@@ -21,16 +36,26 @@ const timeAgo = (iso: string) => {
   return `${Math.floor(hrs / 24)}d atrás`;
 };
 
-const ImpactMetrics = ({ insights, activity, loading }: Props) => (
+const ImpactMetrics = ({ insights, activity, loading, insightsLoading, period, onPeriodChange }: Props) => (
   <div className="teacher-dashboard-right">
 
     {/* ── Impact cards ── */}
     <div className="teacher-insights">
       <div className="teacher-insights-header">
         <h2>Impacto</h2>
-        <span>Engajamento dos seus alunos</span>
+        <div className="teacher-period-pills">
+          {PERIODS.map(p => (
+            <button
+              key={p.value}
+              className={`teacher-period-pill${period === p.value ? ' active' : ''}`}
+              onClick={() => onPeriodChange(p.value)}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="teacher-insights-cards">
+      <div className={`teacher-insights-cards${insightsLoading ? ' insights-refreshing' : ''}`}>
         {loading ? (
           [...Array(3)].map((_, i) => (
             <div key={i} className="teacher-insight-card">
@@ -43,18 +68,21 @@ const ImpactMetrics = ({ insights, activity, loading }: Props) => (
           ))
         ) : (
           <>
-            <div className="teacher-insight-card insight-red">
+            <div className={`teacher-insight-card insight-red${(insights?.pendingDoubts ?? 0) > 0 ? ' has-alert' : ''}`}>
+              {(insights?.pendingDoubts ?? 0) > 0 && <span className="insight-pulse-dot" />}
               <div className="teacher-insight-icon"><AlertCircle size={22} /></div>
               <div className="teacher-insight-body">
                 <span className="teacher-insight-number">{insights?.pendingDoubts ?? '--'}</span>
                 <span className="teacher-insight-label">Dúvidas pendentes</span>
+                <span className="teacher-insight-sublabel">total acumulado</span>
               </div>
             </div>
             <div className="teacher-insight-card insight-blue">
               <div className="teacher-insight-icon"><Users size={22} /></div>
               <div className="teacher-insight-body">
                 <span className="teacher-insight-number">{insights?.activeStudents ?? '--'}</span>
-                <span className="teacher-insight-label">Alunos ativos (24h)</span>
+                <span className="teacher-insight-label">Alunos ativos</span>
+                <span className="teacher-insight-sublabel">{periodLabel[period]}</span>
               </div>
             </div>
             <div className="teacher-insight-card insight-yellow">
@@ -64,8 +92,9 @@ const ImpactMetrics = ({ insights, activity, loading }: Props) => (
                   {insights?.avgRating ?? '--'}
                   {insights?.avgRating && <small>/5</small>}
                 </span>
-                <span className="teacher-insight-label">
-                  Avaliação média{insights?.ratingCount ? ` (${insights.ratingCount} sessões)` : ''}
+                <span className="teacher-insight-label">Avaliação média</span>
+                <span className="teacher-insight-sublabel">
+                  {insights?.ratingCount ? `${insights.ratingCount} sessões · ` : ''}{periodLabel[period]}
                 </span>
               </div>
             </div>
