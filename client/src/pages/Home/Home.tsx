@@ -445,7 +445,7 @@ const Home = () => {
                 {quickActions.map(({ icon: Icon, label, to }) => (
                   <Link key={to} to={to} className="home-quick-btn">
                     <Icon size={18} />
-                    {label}
+                    <span>{label}</span>
                   </Link>
                 ))}
               </div>

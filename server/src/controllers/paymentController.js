@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { Op } from 'sequelize';
 import { Subscription, PendingStudent, Student } from '../db/models/index.js';
 import { hashPassword } from '../services/hashService.js';
 
@@ -348,11 +349,16 @@ export const handleWebhook = async (req, res) => {
 // POST /api/payments/portal  (requer autenticação)
 export const createPortalSession = async (req, res) => {
   try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ message: 'E-mail obrigatório.' });
+    const authenticatedEmail = req.user?.email;
+    if (!authenticatedEmail) {
+      return res.status(401).json({ message: 'Usuario nao autenticado.' });
+    }
 
     const subscription = await Subscription.findOne({
-      where: { customer_email: email, status: ['active', 'trialing', 'past_due'] },
+      where: {
+        customer_email: authenticatedEmail,
+        status: { [Op.in]: ['active', 'trialing', 'past_due'] },
+      },
       order: [['created_at', 'DESC']],
     });
 
@@ -373,14 +379,16 @@ export const createPortalSession = async (req, res) => {
   }
 };
 
-// GET /api/payments/subscription?email=...
+// GET /api/payments/subscription
 export const getSubscription = async (req, res) => {
   try {
-    const { email } = req.query;
-    if (!email) return res.status(400).json({ message: 'E-mail obrigatório.' });
+    const authenticatedEmail = req.user?.email;
+    if (!authenticatedEmail) {
+      return res.status(401).json({ message: 'Usuario nao autenticado.' });
+    }
 
     const subscription = await Subscription.findOne({
-      where: { customer_email: email },
+      where: { customer_email: authenticatedEmail },
       order: [['created_at', 'DESC']],
     });
 

@@ -9,7 +9,7 @@ import './Simulations.css';
 
 const Simulations = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { simulations, currentSimulation, session, history, loading } = useSelector((s: RootState) => s.simulations);
+  const { simulations, currentSimulation, session, history, loading, error } = useSelector((s: RootState) => s.simulations);
 
   const [mode, setMode] = useState<'list' | 'running' | 'result'>('list');
   const [currentQIdx, setCurrentQIdx] = useState(0);
@@ -18,6 +18,7 @@ const Simulations = () => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [result, setResult] = useState({ score: 0, correct: 0, total: 0 });
   const [showHistory, setShowHistory] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
   const timerRef = useRef<any>(null);
 
   useEffect(() => {
@@ -26,19 +27,39 @@ const Simulations = () => {
   }, [dispatch]);
 
   const startSim = async (simId: number) => {
-    await dispatch(fetchSimulationById(simId));
-    const res = await dispatch(startSession(simId));
-    if (startSession.fulfilled.match(res)) {
-      setMode('running');
-      setCurrentQIdx(0);
-      setSelectedAlts({});
-      setAnsweredQs(new Set());
+    setStartError(null);
+
+    const simulationRes = await dispatch(fetchSimulationById(simId));
+    if (fetchSimulationById.rejected.match(simulationRes)) {
+      setStartError((simulationRes.payload as string) || 'Nao foi possivel carregar o simulado.');
+      return;
     }
+
+    const loadedQuestions = simulationRes.payload?.simulationQuestions
+      ?.map((sq: any) => sq?.question)
+      ?.filter(Boolean) || [];
+
+    if (loadedQuestions.length === 0) {
+      setStartError('Este simulado ainda nao possui questoes disponiveis.');
+      return;
+    }
+
+    const sessionRes = await dispatch(startSession(simId));
+    if (!startSession.fulfilled.match(sessionRes)) {
+      setStartError((sessionRes.payload as string) || 'Nao foi possivel iniciar o simulado.');
+      return;
+    }
+
+    setMode('running');
+    setCurrentQIdx(0);
+    setSelectedAlts({});
+    setAnsweredQs(new Set());
   };
 
   useEffect(() => {
     if (mode === 'running' && currentSimulation) {
-      setTimeLeft(currentSimulation.time_limit_minutes * 60);
+      const totalSeconds = Number(currentSimulation.time_limit_minutes || 0) * 60;
+      setTimeLeft(totalSeconds > 0 ? totalSeconds : 3600);
       timerRef.current = setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
@@ -85,9 +106,16 @@ const Simulations = () => {
   };
 
   const formatTime = (s: number) => `${Math.floor(s / 3600).toString().padStart(2, '0')}:${Math.floor((s % 3600) / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+  const normalizeText = (text?: string | null) => (text || '').replace(/\u00A0/g, ' ');
 
-  const questions = currentSimulation?.simulationQuestions?.map((sq: any) => sq.question) || [];
+  const questions = currentSimulation?.simulationQuestions?.map((sq: any) => sq?.question)?.filter(Boolean) || [];
   const currentQ = questions[currentQIdx];
+
+  useEffect(() => {
+    if (mode === 'running' && questions.length > 0 && currentQIdx >= questions.length) {
+      setCurrentQIdx(0);
+    }
+  }, [mode, questions.length, currentQIdx]);
 
   const getDifficultyLabel = (d: string) => ({ easy: 'Facil', medium: 'Media', hard: 'Dificil', mixed: 'Mista' }[d] || d);
 
@@ -101,12 +129,31 @@ const Simulations = () => {
               <h1 style={{ fontSize: '24px', fontWeight: 800 }}>Simulados</h1>
               <button
                 className="btn-secondary"
-                onClick={() => setShowHistory(!showHistory)}
+                onClick={() => {
+                  setStartError(null);
+                  setShowHistory(!showHistory);
+                }}
                 style={{ fontSize: '14px' }}
               >
                 {showHistory ? 'Ver simulados' : 'Ver historico'}
               </button>
             </div>
+
+            {(startError || error) && (
+              <div
+                style={{
+                  marginBottom: '16px',
+                  background: 'rgba(220, 38, 38, 0.08)',
+                  border: '1px solid rgba(220, 38, 38, 0.35)',
+                  color: '#b91c1c',
+                  borderRadius: '12px',
+                  padding: '12px 14px',
+                  fontSize: '14px',
+                }}
+              >
+                {startError || error}
+              </div>
+            )}
 
             {!showHistory ? (
               loading ? (
@@ -186,64 +233,103 @@ const Simulations = () => {
           </>
         )}
 
-        {mode === 'running' && currentSimulation && currentQ && (
-          <div className="simulation-active">
-            <div className="simulation-active-header">
-              <div>
-                <div className="simulation-active-title">{currentSimulation.title}</div>
-                <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                  Questao {currentQIdx + 1} de {questions.length}
+        {mode === 'running' && (
+          !currentSimulation || questions.length === 0 || !currentQ ? (
+            <div className="empty-state">
+              <BookOpen size={48} />
+              <h3>Nao foi possivel exibir este simulado</h3>
+              <p>Esse simulado pode estar sem questoes vinculadas no momento.</p>
+              <button
+                className="btn-primary"
+                onClick={() => {
+                  setMode('list');
+                  setStartError('Este simulado nao possui questoes para responder.');
+                }}
+                style={{ marginTop: '12px' }}
+              >
+                Voltar para simulados
+              </button>
+            </div>
+          ) : (
+            <div className="simulation-active">
+              <div className="simulation-active-header">
+                <div>
+                  <div className="simulation-active-title">{currentSimulation.title}</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                    Questao {currentQIdx + 1} de {questions.length}
+                  </div>
+                </div>
+                <div className={`simulation-timer${timeLeft < 300 ? ' warning' : ''}`}>
+                  <Clock size={20} />
+                  {formatTime(timeLeft)}
                 </div>
               </div>
-              <div className={`simulation-timer${timeLeft < 300 ? ' warning' : ''}`}>
-                <Clock size={20} />
-                {formatTime(timeLeft)}
+
+              <div className="simulation-question-nav">
+                {questions.map((_: any, i: number) => (
+                  <button
+                    key={i}
+                    className={`sim-q-btn${i === currentQIdx ? ' current' : ''}${selectedAlts[questions[i]?.id] ? ' answered' : ''}`}
+                    onClick={() => setCurrentQIdx(i)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
               </div>
-            </div>
 
-            <div className="simulation-question-nav">
-              {questions.map((_: any, i: number) => (
-                <button
-                  key={i}
-                  className={`sim-q-btn${i === currentQIdx ? ' current' : ''}${selectedAlts[questions[i]?.id] ? ' answered' : ''}`}
-                  onClick={() => setCurrentQIdx(i)}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
+              <div className="progress-bar">
+                <div className="progress-bar-fill" style={{ width: `${(answeredQs.size / questions.length) * 100}%` }} />
+              </div>
 
-            <div className="progress-bar">
-              <div className="progress-bar-fill" style={{ width: `${(answeredQs.size / questions.length) * 100}%` }} />
-            </div>
+              <p className="simulation-question-statement">
+                {normalizeText(currentQ.statement)}
+              </p>
 
-            <p className="question-statement" style={{ marginTop: '20px' }}>{currentQ.statement}</p>
-
-            <div className="alternatives-list">
-              {currentQ.alternatives?.map((alt: any) => (
-                <div
-                  key={alt.id}
-                  className={`alternative-item${selectedAlts[currentQ.id] === alt.id ? ' selected' : ''}`}
-                  onClick={() => handleAnswerQ(currentQ.id, alt.id)}
-                >
-                  <div className="alternative-letter">{alt.letter}</div>
-                  <div className="alternative-text">{alt.text}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="question-actions" style={{ marginTop: '20px' }}>
-              {currentQIdx < questions.length - 1 ? (
-                <button className="btn-primary" onClick={() => setCurrentQIdx(prev => prev + 1)}>
-                  Proxima questao
-                </button>
-              ) : (
-                <button className="btn-primary" onClick={handleFinish}>
-                  Finalizar simulado
-                </button>
+              {currentQ.image_url && (
+                <img
+                  className="simulation-question-image"
+                  src={currentQ.image_url}
+                  alt="Imagem da questao"
+                  loading="lazy"
+                />
               )}
+
+              <div className="simulation-alternatives-list">
+                {currentQ.alternatives?.map((alt: any) => (
+                  <div
+                    key={alt.id}
+                    className={`simulation-alternative-item${selectedAlts[currentQ.id] === alt.id ? ' selected' : ''}`}
+                    onClick={() => handleAnswerQ(currentQ.id, alt.id)}
+                  >
+                    <div className="simulation-alternative-letter">{alt.letter}</div>
+                    <div className="simulation-alternative-text">
+                      {normalizeText(alt.text)}
+                      {alt.image_url && (
+                        <img
+                          className="simulation-alternative-image"
+                          src={alt.image_url}
+                          alt={`Imagem da alternativa ${alt.letter}`}
+                          loading="lazy"
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="question-actions" style={{ marginTop: '20px' }}>
+                {currentQIdx < questions.length - 1 ? (
+                  <button className="btn-primary" onClick={() => setCurrentQIdx(prev => prev + 1)}>
+                    Proxima questao
+                  </button>
+                ) : (
+                  <button className="btn-primary" onClick={handleFinish}>
+                    Finalizar simulado
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )
         )}
 
         {mode === 'result' && (

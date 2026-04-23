@@ -6,6 +6,7 @@ import {
   createPortalSession,
   getSubscription,
 } from '../controllers/paymentController.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
@@ -18,10 +19,10 @@ router.post('/create-checkout-session', createCheckoutSession);
 // Rota pública — cria sessão PIX (pagamento único)
 router.post('/create-pix-session', createPixCheckoutSession);
 
-// Consultar assinatura por e-mail
-router.get('/subscription', getSubscription);
+// Consultar assinatura do usuario autenticado
+router.get('/subscription', authMiddleware, getSubscription);
 
-// Portal de gerenciamento de assinatura
-router.post('/portal', createPortalSession);
+// Portal de gerenciamento da assinatura do usuario autenticado
+router.post('/portal', authMiddleware, createPortalSession);
 
 export default router;
