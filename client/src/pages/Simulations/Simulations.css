@@ -132,6 +132,95 @@
   flex-wrap: wrap;
 }
 
+.simulation-question-statement {
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.8;
+  margin: 20px 0 20px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.simulation-question-image {
+  display: block;
+  max-width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  image-orientation: from-image;
+  margin: 0 0 24px;
+  border-radius: 8px;
+}
+
+.simulation-alternatives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.simulation-alternative-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--white);
+}
+
+.simulation-alternative-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.simulation-alternative-item.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.simulation-alternative-letter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.simulation-alternative-item.selected .simulation-alternative-letter {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.simulation-alternative-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  flex: 1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.simulation-alternative-image {
+  display: block;
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  image-orientation: from-image;
+  margin-top: 8px;
+  border-radius: 6px;
+}
+
 .sim-q-btn {
   width: 36px;
   height: 36px;
@@ -260,4 +349,11 @@
 
 @media (max-width: 768px) {
   .simulations-list { grid-template-columns: 1fr; }
+  .simulation-active {
+    padding: 20px;
+  }
+  .simulation-timer {
+    font-size: 18px;
+    padding: 8px 14px;
+  }
 }
