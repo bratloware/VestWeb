@@ -5,6 +5,7 @@ import {
   setTargetVestibular, submitAnswer, startPracticeSession,
 } from '../controllers/questionsController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
+import requireTeacher from '../middlewares/requireTeacher.js';
 
 const router = Router();
 
@@ -14,9 +15,9 @@ router.get('/vestibulares', getVestibulares);
 router.get('/years', getYears);
 router.get('/', authMiddleware, getAll);
 router.get('/:id', authMiddleware, getById);
-router.post('/', authMiddleware, createQuestion);
-router.put('/:id', authMiddleware, updateQuestion);
-router.delete('/:id', authMiddleware, deleteQuestion);
+router.post('/', authMiddleware, requireTeacher, createQuestion);
+router.put('/:id', authMiddleware, requireTeacher, updateQuestion);
+router.delete('/:id', authMiddleware, requireTeacher, deleteQuestion);
 router.post('/session', authMiddleware, startPracticeSession);
 router.post('/answer', authMiddleware, submitAnswer);
 router.post('/target-vestibular', authMiddleware, setTargetVestibular);
