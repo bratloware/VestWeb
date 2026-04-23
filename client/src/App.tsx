@@ -24,7 +24,6 @@ import Metrics from './pages/Metrics/Metrics';
 import Community from './pages/Community/Community';
 import Mentoring from './pages/Mentoring/Mentoring';
 import Settings from './pages/Settings/Settings';
-import Flashcards from './pages/Flashcards/Flashcards';
 import EssayCorrection from './pages/EssayCorrection/EssayCorrection';
 
 function App() {
@@ -70,9 +69,6 @@ function App() {
       } />
       <Route path="/classroom/settings" element={
         <ProtectedRoute><Settings /></ProtectedRoute>
-      } />
-      <Route path="/classroom/flashcards" element={
-        <ProtectedRoute><Flashcards /></ProtectedRoute>
       } />
       <Route path="/classroom/essay" element={
         <ProtectedRoute><EssayCorrection /></ProtectedRoute>
