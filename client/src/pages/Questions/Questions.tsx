@@ -57,7 +57,7 @@ const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
     >
       <div
         style={{
-          background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 18,
+          background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 18,
           padding: 28, maxWidth: 440, width: '100%',
           boxShadow: '0 24px 60px rgba(0,0,0,0.25)',
         }}
