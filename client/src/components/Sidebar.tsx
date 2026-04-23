@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  LayoutDashboard, HelpCircle, ClipboardList,
+  LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BarChart2, Users, MessageCircle,
   Settings, LogOut, Menu, X, LucideIcon, Sun, Moon,
   ChevronLeft, ChevronRight, PenLine,
@@ -26,6 +26,7 @@ export interface NavItem {
 const defaultNavItems: NavItem[] = [
   { label: 'Home', icon: LayoutDashboard, to: '/classroom/home' },
   { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
+  { label: 'VestWebFlix', icon: Play, to: '/VestWebFlix' },
   { label: 'Redação', icon: PenLine, to: '/classroom/essay' },
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
   { label: 'Calendário', icon: Calendar, to: '/classroom/review-calendar' },
