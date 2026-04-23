@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   LayoutDashboard, HelpCircle, ClipboardList, Play,
   Calendar, BarChart2, Users, MessageCircle,
-  Settings, LogOut, Menu, X, LucideIcon, Sun, Moon, Layers,
+  Settings, LogOut, Menu, X, LucideIcon, Sun, Moon,
   ChevronLeft, ChevronRight, PenLine,
 } from 'lucide-react';
 import logo from '../assets/images/logo.png';
@@ -26,7 +26,7 @@ export interface NavItem {
 const defaultNavItems: NavItem[] = [
   { label: 'Home', icon: LayoutDashboard, to: '/classroom/home' },
   { label: 'Questões', icon: HelpCircle, to: '/classroom/questions' },
-  { label: 'Flashcards', icon: Layers, to: '/classroom/flashcards' },
+  // { label: 'Flashcards', icon: Layers, to: '/classroom/flashcards' }, // Temporariamente desativado nesta branch
   { label: 'Redação', icon: PenLine, to: '/classroom/essay' },
   { label: 'Simulados', icon: ClipboardList, to: '/classroom/simulations' },
   { label: 'VestWebFlix', icon: Play, to: '/VestWebFlix' },

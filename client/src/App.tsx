@@ -24,7 +24,7 @@ import Metrics from './pages/Metrics/Metrics';
 import Community from './pages/Community/Community';
 import Mentoring from './pages/Mentoring/Mentoring';
 import Settings from './pages/Settings/Settings';
-import Flashcards from './pages/Flashcards/Flashcards';
+// import Flashcards from './pages/Flashcards/Flashcards'; // Temporariamente desativado nesta branch
 import EssayCorrection from './pages/EssayCorrection/EssayCorrection';
 
 function App() {
@@ -71,9 +71,11 @@ function App() {
       <Route path="/classroom/settings" element={
         <ProtectedRoute><Settings /></ProtectedRoute>
       } />
+      {/* Área de Flashcards temporariamente desativada nesta branch
       <Route path="/classroom/flashcards" element={
         <ProtectedRoute><Flashcards /></ProtectedRoute>
       } />
+      */}
       <Route path="/classroom/essay" element={
         <ProtectedRoute><EssayCorrection /></ProtectedRoute>
       } />

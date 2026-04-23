@@ -1,5 +1,14 @@
 import { QueryTypes } from 'sequelize';
-import { Answer, Points, Streak, Question, Alternative } from '../db/models/index.js';
+import {
+  Answer,
+  Points,
+  Streak,
+  Question,
+  Alternative,
+  QuestionSession,
+  Student,
+  Vestibular,
+} from '../db/models/index.js';
 import sequelize from '../db/index.js';
 
 
@@ -174,40 +183,88 @@ export const submitAnswer = async (req, res) => {
     const { session_id, question_id, chosen_alternative_id, response_time_seconds } = req.body;
     const student_id = req.user.id;
 
-    const [alt] = await sequelize.query(
-      `SELECT is_correct FROM alternatives WHERE id = :id`,
-      { replacements: { id: chosen_alternative_id }, type: QueryTypes.SELECT },
-    );
-    const is_correct = alt ? alt.is_correct : false;
+    const sessionId = Number.parseInt(session_id, 10);
+    const questionId = Number.parseInt(question_id, 10);
+    const chosenAlternativeId = Number.parseInt(chosen_alternative_id, 10);
+    const responseTimeSeconds = response_time_seconds === undefined || response_time_seconds === null
+      ? null
+      : Number.parseInt(response_time_seconds, 10);
 
-    const answer = await Answer.create({
-      session_id,
-      question_id,
-      chosen_alternative_id,
-      is_correct,
-      student_id,
-      response_time_seconds,
-    });
-
-    if (is_correct) {
-      await Points.create({ student_id, amount: 10, reason: 'correct_answer' });
+    if (!Number.isInteger(sessionId) || !Number.isInteger(questionId) || !Number.isInteger(chosenAlternativeId)) {
+      return res.status(400).json({ message: 'session_id, question_id e chosen_alternative_id sao obrigatorios e devem ser numeros inteiros.' });
     }
 
-    const today = new Date().toISOString().slice(0, 10);
-    const streak = await Streak.findOne({ where: { student_id } });
-    if (!streak) {
-      await Streak.create({ student_id, current_streak: 1, longest_streak: 1, last_activity_date: today });
-    } else if (streak.last_activity_date !== today) {
-      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-      const new_streak = streak.last_activity_date === yesterday ? streak.current_streak + 1 : 1;
-      await streak.update({
-        current_streak: new_streak,
-        longest_streak: Math.max(new_streak, streak.longest_streak),
-        last_activity_date: today,
+    if (
+      response_time_seconds !== undefined
+      && response_time_seconds !== null
+      && !Number.isInteger(responseTimeSeconds)
+    ) {
+      return res.status(400).json({ message: 'response_time_seconds deve ser um numero inteiro.' });
+    }
+
+    const t = await sequelize.transaction();
+
+    try {
+      const session = await QuestionSession.findOne({
+        where: { id: sessionId, student_id },
+        transaction: t,
       });
-    }
 
-    return res.json({ message: 'Answer submitted', data: { answer, is_correct } });
+      if (!session) {
+        await t.rollback();
+        return res.status(403).json({ message: 'Sessao invalida para este usuario.' });
+      }
+
+      const alternative = await Alternative.findOne({
+        where: { id: chosenAlternativeId, question_id: questionId },
+        attributes: ['id', 'is_correct'],
+        transaction: t,
+      });
+
+      if (!alternative) {
+        await t.rollback();
+        return res.status(400).json({ message: 'Alternativa invalida para a questao informada.' });
+      }
+
+      const is_correct = Boolean(alternative.is_correct);
+
+      const answer = await Answer.create({
+        session_id: sessionId,
+        question_id: questionId,
+        chosen_alternative_id: chosenAlternativeId,
+        is_correct,
+        student_id,
+        response_time_seconds: responseTimeSeconds,
+      }, { transaction: t });
+
+      if (is_correct) {
+        await Points.create({ student_id, amount: 10, reason: 'correct_answer' }, { transaction: t });
+      }
+
+      const today = new Date().toISOString().slice(0, 10);
+      const streak = await Streak.findOne({ where: { student_id }, transaction: t });
+
+      if (!streak) {
+        await Streak.create(
+          { student_id, current_streak: 1, longest_streak: 1, last_activity_date: today },
+          { transaction: t },
+        );
+      } else if (streak.last_activity_date !== today) {
+        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        const new_streak = streak.last_activity_date === yesterday ? streak.current_streak + 1 : 1;
+        await streak.update({
+          current_streak: new_streak,
+          longest_streak: Math.max(new_streak, streak.longest_streak),
+          last_activity_date: today,
+        }, { transaction: t });
+      }
+
+      await t.commit();
+      return res.json({ message: 'Answer submitted', data: { answer, is_correct } });
+    } catch (error) {
+      await t.rollback();
+      throw error;
+    }
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
@@ -215,7 +272,6 @@ export const submitAnswer = async (req, res) => {
 
 export const startPracticeSession = async (req, res) => {
   try {
-    const { QuestionSession } = await import('../db/models/index.js');
     const session = await QuestionSession.create({
       student_id: req.user.id,
       simulation_id: null,
@@ -230,8 +286,35 @@ export const startPracticeSession = async (req, res) => {
 export const setTargetVestibular = async (req, res) => {
   try {
     const { vestibular_id } = req.body;
-    await req.user.update({ target_vestibular_id: vestibular_id || null });
-    return res.json({ message: 'Target vestibular updated', data: { target_vestibular_id: vestibular_id } });
+
+    if (req.user?.type !== 'student') {
+      return res.status(403).json({ message: 'Apenas estudantes podem definir vestibular alvo.' });
+    }
+
+    let targetVestibularId = null;
+    if (vestibular_id !== null && vestibular_id !== undefined && vestibular_id !== '') {
+      targetVestibularId = Number.parseInt(vestibular_id, 10);
+      if (!Number.isInteger(targetVestibularId) || targetVestibularId <= 0) {
+        return res.status(400).json({ message: 'vestibular_id deve ser um numero inteiro valido ou null.' });
+      }
+
+      const vestibular = await Vestibular.findByPk(targetVestibularId);
+      if (!vestibular) {
+        return res.status(404).json({ message: 'Vestibular nao encontrado.' });
+      }
+    }
+
+    const student = await Student.findByPk(req.user.id);
+    if (!student) {
+      return res.status(404).json({ message: 'Estudante nao encontrado.' });
+    }
+
+    await student.update({ target_vestibular_id: targetVestibularId });
+
+    return res.json({
+      message: 'Target vestibular updated',
+      data: { target_vestibular_id: targetVestibularId },
+    });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }

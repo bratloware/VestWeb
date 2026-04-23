@@ -63,28 +63,24 @@ export const getMyStats = async (req, res) => {
   }
 };
 
-const DISCIPLINE_LABELS = {
-  'ciencias-humanas':   'Ciências Humanas',
-  'ciencias-natureza':  'Ciências da Natureza',
-  'linguagens':         'Linguagens',
-  'matematica':         'Matemática',
-};
-
 export const getSubjectStats = async (req, res) => {
   try {
     const results = await sequelize.query(
-      `SELECT q.discipline,
+      `SELECT COALESCE(s.name, 'Sem materia')               AS subject_name,
               COUNT(a.id)                                    AS total,
               SUM(CASE WHEN a.is_correct THEN 1 ELSE 0 END) AS correct
        FROM answers a
        JOIN question_sessions qs ON a.session_id = qs.id
-       JOIN "Question" q          ON a.question_id = q.id
+       JOIN questions q          ON a.question_id = q.id
+       LEFT JOIN topics t        ON q.topic_id = t.id
+       LEFT JOIN subjects s      ON t.subject_id = s.id
        WHERE qs.student_id = :student_id
-       GROUP BY q.discipline`,
+       GROUP BY s.name
+       ORDER BY s.name`,
       { replacements: { student_id: req.user.id }, type: QueryTypes.SELECT }
     );
     const subjects = results.map(r => ({
-      name:     DISCIPLINE_LABELS[r.discipline] || r.discipline,
+      name:     r.subject_name,
       total:    Number(r.total),
       correct:  Number(r.correct),
       accuracy: Number(r.total) > 0 ? Math.round((Number(r.correct) / Number(r.total)) * 100) : 0,
