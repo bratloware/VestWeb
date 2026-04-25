@@ -9,7 +9,7 @@ export const getBanners = async (req, res) => {
     });
     return res.json({ message: 'Banners fetched', data: banners });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -21,7 +21,7 @@ export const getTestimonials = async (req, res) => {
     });
     return res.json({ message: 'Testimonials fetched', data: testimonials });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -30,7 +30,7 @@ export const getInstitutionalVideo = async (req, res) => {
     const video = await InstitutionalVideo.findOne({ order: [['updated_at', 'DESC']] });
     return res.json({ message: 'Video fetched', data: video });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -42,7 +42,7 @@ export const getCollaborators = async (req, res) => {
     });
     return res.json({ message: 'Collaborators fetched', data: collaborators });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -56,6 +56,6 @@ export const submitContact = async (req, res) => {
     return res.json({ message: 'Mensagem recebida com sucesso! Entraremos em contato em breve.' });
   } catch (error) {
     console.error('Erro ao enviar email de contato:', error.message);
-    return res.status(500).json({ message: 'Erro ao enviar mensagem', error: error.message });
+    return res.status(500).json({ message: 'Erro ao enviar mensagem' });
   }
 };

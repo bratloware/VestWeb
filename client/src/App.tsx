@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from './store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from './store/store';
+import { clearAuth } from './slices/authSlice';
 import ProtectedRoute from './components/ProtectedRoute';
 import TeacherRoute from './components/TeacherRoute';
 import LandingPage from './pages/LandingPage/LandingPage';
@@ -27,11 +28,23 @@ import Settings from './pages/Settings/Settings';
 import EssayCorrection from './pages/EssayCorrection/EssayCorrection';
 
 function App() {
+  const dispatch = useDispatch<AppDispatch>();
   const { mode } = useSelector((state: RootState) => state.theme);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
+
+  useEffect(() => {
+    const onUnauthorized = () => {
+      dispatch(clearAuth());
+    };
+
+    window.addEventListener('vestweb:unauthorized', onUnauthorized);
+    return () => {
+      window.removeEventListener('vestweb:unauthorized', onUnauthorized);
+    };
+  }, [dispatch]);
 
   return (
     <Routes>

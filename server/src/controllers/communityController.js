@@ -28,7 +28,7 @@ export const getPosts = async (req, res) => {
 
     return res.json({ message: 'Posts fetched', data: { count: posts.count, rows: postsWithCounts } });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -48,7 +48,7 @@ export const createPost = async (req, res) => {
 
     return res.status(201).json({ message: 'Post created', data: full });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -65,7 +65,7 @@ export const deletePost = async (req, res) => {
     await post.destroy();
     return res.json({ message: 'Post deleted' });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -82,7 +82,7 @@ export const likePost = async (req, res) => {
       return res.json({ message: 'Post liked', data: { liked: true } });
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -103,7 +103,7 @@ export const getComments = async (req, res) => {
     });
     return res.json({ message: 'Comments fetched', data: comments });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -123,7 +123,7 @@ export const addComment = async (req, res) => {
 
     return res.status(201).json({ message: 'Comment added', data: full });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -134,7 +134,7 @@ export const reportPost = async (req, res) => {
     const report = await Report.create({ student_id: req.user.id, post_id: id, reason });
     return res.json({ message: 'Report submitted', data: report });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -150,6 +150,6 @@ export const getRanking = async (req, res) => {
 
     return res.json({ message: 'Ranking fetched', data: ranking });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };

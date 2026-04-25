@@ -12,7 +12,7 @@ import {
 import sequelize from '../db/index.js';
 
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const QUESTION_SELECT = `
   SELECT
@@ -49,7 +49,7 @@ const QUESTION_SELECT = `
   LEFT JOIN vestibulares v ON v.id = qv2.vestibular_id
 `;
 
-// ─── Endpoints ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const getAll = async (req, res) => {
   try {
@@ -107,7 +107,7 @@ export const getAll = async (req, res) => {
     });
   } catch (error) {
     console.error('getAll questions error:', error);
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -121,7 +121,7 @@ export const getById = async (req, res) => {
     if (!question) return res.status(404).json({ message: 'Question not found' });
     return res.json({ message: 'Question fetched', data: question });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -133,7 +133,7 @@ export const getSubjects = async (req, res) => {
     );
     return res.json({ message: 'Subjects fetched', data: rows });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -148,7 +148,7 @@ export const getTopics = async (req, res) => {
     );
     return res.json({ message: 'Topics fetched', data: rows });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -160,7 +160,7 @@ export const getVestibulares = async (req, res) => {
     );
     return res.json({ message: 'Vestibulares fetched', data: rows });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -172,11 +172,11 @@ export const getYears = async (req, res) => {
     );
     return res.json({ message: 'Years fetched', data: rows.map(r => r.year) });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// ─── Answer submission ───────────────────────────────────────────────────────
+// â”€â”€â”€ Answer submission â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const submitAnswer = async (req, res) => {
   try {
@@ -266,7 +266,7 @@ export const submitAnswer = async (req, res) => {
       throw error;
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -279,7 +279,7 @@ export const startPracticeSession = async (req, res) => {
     });
     return res.status(201).json({ message: 'Session started', data: session });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -316,18 +316,18 @@ export const setTargetVestibular = async (req, res) => {
       data: { target_vestibular_id: targetVestibularId },
     });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-// ─── Teacher CRUD ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Teacher CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const createQuestion = async (req, res) => {
   try {
     const { statement, image_url, topic_id, difficulty, source, year, bank, alternatives } = req.body;
 
     if (!statement || !topic_id || !difficulty || !Array.isArray(alternatives) || alternatives.length < 2) {
-      return res.status(400).json({ message: 'Campos obrigatórios: statement, topic_id, difficulty, alternatives' });
+      return res.status(400).json({ message: 'Campos obrigatÃ³rios: statement, topic_id, difficulty, alternatives' });
     }
 
     const t = await sequelize.transaction();
@@ -373,7 +373,7 @@ export const createQuestion = async (req, res) => {
       throw err;
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -414,7 +414,7 @@ export const updateQuestion = async (req, res) => {
 
     return res.json({ message: 'Question updated', data: question });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
@@ -426,6 +426,6 @@ export const deleteQuestion = async (req, res) => {
     await question.destroy();
     return res.json({ message: 'Question deleted' });
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };

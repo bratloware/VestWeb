@@ -10,9 +10,9 @@ function generateEnrollment() {
   return random.toString();
 }
 
-// Preços em centavos (BRL) por plano individual e período
+// PreÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§os em centavos (BRL) por plano individual e perÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­odo
 const INDIVIDUAL_PLAN_PRICES = {
-  Básico: { mensal: 1490, trimestral: 4023,  anual: 11988 },
+  'B\u00E1sico': { mensal: 1490, trimestral: 4023,  anual: 11988 },
   Plus:   { mensal: 2490, trimestral: 6723,  anual: 19992 },
   Pro:    { mensal: 3990, trimestral: 10773, anual: 32076 },
   Elite:  { mensal: 4490, trimestral: 12123, anual: 36084 },
@@ -24,7 +24,7 @@ const BILLING_INTERVAL = {
   anual:      { interval: 'year',  interval_count: 1 },
 };
 
-// POST /api/payments/create-pix-session  (pagamento único — PIX não suporta recorrência)
+// POST /api/payments/create-pix-session  (pagamento ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºnico ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â PIX nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o suporta recorrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âªncia)
 export const createPixCheckoutSession = async (req, res) => {
   try {
     const {
@@ -40,11 +40,11 @@ export const createPixCheckoutSession = async (req, res) => {
     } = req.body;
 
     if (!planType || !billingPeriod || !email || !name) {
-      return res.status(400).json({ message: 'Campos obrigatórios ausentes.' });
+      return res.status(400).json({ message: 'Campos obrigatÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rios ausentes.' });
     }
 
     if (planType === 'individual' && !password) {
-      return res.status(400).json({ message: 'Senha obrigatória.' });
+      return res.status(400).json({ message: 'Senha obrigatÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ria.' });
     }
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -53,15 +53,15 @@ export const createPixCheckoutSession = async (req, res) => {
 
     if (planType === 'individual') {
       const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
-      if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
+      if (!planPrices) return res.status(400).json({ message: 'Plano invÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lido.' });
       unitAmount = planPrices[billingPeriod];
-      if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
-      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
+      if (!unitAmount) return res.status(400).json({ message: 'PerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­odo de cobranÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§a invÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lido.' });
+      productName = `VestWeb ${planTier} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
     } else {
-      return res.status(400).json({ message: 'Tipo de plano inválido.' });
+      return res.status(400).json({ message: 'Tipo de plano invÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lido.' });
     }
 
-    // Calcula data de expiração do acesso com base no período escolhido
+    // Calcula data de expiraÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o do acesso com base no perÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­odo escolhido
     const periodMonths = { mensal: 1, trimestral: 3, anual: 12 };
     const accessEndDate = new Date();
     accessEndDate.setMonth(accessEndDate.getMonth() + (periodMonths[billingPeriod] || 1));
@@ -75,7 +75,7 @@ export const createPixCheckoutSession = async (req, res) => {
           product_data: {
             name: productName,
             description: planType === 'individual'
-              ? 'Acesso completo à plataforma VestWeb'
+              ? 'Acesso completo ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  plataforma VestWeb'
               : `Plano empresarial VestWeb para ${numStudents || 1} aluno(s)`,
           },
           unit_amount: unitAmount,
@@ -97,7 +97,7 @@ export const createPixCheckoutSession = async (req, res) => {
         payment_method: 'pix',
       },
       locale: 'pt-BR',
-      expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // QR Code válido por 24h
+      expires_at: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // QR Code vÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lido por 24h
     });
 
     // Salva dados do aluno temporariamente
@@ -115,7 +115,7 @@ export const createPixCheckoutSession = async (req, res) => {
     res.json({ url: session.url });
   } catch (err) {
     console.error('Stripe createPixCheckoutSession error:', err);
-    res.status(500).json({ message: 'Erro ao criar sessão PIX.' });
+    res.status(500).json({ message: 'Erro ao criar sessÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o PIX.' });
   }
 };
 
@@ -124,7 +124,7 @@ export const createCheckoutSession = async (req, res) => {
   try {
     const {
       planType,      // 'individual' | 'empresa'
-      planTier,      // 'individual' | 'Starter' | 'Básico' | 'Profissional' | 'Enterprise'
+      planTier,      // 'individual' | 'Starter' | 'BÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡sico' | 'Profissional' | 'Enterprise'
       billingPeriod, // 'mensal' | 'trimestral' | 'anual'
       name,
       email,
@@ -135,11 +135,11 @@ export const createCheckoutSession = async (req, res) => {
     } = req.body;
 
     if (!planType || !billingPeriod || !email || !name) {
-      return res.status(400).json({ message: 'Campos obrigatórios ausentes.' });
+      return res.status(400).json({ message: 'Campos obrigatÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rios ausentes.' });
     }
 
     if (planType === 'individual' && !password) {
-      return res.status(400).json({ message: 'Senha obrigatória.' });
+      return res.status(400).json({ message: 'Senha obrigatÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ria.' });
     }
 
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -151,17 +151,17 @@ export const createCheckoutSession = async (req, res) => {
 
     if (planType === 'individual') {
       const planPrices = INDIVIDUAL_PLAN_PRICES[planTier];
-      if (!planPrices) return res.status(400).json({ message: 'Plano inválido.' });
+      if (!planPrices) return res.status(400).json({ message: 'Plano invÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lido.' });
 
       unitAmount = planPrices[billingPeriod];
-      if (!unitAmount) return res.status(400).json({ message: 'Período de cobrança inválido.' });
+      if (!unitAmount) return res.status(400).json({ message: 'PerÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­odo de cobranÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§a invÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lido.' });
 
       const { interval, interval_count } = BILLING_INTERVAL[billingPeriod];
       recurring = { interval, interval_count };
-      productName = `VestWeb ${planTier} — ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
+      productName = `VestWeb ${planTier} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ${billingPeriod.charAt(0).toUpperCase() + billingPeriod.slice(1)}`;
 
     } else {
-      return res.status(400).json({ message: 'Tipo de plano inválido.' });
+      return res.status(400).json({ message: 'Tipo de plano invÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡lido.' });
     }
 
     lineItems = [{
@@ -170,7 +170,7 @@ export const createCheckoutSession = async (req, res) => {
         product_data: {
           name: productName,
           description: planType === 'individual'
-            ? 'Acesso completo à plataforma VestWeb'
+            ? 'Acesso completo ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â  plataforma VestWeb'
             : `Plano empresarial VestWeb para ${numStudents || 1} aluno(s)`,
         },
         unit_amount: unitAmount,
@@ -204,7 +204,7 @@ export const createCheckoutSession = async (req, res) => {
 
     const session = await stripe.checkout.sessions.create(sessionConfig);
 
-    // Salva dados do aluno temporariamente — será criado no banco após pagamento confirmar
+    // Salva dados do aluno temporariamente ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â serÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡ criado no banco apÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³s pagamento confirmar
     if (planType === 'individual') {
       const password_hash = await hashPassword(password);
       await PendingStudent.upsert({
@@ -219,11 +219,11 @@ export const createCheckoutSession = async (req, res) => {
     res.json({ url: session.url });
   } catch (err) {
     console.error('Stripe createCheckoutSession error:', err);
-    res.status(500).json({ message: 'Erro ao criar sessão de pagamento.' });
+    res.status(500).json({ message: 'Erro ao criar sessÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o de pagamento.' });
   }
 };
 
-// POST /api/payments/webhook  (raw body obrigatório — configurado em app.js)
+// POST /api/payments/webhook  (raw body obrigatÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rio ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â configurado em app.js)
 export const handleWebhook = async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
@@ -232,7 +232,7 @@ export const handleWebhook = async (req, res) => {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('Webhook signature error:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send('Webhook Error');
   }
 
   try {
@@ -242,7 +242,7 @@ export const handleWebhook = async (req, res) => {
         const meta = session.metadata || {};
         const isPix = meta.payment_method === 'pix';
 
-        // Para PIX: só processa se o pagamento foi confirmado
+        // Para PIX: sÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ processa se o pagamento foi confirmado
         // Para assinaturas: processa mesmo em trial (payment_status = 'no_payment_required')
         const isPaid = session.payment_status === 'paid';
         const isTrialing = session.payment_status === 'no_payment_required';
@@ -274,13 +274,13 @@ export const handleWebhook = async (req, res) => {
           await Subscription.upsert(subscriptionData, { conflictFields: ['stripe_subscription_id'] });
         }
 
-        // Cria o Student se for plano individual e ainda não existir
+        // Cria o Student se for plano individual e ainda nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o existir
         if (meta.plan_type === 'individual') {
           const pending = await PendingStudent.findOne({ where: { stripe_session_id: session.id } });
           if (pending) {
             const alreadyExists = await Student.findOne({ where: { email: pending.email } });
             if (!alreadyExists) {
-              // Garante enrollment único
+              // Garante enrollment ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âºnico
               let enrollment;
               let enrollmentTaken = true;
               while (enrollmentTaken) {
@@ -324,7 +324,7 @@ export const handleWebhook = async (req, res) => {
         break;
       }
 
-      // PIX pago de forma assíncrona (usuário fechou a tela e pagou depois)
+      // PIX pago de forma assÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­ncrona (usuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rio fechou a tela e pagou depois)
       case 'payment_intent.succeeded': {
         const pi = event.data.object;
         // Atualiza status caso a subscription tenha sido criada mas ainda estava pendente
@@ -346,7 +346,7 @@ export const handleWebhook = async (req, res) => {
   }
 };
 
-// POST /api/payments/portal  (requer autenticação)
+// POST /api/payments/portal  (requer autenticaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o)
 export const createPortalSession = async (req, res) => {
   try {
     const authenticatedEmail = req.user?.email;

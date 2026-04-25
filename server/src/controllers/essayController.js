@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+﻿import fetch from 'node-fetch';
 import formidable from 'formidable';
 import { readFileSync } from 'fs';
 
@@ -18,7 +18,7 @@ export const correctEssay = async (req, res) => {
   try {
     files = await parseForm(req);
   } catch (err) {
-    return res.status(400).json({ message: err.message || 'Erro ao processar o arquivo.' });
+    return res.status(400).json({ message: 'Erro ao processar o arquivo enviado.' });
   }
 
   const uploaded = files.pdf;
@@ -32,22 +32,22 @@ export const correctEssay = async (req, res) => {
   try {
     pdfBase64 = readFileSync(file.filepath).toString('base64');
   } catch {
-    return res.status(422).json({ message: 'Não foi possível ler o arquivo.' });
+    return res.status(422).json({ message: 'NÃ£o foi possÃ­vel ler o arquivo.' });
   }
 
-  const prompt = `Você é um corretor especializado em redações do ENEM. Analise a redação no PDF anexado e forneça uma correção detalhada nas 5 competências do ENEM.
+  const prompt = `VocÃª Ã© um corretor especializado em redaÃ§Ãµes do ENEM. Analise a redaÃ§Ã£o no PDF anexado e forneÃ§a uma correÃ§Ã£o detalhada nas 5 competÃªncias do ENEM.
 
-Para cada competência, atribua uma nota de 0 a 200 (apenas múltiplos de 40: 0, 40, 80, 120, 160 ou 200) e forneça um comentário detalhado em português.
+Para cada competÃªncia, atribua uma nota de 0 a 200 (apenas mÃºltiplos de 40: 0, 40, 80, 120, 160 ou 200) e forneÃ§a um comentÃ¡rio detalhado em portuguÃªs.
 
-Responda APENAS com JSON válido, sem texto antes ou depois, no seguinte formato:
+Responda APENAS com JSON vÃ¡lido, sem texto antes ou depois, no seguinte formato:
 {
   "nota_total": <soma das 5 notas>,
   "competencias": [
-    { "numero": 1, "nome": "Domínio da norma padrão da língua escrita", "nota": <0-200>, "comentario": "..." },
-    { "numero": 2, "nome": "Compreensão da proposta e desenvolvimento do tema", "nota": <0-200>, "comentario": "..." },
-    { "numero": 3, "nome": "Seleção e organização das informações e argumentos", "nota": <0-200>, "comentario": "..." },
-    { "numero": 4, "nome": "Conhecimento dos mecanismos linguísticos de argumentação", "nota": <0-200>, "comentario": "..." },
-    { "numero": 5, "nome": "Proposta de intervenção", "nota": <0-200>, "comentario": "..." }
+    { "numero": 1, "nome": "DomÃ­nio da norma padrÃ£o da lÃ­ngua escrita", "nota": <0-200>, "comentario": "..." },
+    { "numero": 2, "nome": "CompreensÃ£o da proposta e desenvolvimento do tema", "nota": <0-200>, "comentario": "..." },
+    { "numero": 3, "nome": "SeleÃ§Ã£o e organizaÃ§Ã£o das informaÃ§Ãµes e argumentos", "nota": <0-200>, "comentario": "..." },
+    { "numero": 4, "nome": "Conhecimento dos mecanismos linguÃ­sticos de argumentaÃ§Ã£o", "nota": <0-200>, "comentario": "..." },
+    { "numero": 5, "nome": "Proposta de intervenÃ§Ã£o", "nota": <0-200>, "comentario": "..." }
   ],
   "comentario_geral": "...",
   "pontos_positivos": ["...", "..."],
@@ -99,7 +99,8 @@ Responda APENAS com JSON válido, sem texto antes ou depois, no seguinte formato
     const correction = JSON.parse(jsonMatch[0]);
     return res.json({ correction });
   } catch (err) {
-    console.error('Erro na correção IA:', err);
-    return res.status(500).json({ message: 'Erro ao processar correção com IA.' });
+    console.error('Erro na correÃ§Ã£o IA:', err);
+    return res.status(500).json({ message: 'Erro ao processar correÃ§Ã£o com IA.' });
   }
 };
+
