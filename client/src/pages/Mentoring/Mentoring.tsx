@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Calendar, Clock, X } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import api from '../../api/api';
 import './Mentoring.css';
 
@@ -94,7 +95,11 @@ const Mentoring = () => {
     <div className="mentoring-page">
       <Sidebar />
       <main className="page-content">
-        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Mentoria</h1>
+        <PageHeader
+          crumb="Mentoria"
+          title={<>Mentoria <span className="vw-page-header-accent">VestWeb</span></>}
+          subtitle="Conecte-se com mentores e organize suas sessoes de acompanhamento."
+        />
 
         <div className="mentoring-tabs">
           <button className={`mentoring-tab${activeTab === 'mentors' ? ' active' : ''}`} onClick={() => setActiveTab('mentors')}>

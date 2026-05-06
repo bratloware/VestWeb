@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   getAll, getById, createQuestion, updateQuestion, deleteQuestion,
-  getSubjects, getTopics, getVestibulares, getYears,
+  getSubjects, getTopics, getVestibulares, getYears, getCategories,
   setTargetVestibular, submitAnswer, startPracticeSession, reportQuestion,
 } from '../controllers/questionsController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
@@ -11,6 +11,7 @@ const router = Router();
 router.get('/subjects', getSubjects);
 router.get('/topics', getTopics);
 router.get('/vestibulares', getVestibulares);
+router.get('/categories', authMiddleware, getCategories);
 router.get('/years', getYears);
 router.get('/', authMiddleware, getAll);
 router.get('/:id', authMiddleware, getById);

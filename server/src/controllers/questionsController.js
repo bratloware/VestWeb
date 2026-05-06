@@ -10,6 +10,7 @@ const QUESTION_SELECT = `
     q.id,
     q.statement,
     q.image_url,
+    q.source,
     q.year,
     q.difficulty,
     q.topic_id,
@@ -44,7 +45,17 @@ const QUESTION_SELECT = `
 
 export const getAll = async (req, res) => {
   try {
-    const { subject_id, vestibular_id, year, difficulty, with_image, limit = 20, offset = 0 } = req.query;
+    const {
+      subject_id,
+      vestibular_id,
+      vestibular_name,
+      category,
+      year,
+      difficulty,
+      with_image,
+      limit = 20,
+      offset = 0,
+    } = req.query;
 
     const conditions = [];
     const replacements = { limit: parseInt(limit), offset: parseInt(offset) };
@@ -57,6 +68,16 @@ export const getAll = async (req, res) => {
     if (vestibular_id) {
       conditions.push(`qv2.vestibular_id = :vestibular_id`);
       replacements.vestibular_id = parseInt(vestibular_id);
+    }
+
+    if (vestibular_name) {
+      conditions.push(`(LOWER(v.name) = LOWER(:vestibular_name) OR LOWER(COALESCE(q.bank, '')) = LOWER(:vestibular_name))`);
+      replacements.vestibular_name = String(vestibular_name).trim();
+    }
+
+    if (category) {
+      conditions.push(`LOWER(COALESCE(q.source, '')) = LOWER(:category)`);
+      replacements.category = String(category).trim();
     }
 
     if (year) {
@@ -146,10 +167,98 @@ export const getTopics = async (req, res) => {
 export const getVestibulares = async (req, res) => {
   try {
     const rows = await sequelize.query(
-      `SELECT id, name, full_name FROM vestibulares ORDER BY name`,
+      `WITH base_vestibulares AS (
+         SELECT CAST(id AS TEXT) AS id, name, full_name
+         FROM vestibulares
+       ),
+       bancos_sem_vestibular AS (
+         SELECT
+           CONCAT('bank:', LOWER(TRIM(q.bank))) AS id,
+           UPPER(TRIM(q.bank)) AS name,
+           UPPER(TRIM(q.bank)) AS full_name
+         FROM questions q
+         WHERE q.bank IS NOT NULL
+           AND TRIM(q.bank) <> ''
+           AND NOT EXISTS (
+             SELECT 1
+             FROM vestibulares v
+             WHERE LOWER(v.name) = LOWER(TRIM(q.bank))
+           )
+         GROUP BY TRIM(q.bank)
+       ),
+       vestibulares_padrao AS (
+         SELECT 'bank:enem' AS id, 'ENEM' AS name, 'ENEM' AS full_name
+         UNION ALL
+         SELECT 'bank:cebraspe' AS id, 'CEBRASPE' AS name, 'CEBRASPE' AS full_name
+         UNION ALL
+         SELECT 'bank:cesgranrio' AS id, 'CESGRANRIO' AS name, 'CESGRANRIO' AS full_name
+       ),
+       padrao_faltantes AS (
+         SELECT vp.id, vp.name, vp.full_name
+         FROM vestibulares_padrao vp
+         WHERE NOT EXISTS (
+           SELECT 1
+           FROM base_vestibulares bv
+           WHERE LOWER(bv.name) = LOWER(vp.name)
+         )
+         AND NOT EXISTS (
+           SELECT 1
+           FROM bancos_sem_vestibular bsv
+           WHERE LOWER(bsv.name) = LOWER(vp.name)
+         )
+       )
+       SELECT id, name, full_name
+       FROM (
+         SELECT * FROM base_vestibulares
+         UNION ALL
+         SELECT * FROM bancos_sem_vestibular
+         UNION ALL
+         SELECT * FROM padrao_faltantes
+       ) merged
+       ORDER BY
+         CASE
+           WHEN UPPER(name) = 'ENEM' THEN 1
+           WHEN UPPER(name) = 'CEBRASPE' THEN 2
+           WHEN UPPER(name) = 'CESGRANRIO' THEN 3
+           ELSE 10
+         END,
+         name`,
       { type: QueryTypes.SELECT },
     );
     return res.json({ message: 'Vestibulares fetched', data: rows });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+export const getCategories = async (_req, res) => {
+  try {
+    const rows = await sequelize.query(
+      `SELECT
+         TRIM(q.source) AS value,
+         TRIM(q.source) AS label,
+         COUNT(*)::int AS count
+       FROM questions q
+       WHERE q.source IS NOT NULL
+         AND TRIM(q.source) <> ''
+       GROUP BY TRIM(q.source)
+       ORDER BY COUNT(*) DESC, TRIM(q.source)`,
+      { type: QueryTypes.SELECT },
+    );
+
+    const defaultCategory = {
+      value: 'QCONCURSOS_LOTE_1_100',
+      label: 'QCONCURSOS_LOTE_1_100',
+      count: 0,
+    };
+
+    const alreadyExists = rows.some(
+      (row) => String(row.value).toLowerCase() === defaultCategory.value.toLowerCase(),
+    );
+
+    const data = alreadyExists ? rows : [defaultCategory, ...rows];
+
+    return res.json({ message: 'Categories fetched', data });
   } catch (error) {
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   }

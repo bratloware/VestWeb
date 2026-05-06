@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Heart, MessageSquare, Flag, Trophy, Send, Award } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import { fetchPosts, createPost, likePost, fetchComments, addComment, fetchRanking, Post } from '../../slices/communitySlice';
 import { AppDispatch, RootState } from '../../store/store';
 import './Community.css';
@@ -66,7 +67,11 @@ const Community = () => {
     <div className="community-page">
       <Sidebar />
       <main className="page-content">
-        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Comunidade</h1>
+        <PageHeader
+          crumb="Comunidade"
+          title={<>Comunidade <span className="vw-page-header-accent">VestWeb</span></>}
+          subtitle="Compartilhe duvidas, aprendizados e motive outros alunos."
+        />
 
         <div className="community-layout">
           {/* Feed */}

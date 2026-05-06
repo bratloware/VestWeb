@@ -8,6 +8,7 @@ import {
   ScrollText, MonitorPlay, PenLine,
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import api from '../../api/api';
 import { RootState } from '../../store/store';
 import './Home.css';
@@ -140,6 +141,7 @@ const Home = () => {
     useQuery({
       queryKey: ['dashboard-metrics', student?.id],
       queryFn: () => fetchMetrics(student?.id),
+      staleTime: 0,
       refetchInterval: 30_000,
       refetchIntervalInBackground: false,
     });
@@ -148,6 +150,7 @@ const Home = () => {
     useQuery({
       queryKey: ['week-events'],
       queryFn: fetchWeekEvents,
+      staleTime: 0,
     });
 
   const toggleMutation = useMutation({
@@ -361,10 +364,15 @@ const Home = () => {
       <Sidebar />
       <main className="page-content">
         <div className="home-container">
-          <div className="home-header">
-            <h1>{getGreeting()}, <span>{student?.name?.split(' ')[0] || 'Aluno'}</span>!</h1>
-            <p>Tudo pronto para mais um dia de estudos?</p>
-          </div>
+          <PageHeader
+            crumb="Home"
+            title={
+              <>
+                {getGreeting()}, <span className="vw-page-header-accent">{student?.name?.split(' ')[0] || 'Aluno'}</span>!
+              </>
+            }
+            subtitle="Tudo pronto para mais um dia de estudos?"
+          />
 
           {visibleAnnouncements.length > 0 && (
             <div className="home-announcements">

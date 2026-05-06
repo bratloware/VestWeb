@@ -1,0 +1,61 @@
+﻿.vw-page-header {
+  margin-bottom: 24px;
+}
+
+.vw-page-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.vw-page-breadcrumb-current {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.vw-page-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.vw-page-header-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.4px;
+  color: var(--text);
+}
+
+.vw-page-header-accent {
+  color: var(--primary);
+}
+
+.vw-page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vw-page-header-subtitle {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .vw-page-header-title {
+    font-size: 24px;
+  }
+
+  .vw-page-header-right {
+    width: 100%;
+  }
+}

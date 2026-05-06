@@ -8,6 +8,7 @@ import {
   ChevronDown, Search, Eye, EyeOff,
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import api from '../../api/api';
 import { AppDispatch, RootState } from '../../store/store';
 import { updateUser } from '../../slices/authSlice';
@@ -306,7 +307,11 @@ const Settings = () => {
         />
       )}
       <main className="page-content">
-        <h1 className="settings-title">Configurações</h1>
+        <PageHeader
+          crumb="Configuracoes"
+          title={<>Configuracoes <span className="vw-page-header-accent">VestWeb</span></>}
+          subtitle="Gerencie seu perfil, seguranca, notificacoes e preferencias."
+        />
 
         <div className="settings-layout">
           {/* Sidebar nav */}

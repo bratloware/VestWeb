@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import api from '../../api/api';
 import './ReviewCalendar.css';
 
@@ -134,20 +135,24 @@ const ReviewCalendar = () => {
     <div className="calendar-page">
       <Sidebar />
       <main className="page-content">
-        <div className="calendar-header-row">
-          <h1>Calendario de Revisao</h1>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <div className="calendar-nav">
-              <button onClick={prevMonth}><ChevronLeft size={18} /></button>
-              <span className="calendar-month-label">{MONTHS[currentMonth - 1]} {currentYear}</span>
-              <button onClick={nextMonth}><ChevronRight size={18} /></button>
+        <PageHeader
+          crumb="Calendario"
+          title={<>Calendario de <span className="vw-page-header-accent">Revisao</span></>}
+          subtitle="Planeje seus estudos com visao mensal e mantenha constancia."
+          right={
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div className="calendar-nav">
+                <button onClick={prevMonth}><ChevronLeft size={18} /></button>
+                <span className="calendar-month-label">{MONTHS[currentMonth - 1]} {currentYear}</span>
+                <button onClick={nextMonth}><ChevronRight size={18} /></button>
+              </div>
+              <button className="btn-primary" onClick={() => openCreateModal(today)} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
+                <Plus size={16} />
+                Criar evento
+              </button>
             </div>
-            <button className="btn-primary" onClick={() => openCreateModal(today)} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-              <Plus size={16} />
-              Criar evento
-            </button>
-          </div>
-        </div>
+          }
+        />
 
         <div className="calendar-grid-wrapper">
           <div className="calendar-weekdays">

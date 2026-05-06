@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Layers, ChevronLeft, ChevronRight, RotateCcw, Check, X, Shuffle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, Check, X, Shuffle } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import { fetchQuestions, fetchSubjects, Question } from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import './Flashcards.css';
@@ -111,7 +112,11 @@ const Flashcards = () => {
       <div className="fc-page">
         <Sidebar />
         <main className="page-content">
-          <h1 className="fc-title"><Layers size={24} /> Flashcards</h1>
+                  <PageHeader
+          crumb="Flashcards"
+          title={<>Flashcards <span className="vw-page-header-accent">VestWeb</span></>}
+          subtitle="Revise rapido, memorize melhor e acelere sua fixacao."
+        />
           <div className="fc-setup-card">
             <div className="fc-setup-icon">🃏</div>
             <h2>Crie seu baralho de estudo</h2>
@@ -163,7 +168,11 @@ const Flashcards = () => {
       <div className="fc-page">
         <Sidebar />
         <main className="page-content">
-          <h1 className="fc-title"><Layers size={24} /> Flashcards</h1>
+                  <PageHeader
+          crumb="Flashcards"
+          title={<>Flashcards <span className="vw-page-header-accent">VestWeb</span></>}
+          subtitle="Revise rapido, memorize melhor e acelere sua fixacao."
+        />
           <div className="fc-setup-card">
             <div className="fc-setup-icon">😕</div>
             <h2>Nenhuma questão encontrada</h2>
@@ -181,7 +190,11 @@ const Flashcards = () => {
       <div className="fc-page">
         <Sidebar />
         <main className="page-content">
-          <h1 className="fc-title"><Layers size={24} /> Flashcards</h1>
+                  <PageHeader
+          crumb="Flashcards"
+          title={<>Flashcards <span className="vw-page-header-accent">VestWeb</span></>}
+          subtitle="Revise rapido, memorize melhor e acelere sua fixacao."
+        />
           <div className="fc-result-card">
             <div className="fc-result-emoji">{pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '💪'}</div>
             <h2>Sessão concluída!</h2>
@@ -218,7 +231,11 @@ const Flashcards = () => {
       <Sidebar />
       <main className="page-content">
         <div className="fc-header">
-          <h1 className="fc-title"><Layers size={24} /> Flashcards</h1>
+                  <PageHeader
+          crumb="Flashcards"
+          title={<>Flashcards <span className="vw-page-header-accent">VestWeb</span></>}
+          subtitle="Revise rapido, memorize melhor e acelere sua fixacao."
+        />
           <div className="fc-header-actions">
             <button className="fc-ghost-btn fc-ghost-btn-sm" onClick={handleReset}>
               <Shuffle size={15} /> Embaralhar

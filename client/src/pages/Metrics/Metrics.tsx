@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BarChart2, Target, HelpCircle, Flame } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import api from '../../api/api';
 import './Metrics.css';
 
@@ -54,7 +55,11 @@ const Metrics = () => {
     <div className="metrics-page">
       <Sidebar />
       <main className="page-content">
-        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Métricas de Desempenho</h1>
+        <PageHeader
+          crumb="Metricas"
+          title={<>Metricas de <span className="vw-page-header-accent">Desempenho</span></>}
+          subtitle="Veja sua evolucao, pontos fortes e oportunidades de melhoria."
+        />
 
         {/* Summary cards */}
         <div className="metrics-summary">

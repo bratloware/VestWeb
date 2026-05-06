@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Clock, BookOpen, HelpCircle, RotateCcw } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import { fetchSimulations, fetchSimulationById, startSession, finishSession, fetchHistory } from '../../slices/simulationsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
@@ -97,16 +98,20 @@ const Simulations = () => {
       <main className="page-content">
         {mode === 'list' && (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h1 style={{ fontSize: '24px', fontWeight: 800 }}>Simulados</h1>
-              <button
-                className="btn-secondary"
-                onClick={() => setShowHistory(!showHistory)}
-                style={{ fontSize: '14px' }}
-              >
-                {showHistory ? 'Ver simulados' : 'Ver historico'}
-              </button>
-            </div>
+            <PageHeader
+              crumb="Simulados"
+              title={<>Simulados <span className="vw-page-header-accent">VestWeb</span></>}
+              subtitle="Treine com simulados completos e acompanhe sua evolucao."
+              right={
+                <button
+                  className="btn-secondary"
+                  onClick={() => setShowHistory(!showHistory)}
+                  style={{ fontSize: '14px' }}
+                >
+                  {showHistory ? 'Ver simulados' : 'Ver historico'}
+                </button>
+              }
+            />
 
             {!showHistory ? (
               loading ? (

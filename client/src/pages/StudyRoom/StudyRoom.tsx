@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, X, Check } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import api from '../../api/api';
 import './StudyRoom.css';
 
@@ -105,13 +106,17 @@ const StudyRoom = () => {
     <div className="study-room-page">
       <Sidebar />
       <main className="page-content">
-        <div className="study-room-header">
-          <h1>Sala de Estudos</h1>
-          <button className="btn-primary" onClick={() => { setForm({ title: '', date: today.toISOString().split('T')[0], start_time: '', end_time: '', type: 'study_block', topic_id: '' }); setShowModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-            <Plus size={16} />
-            Adicionar bloco
-          </button>
-        </div>
+        <PageHeader
+          crumb="Sala de Estudos"
+          title={<>Sala de <span className="vw-page-header-accent">Estudos</span></>}
+          subtitle="Organize sua semana com blocos de estudo e revisao."
+          right={
+            <button className="btn-primary" onClick={() => { setForm({ title: '', date: today.toISOString().split('T')[0], start_time: '', end_time: '', type: 'study_block', topic_id: '' }); setShowModal(true); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
+              <Plus size={16} />
+              Adicionar bloco
+            </button>
+          }
+        />
 
         {/* Week Grid */}
         <div className="week-grid-wrapper" style={{ marginBottom: '32px' }}>

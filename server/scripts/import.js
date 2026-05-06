@@ -6,8 +6,10 @@
  *
  * Uso:
  *   node scripts/import.js <arquivo.json>
+ *   node scripts/import.js <arquivo.json> <categoria_source>
  *   node scripts/import.js data/enem.json
  *   node scripts/import.js data/fuvest.json
+ *   node scripts/import.js data/qconcursos_lote_1_100.json QCONCURSOS_LOTE_1_100
  *
  * Formato de entrada esperado (saída do normalize.js):
  * [
@@ -15,6 +17,7 @@
  *     "statement":    "Texto da questão",
  *     "year":         2023,
  *     "difficulty":   "medium",
+ *     "source":       "QCONCURSOS_LOTE_1_100",
  *     "vestibular":   "ENEM",
  *     "subject":      "Matemática",
  *     "topic":        "Álgebra",
@@ -139,8 +142,9 @@ async function buildExistingStatements() {
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 const inputArg = process.argv[2];
+const sourceOverride = process.argv[3] ? String(process.argv[3]).trim() : null;
 if (!inputArg) {
-  console.error('Uso: node scripts/import.js <arquivo.json>');
+  console.error('Uso: node scripts/import.js <arquivo.json> [categoria_source]');
   process.exit(1);
 }
 
@@ -162,6 +166,9 @@ if (!Array.isArray(raw) || raw.length === 0) {
 async function main() {
   console.log(`\nImportador VestWeb`);
   console.log(`Arquivo: ${inputPath}`);
+  if (sourceOverride) {
+    console.log(`Categoria source fixa: ${sourceOverride}`);
+  }
   console.log(`Questões no arquivo: ${raw.length}\n`);
 
   await sequelize.authenticate();
@@ -238,6 +245,7 @@ async function main() {
           topic_id:    ids.topicId,
           subtopic_id: ids.subtopicId,
           difficulty:  q.difficulty,
+          source:      sourceOverride || q.source || null,
           year:        q.year || null,
           number:      q.number ?? null,
           image:       q.image ?? null,
@@ -294,3 +302,4 @@ main().catch(err => {
   console.error('\nErro fatal:', err.message);
   process.exit(1);
 });
+

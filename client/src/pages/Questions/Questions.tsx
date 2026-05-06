@@ -1,25 +1,97 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Filter, ChevronRight, RotateCcw, PenLine, Trash2, Flag, X, Send, CheckCircle } from 'lucide-react';
+import {
+  Filter,
+  ChevronRight,
+  RotateCcw,
+  PenLine,
+  Trash2,
+  Flag,
+  X,
+  Send,
+  CheckCircle,
+  BookOpen,
+  Globe,
+  Landmark,
+  Microscope,
+  Calculator,
+  FlaskConical,
+  Zap,
+  Languages,
+  GraduationCap,
+  ArrowLeft,
+  type LucideIcon,
+} from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
-import { fetchQuestions, fetchSubjects, fetchVestibulares, Question, Alternative } from '../../slices/questionsSlice';
+import {
+  fetchQuestions,
+  fetchQuestionsTotal,
+  fetchSubjects,
+  fetchVestibulares,
+  fetchQuestionCategories,
+  clearQuestionsList,
+  Question,
+  Alternative,
+} from '../../slices/questionsSlice';
 import { AppDispatch, RootState } from '../../store/store';
 import api from '../../api/api';
 import './Questions.css';
 
-// ── Report types ──────────────────────────────────────────────────────────────
-
 const REPORT_TYPES = [
-  { value: 'wrong_answer',       label: 'Gabarito incorreto' },
-  { value: 'typo',               label: 'Erro de digitação/ortografia' },
-  { value: 'image_missing',      label: 'Imagem ausente ou corrompida' },
-  { value: 'unclear_statement',  label: 'Enunciado confuso ou incompleto' },
-  { value: 'wrong_subject',      label: 'Disciplina/assunto incorreto' },
-  { value: 'other',              label: 'Outro' },
+  { value: 'wrong_answer', label: 'Gabarito incorreto' },
+  { value: 'typo', label: 'Erro de digitação/ortografia' },
+  { value: 'image_missing', label: 'Imagem ausente ou corrompida' },
+  { value: 'unclear_statement', label: 'Enunciado confuso ou incompleto' },
+  { value: 'wrong_subject', label: 'Disciplina/assunto incorreto' },
+  { value: 'other', label: 'Outro' },
 ] as const;
 
 type ReportType = typeof REPORT_TYPES[number]['value'];
 type ReportState = 'idle' | 'loading' | 'success';
+
+type SubjectVisual = {
+  icon: LucideIcon;
+  bg: string;
+  color: string;
+};
+
+const SUBJECT_VISUALS: { keywords: string[]; visual: SubjectVisual }[] = [
+  { keywords: ['geografia'], visual: { icon: Globe, bg: '#e0f2fe', color: '#0369a1' } },
+  { keywords: ['historia'], visual: { icon: Landmark, bg: '#fff7ed', color: '#c2410c' } },
+  { keywords: ['biologia'], visual: { icon: Microscope, bg: '#ecfdf5', color: '#047857' } },
+  { keywords: ['matematica'], visual: { icon: Calculator, bg: '#eef2ff', color: '#4338ca' } },
+  { keywords: ['quimica'], visual: { icon: FlaskConical, bg: '#f5f3ff', color: '#7c3aed' } },
+  { keywords: ['fisica'], visual: { icon: Zap, bg: '#fffbeb', color: '#b45309' } },
+  { keywords: ['ingles', 'espanhol', 'lingua'], visual: { icon: Languages, bg: '#ecfeff', color: '#0f766e' } },
+];
+
+const FALLBACK_VISUALS: SubjectVisual[] = [
+  { icon: BookOpen, bg: '#fee2e2', color: '#b91c1c' },
+  { icon: BookOpen, bg: '#ffedd5', color: '#c2410c' },
+  { icon: BookOpen, bg: '#dcfce7', color: '#166534' },
+  { icon: BookOpen, bg: '#dbeafe', color: '#1d4ed8' },
+  { icon: BookOpen, bg: '#ede9fe', color: '#6d28d9' },
+];
+
+const ALL_SUBJECTS_VALUE = '__all_subjects__';
+const ALL_VESTIBULARES_VALUE = '__all_vestibulares__';
+const VESTIBULAR_BANK_PREFIX = 'bank:';
+const FALLBACK_VESTIBULARES = ['ENEM', 'CEBRASPE', 'CESGRANRIO'] as const;
+
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+const getSubjectVisual = (subjectName: string, index: number): SubjectVisual => {
+  const normalized = normalizeText(subjectName);
+  const match = SUBJECT_VISUALS.find((item) => item.keywords.some((keyword) => normalized.includes(keyword)));
+  if (match) return match.visual;
+  return FALLBACK_VISUALS[index % FALLBACK_VISUALS.length];
+};
+
+const isBankVestibularId = (id: string) => id.startsWith(VESTIBULAR_BANK_PREFIX);
 
 interface ReportModalProps {
   questionId: number;
@@ -34,11 +106,19 @@ const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!errorType) { setError('Selecione o tipo de erro.'); return; }
+    if (!errorType) {
+      setError('Selecione o tipo de erro.');
+      return;
+    }
+
     setState('loading');
     setError('');
+
     try {
-      await api.post(`/questions/${questionId}/report`, { error_type: errorType, description: description.trim() || undefined });
+      await api.post(`/questions/${questionId}/report`, {
+        error_type: errorType,
+        description: description.trim() || undefined,
+      });
       setState('success');
     } catch {
       setState('idle');
@@ -49,35 +129,48 @@ const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
   return (
     <div
       style={{
-        position: 'fixed', inset: 0, zIndex: 200,
-        background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(2px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        background: 'rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(2px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
       }}
       onClick={state !== 'success' ? onClose : undefined}
     >
       <div
         style={{
-          background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 18,
-          padding: 28, maxWidth: 440, width: '100%',
+          background: '#f8fafc',
+          border: '1px solid #cbd5e1',
+          borderRadius: 18,
+          padding: 28,
+          maxWidth: 440,
+          width: '100%',
           boxShadow: '0 24px 60px rgba(0,0,0,0.25)',
         }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {state === 'success' ? (
           <div style={{ textAlign: 'center', padding: '16px 0' }}>
             <CheckCircle size={48} color="#22c55e" style={{ marginBottom: 16 }} />
-            <h3 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>
-              Report enviado!
-            </h3>
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', marginBottom: 8 }}>Report enviado!</h3>
             <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
-              Obrigado por nos ajudar a melhorar nossa aplicação. Nossa equipe irá analisar e corrigir o erro em breve.
+              Obrigado por nos ajudar a melhorar nossa aplicação. Nossa equipe vai analisar e corrigir o erro em breve.
             </p>
             <button
               onClick={onClose}
               style={{
-                padding: '10px 28px', borderRadius: 10, border: 'none',
-                background: 'var(--primary)', color: 'white',
-                fontWeight: 700, fontSize: 14, cursor: 'pointer',
+                padding: '10px 28px',
+                borderRadius: 10,
+                border: 'none',
+                background: 'var(--primary)',
+                color: 'white',
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: 'pointer',
               }}
             >
               Continuar respondendo
@@ -96,17 +189,19 @@ const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
             </div>
 
             <form onSubmit={handleSubmit}>
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>
-                Selecione o tipo de erro encontrado:
-              </p>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>Selecione o tipo de erro encontrado:</p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 18 }}>
-                {REPORT_TYPES.map(t => (
+                {REPORT_TYPES.map((t) => (
                   <label
                     key={t.value}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '10px 14px', borderRadius: 10, cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '10px 14px',
+                      borderRadius: 10,
+                      cursor: 'pointer',
                       border: `1.5px solid ${errorType === t.value ? 'var(--primary)' : 'var(--border)'}`,
                       background: errorType === t.value ? 'rgba(99,102,241,0.07)' : 'var(--bg-secondary)',
                       transition: 'border-color 0.15s, background 0.15s',
@@ -117,7 +212,10 @@ const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
                       name="error_type"
                       value={t.value}
                       checked={errorType === t.value}
-                      onChange={() => { setErrorType(t.value); setError(''); }}
+                      onChange={() => {
+                        setErrorType(t.value);
+                        setError('');
+                      }}
                       style={{ accentColor: 'var(--primary)', width: 16, height: 16, flexShrink: 0 }}
                     />
                     <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{t.label}</span>
@@ -131,32 +229,44 @@ const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
                 </label>
                 <textarea
                   value={description}
-                  onChange={e => setDescription(e.target.value)}
+                  onChange={(e) => setDescription(e.target.value)}
                   placeholder="Descreva o erro com mais detalhes..."
                   rows={3}
                   maxLength={500}
                   style={{
-                    width: '100%', padding: '10px 12px', borderRadius: 8,
-                    border: '1.5px solid var(--border)', background: 'var(--bg)',
-                    color: 'var(--text)', fontSize: 13, resize: 'vertical',
-                    outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box',
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: 8,
+                    border: '1.5px solid var(--border)',
+                    background: 'var(--bg)',
+                    color: 'var(--text)',
+                    fontSize: 13,
+                    resize: 'vertical',
+                    outline: 'none',
+                    fontFamily: 'inherit',
+                    boxSizing: 'border-box',
                   }}
                 />
               </div>
 
-              {error && (
-                <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12, fontWeight: 600 }}>{error}</p>
-              )}
+              {error && <p style={{ fontSize: 13, color: '#dc2626', marginBottom: 12, fontWeight: 600 }}>{error}</p>}
 
               <button
                 type="submit"
                 disabled={state === 'loading' || !errorType}
                 style={{
-                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                  padding: '12px', borderRadius: 10, border: 'none',
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  padding: '12px',
+                  borderRadius: 10,
+                  border: 'none',
                   background: !errorType ? 'var(--border)' : 'var(--primary)',
                   color: !errorType ? 'var(--text-secondary)' : 'white',
-                  fontWeight: 700, fontSize: 14,
+                  fontWeight: 700,
+                  fontSize: 14,
                   cursor: !errorType || state === 'loading' ? 'not-allowed' : 'pointer',
                   opacity: state === 'loading' ? 0.7 : 1,
                   transition: 'background 0.15s',
@@ -175,9 +285,52 @@ const ReportModal = ({ questionId, onClose }: ReportModalProps) => {
 
 const Questions = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { questions, subjects, vestibulares, loading } = useSelector((state: RootState) => state.questions);
+  const { questions, subjects, vestibulares, categories, loading, total } = useSelector((state: RootState) => state.questions);
 
-  const [filters, setFilters] = useState({ subject_id: '', difficulty: '', vestibular_id: '', with_image: '' });
+  const availableVestibulares = useMemo(() => {
+    const byKey = new Map<string, { id: number | string; name: string; full_name?: string }>();
+
+    vestibulares.forEach((v) => {
+      if (!v?.name) return;
+      byKey.set(normalizeText(v.name), v);
+    });
+
+    FALLBACK_VESTIBULARES.forEach((name) => {
+      const key = normalizeText(name);
+      if (!byKey.has(key)) {
+        byKey.set(key, {
+          id: `${VESTIBULAR_BANK_PREFIX}${name.toLowerCase()}`,
+          name,
+          full_name: name,
+        });
+      }
+    });
+
+    const priority = FALLBACK_VESTIBULARES.map((name) => byKey.get(normalizeText(name))).filter(
+      Boolean,
+    ) as { id: number | string; name: string; full_name?: string }[];
+
+    const rest = Array.from(byKey.values())
+      .filter(
+        (item) =>
+          !FALLBACK_VESTIBULARES.some(
+            (fallbackName) => normalizeText(fallbackName) === normalizeText(item.name),
+          ),
+      )
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+    return [...priority, ...rest];
+  }, [vestibulares]);
+
+  const [step, setStep] = useState<'vestibular' | 'subject' | 'practice'>('vestibular');
+  const [filters, setFilters] = useState({
+    subject_id: '',
+    difficulty: '',
+    vestibular_id: ALL_VESTIBULARES_VALUE,
+    vestibular_name: '',
+    category: '',
+    with_image: '',
+  });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAlt, setSelectedAlt] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -191,18 +344,55 @@ const Questions = () => {
   const statementRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
+    dispatch(clearQuestionsList());
     dispatch(fetchSubjects());
     dispatch(fetchVestibulares());
+    dispatch(fetchQuestionCategories());
+    dispatch(fetchQuestionsTotal());
   }, [dispatch]);
 
-  const handleSearch = async () => {
-    dispatch(fetchQuestions({ ...filters, limit: 200 }));
+  const resetPracticeState = () => {
     setCurrentIndex(0);
     setSelectedAlt(null);
     setAnswered(false);
     setIsCorrect(null);
     setFinished(false);
     setScore({ correct: 0, total: 0 });
+  };
+
+  const handleSearch = async (customFilters?: typeof filters) => {
+    const queryFilters = customFilters ?? filters;
+    const isSubjectSelected = Boolean(queryFilters.subject_id);
+
+    if (!isSubjectSelected) {
+      dispatch(clearQuestionsList());
+      resetPracticeState();
+      return;
+    }
+
+    const selectedVestibular = String(queryFilters.vestibular_id || '');
+    const selectedVestibularData = availableVestibulares.find(
+      (v) => String(v.id) === selectedVestibular,
+    );
+    const isBankFilter = isBankVestibularId(selectedVestibular);
+
+    const requestFilters = {
+      ...queryFilters,
+      subject_id: queryFilters.subject_id === ALL_SUBJECTS_VALUE ? '' : queryFilters.subject_id,
+      vestibular_id:
+        queryFilters.vestibular_id === ALL_VESTIBULARES_VALUE || isBankFilter
+          ? ''
+          : queryFilters.vestibular_id,
+      vestibular_name:
+        isBankFilter
+          ? selectedVestibular.replace(VESTIBULAR_BANK_PREFIX, '').toUpperCase()
+          : queryFilters.vestibular_name || selectedVestibularData?.name || '',
+      category: queryFilters.category?.trim() || '',
+    };
+
+    setStep('practice');
+    dispatch(fetchQuestions({ ...requestFilters, limit: 200 }));
+    resetPracticeState();
 
     try {
       const res = await api.post('/questions/session');
@@ -212,15 +402,63 @@ const Questions = () => {
     }
   };
 
+  const handleSelectVestibular = (vestibularId: string) => {
+    const vestibular = availableVestibulares.find((v) => String(v.id) === vestibularId);
+    setFilters({
+      subject_id: '',
+      difficulty: '',
+      vestibular_id: vestibularId,
+      vestibular_name: isBankVestibularId(vestibularId) ? vestibular?.name ?? '' : '',
+      category: '',
+      with_image: '',
+    });
+    setStep('subject');
+    resetPracticeState();
+  };
+
+  const handleSelectSubject = async (subjectId: string) => {
+    const nextFilters = {
+      subject_id: subjectId,
+      difficulty: '',
+      vestibular_id: filters.vestibular_id || ALL_VESTIBULARES_VALUE,
+      vestibular_name: filters.vestibular_name,
+      category: '',
+      with_image: '',
+    };
+    setFilters(nextFilters);
+    setStep('practice');
+    await handleSearch(nextFilters);
+  };
+
+  const handleBackToVestibulares = () => {
+    setStep('vestibular');
+    resetPracticeState();
+    setFilters((prev) => ({
+      ...prev,
+      subject_id: '',
+      difficulty: '',
+      vestibular_id: '',
+      vestibular_name: '',
+      category: '',
+      with_image: '',
+    }));
+  };
+
+  const handleBackToSubjects = () => {
+    setStep('subject');
+    resetPracticeState();
+    setFilters((prev) => ({ ...prev, subject_id: '', difficulty: '', category: '', with_image: '' }));
+  };
+
   const handleConfirm = async () => {
     if (selectedAlt === null) return;
     const question = questions[currentIndex];
-    const chosen = question.alternatives.find(a => a.id === selectedAlt);
+    const chosen = question.alternatives.find((a) => a.id === selectedAlt);
     const correct = chosen?.is_correct || false;
 
     setIsCorrect(correct);
     setAnswered(true);
-    setScore(prev => ({ correct: prev.correct + (correct ? 1 : 0), total: prev.total + 1 }));
+    setScore((prev) => ({ correct: prev.correct + (correct ? 1 : 0), total: prev.total + 1 }));
 
     if (sessionId) {
       try {
@@ -229,7 +467,9 @@ const Questions = () => {
           question_id: question.id,
           chosen_alternative_id: selectedAlt,
         });
-      } catch { /* ignore */ }
+      } catch {
+        // ignore
+      }
     }
   };
 
@@ -237,7 +477,7 @@ const Questions = () => {
     if (currentIndex + 1 >= questions.length) {
       setFinished(true);
     } else {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
       setSelectedAlt(null);
       setAnswered(false);
       setIsCorrect(null);
@@ -253,15 +493,25 @@ const Questions = () => {
     setScore({ correct: 0, total: 0 });
   };
 
-  // Clear highlights and close report modal when question changes
-  useEffect(() => { setHighlights([]); setReportOpen(false); }, [currentIndex]);
+  useEffect(() => {
+    setHighlights([]);
+    setReportOpen(false);
+  }, [currentIndex]);
 
   const getTextOffset = (container: HTMLElement, node: Node, offset: number): number => {
     let total = 0;
     const walk = (n: Node): boolean => {
-      if (n === node) { total += offset; return true; }
-      if (n.nodeType === Node.TEXT_NODE) { total += n.textContent?.length ?? 0; }
-      else { for (const child of Array.from(n.childNodes)) { if (walk(child)) return true; } }
+      if (n === node) {
+        total += offset;
+        return true;
+      }
+      if (n.nodeType === Node.TEXT_NODE) {
+        total += n.textContent?.length ?? 0;
+      } else {
+        for (const child of Array.from(n.childNodes)) {
+          if (walk(child)) return true;
+        }
+      }
       return false;
     };
     walk(container);
@@ -272,7 +522,7 @@ const Questions = () => {
     if (!ranges.length) return [];
     const sorted = [...ranges].sort((a, b) => a.start - b.start);
     const merged = [{ ...sorted[0] }];
-    for (let i = 1; i < sorted.length; i++) {
+    for (let i = 1; i < sorted.length; i += 1) {
       const last = merged[merged.length - 1];
       if (sorted[i].start <= last.end) last.end = Math.max(last.end, sorted[i].end);
       else merged.push({ ...sorted[i] });
@@ -290,7 +540,7 @@ const Questions = () => {
     const start = getTextOffset(container, range.startContainer, range.startOffset);
     const end = getTextOffset(container, range.endContainer, range.endOffset);
     if (start === end) return;
-    setHighlights(prev => mergeRanges([...prev, { start: Math.min(start, end), end: Math.max(start, end) }]));
+    setHighlights((prev) => mergeRanges([...prev, { start: Math.min(start, end), end: Math.max(start, end) }]));
     sel.removeAllRanges();
   };
 
@@ -300,7 +550,11 @@ const Questions = () => {
     let pos = 0;
     for (const { start, end } of highlights) {
       if (pos < start) parts.push(text.slice(pos, start));
-      parts.push(<mark key={start} className="question-highlight">{text.slice(start, end)}</mark>);
+      parts.push(
+        <mark key={start} className="question-highlight">
+          {text.slice(start, end)}
+        </mark>,
+      );
       pos = end;
     }
     if (pos < text.length) parts.push(text.slice(pos));
@@ -308,268 +562,391 @@ const Questions = () => {
   };
 
   const preprocessStatement = (text: string): string => {
-    // Remove \r\n do PDF e colapsa espaços extras
     text = text.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
 
-    // Remove título duplicado no início (ex: "Título Título, continua...")
     const words = text.split(' ');
-    for (let len = 3; len <= Math.min(12, Math.floor(words.length / 2)); len++) {
+    for (let len = 3; len <= Math.min(12, Math.floor(words.length / 2)); len += 1) {
       const firstPhrase = words.slice(0, len).join(' ');
       const rest = words.slice(len).join(' ');
       if (rest.startsWith(firstPhrase)) {
         const nextChar = rest[firstPhrase.length];
-        if (!nextChar || /[,.\s;!?]/.test(nextChar)) {
+        if (!nextChar || /[,\.\s;!?]/.test(nextChar)) {
           text = rest;
           break;
         }
       }
     }
 
-    // Insere quebra de parágrafo antes de citações bibliográficas
-    // Padrão: SOBRENOME, I. ou SOBRENOME; após ponto final
-    text = text.replace(
-      /(\.)(\s+)([A-ZÁÉÍÓÚÂÊÎÔÛÃÕÀÈÌ]{2,},\s[A-Z]\.)/g,
-      '.\n\n$3'
-    );
+    text = text.replace(/(\.)(\s+)([A-ZÁÉÍÓÚÂÊÎÔÛÃÕÀÈÌ]{2,},\s[A-Z]\.)/g, '.\n\n$3');
 
     return text.trim();
   };
 
+  const formatQuestionsCount = (value: number) => {
+    if (!value || value <= 0) return null;
+    return `${value.toLocaleString('pt-BR')}+ questões disponíveis`;
+  };
+
   const question: Question | undefined = questions[currentIndex];
-  const progress = questions.length > 0 ? ((currentIndex) / questions.length) * 100 : 0;
+  const progress = questions.length > 0 ? (currentIndex / questions.length) * 100 : 0;
+  const questionsCountLabel = formatQuestionsCount(total);
+  const hasActiveFilters =
+    filters.category !== '' ||
+    filters.difficulty !== '' ||
+    filters.with_image !== '' ||
+    (filters.subject_id !== '' && filters.subject_id !== ALL_SUBJECTS_VALUE) ||
+    (filters.vestibular_id !== '' && filters.vestibular_id !== ALL_VESTIBULARES_VALUE);
 
   return (
     <div className="questions-page">
       <Sidebar />
       <main className="page-content">
-        <h1 style={{ marginBottom: '24px', fontSize: '24px', fontWeight: 800 }}>Banco de Questoes</h1>
-
-        <div className="questions-layout">
-          <div className="questions-filters">
-            <h2><Filter size={16} /> Filtros</h2>
-
-            <div className="form-group">
-              <label>Matéria</label>
-              <select
-                className="form-control"
-                value={filters.subject_id}
-                onChange={e => setFilters({ ...filters, subject_id: e.target.value })}
-              >
-                <option value="">Todas as matérias</option>
-                {subjects.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Vestibular</label>
-              <select
-                className="form-control"
-                value={filters.vestibular_id}
-                onChange={e => setFilters({ ...filters, vestibular_id: e.target.value })}
-              >
-                <option value="">Todos os vestibulares</option>
-                {vestibulares.map(v => (
-                  <option key={v.id} value={v.id}>{v.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Dificuldade</label>
-              <select
-                className="form-control"
-                value={filters.difficulty}
-                onChange={e => setFilters({ ...filters, difficulty: e.target.value })}
-              >
-                <option value="">Todas</option>
-                <option value="easy">Fácil</option>
-                <option value="medium">Média</option>
-                <option value="hard">Difícil</option>
-              </select>
-            </div>
-
-            <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-              <input
-                type="checkbox"
-                id="with_image"
-                checked={filters.with_image === '1'}
-                onChange={e => setFilters({ ...filters, with_image: e.target.checked ? '1' : '' })}
-                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-              />
-              <label htmlFor="with_image" style={{ marginBottom: 0, cursor: 'pointer', fontSize: '14px' }}>
-                Só questões com imagem
-              </label>
-            </div>
-
-            <button className="filter-btn" onClick={handleSearch} disabled={loading}>
-              {loading ? 'Buscando...' : 'Buscar questões'}
-            </button>
-            {Object.values(filters).some(v => v !== '') && (
-              <button
-                className="filter-clear-btn"
-                onClick={() => setFilters({ subject_id: '', difficulty: '', vestibular_id: '', with_image: '' })}
-              >
-                Limpar filtros
-              </button>
-            )}
-          </div>
-
-          <div>
-            {loading ? (
-              <div className="questions-loading">
-                <div className="questions-spinner" />
-                <p>Carregando questões...</p>
+        {step !== 'practice' ? (
+          <>
+            <div className="questions-hero">
+              <div className="questions-breadcrumb">
+                <span>Início</span>
+                <ChevronRight size={12} />
+                <span className="questions-breadcrumb-current">Questões</span>
               </div>
-            ) : finished ? (
-              <div className="question-container">
-                <div className="question-result">
-                  <span className="result-score">{Math.round((score.correct / score.total) * 100)}%</span>
-                  <h2>Resultado final</h2>
-                  <p>{score.correct} de {score.total} questoes corretas</p>
-                  <button className="btn-primary" onClick={handleRestart} style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto' }}>
-                    <RotateCcw size={16} />
-                    Tentar novamente
-                  </button>
-                </div>
+
+              <div className="questions-hero-top">
+                <h1 className="questions-hero-title">
+                  O que vamos praticar no <span className="questions-hero-accent">Banco de Questões</span>?
+                </h1>
+                {questionsCountLabel && <span className="questions-volume-badge">{questionsCountLabel}</span>}
               </div>
-            ) : questions.length === 0 ? (
-              <div className="questions-empty">
-                <Filter size={48} />
-                <h3>Nenhuma questao carregada</h3>
-                <p>Use os filtros ao lado para buscar questoes e comecar a praticar.</p>
-              </div>
-            ) : question ? (
-              <div className="question-container">
-                {reportOpen && <ReportModal questionId={question.id} onClose={() => setReportOpen(false)} />}
 
-                <div className="progress-bar">
-                  <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
-                </div>
+              <p className="questions-hero-subtitle">
+                {step === 'vestibular'
+                  ? 'Escolha a banca ou vestibular que você quer estudar.'
+                  : 'Agora escolha a disciplina para iniciar as questões.'}
+              </p>
+            </div>
 
-                <div className="question-meta">
-                  {question.subject && (
-                    <span className="question-meta-tag question-meta-tag-topic">{question.subject}</span>
-                  )}
-                  {question.vestibular && (
-                    <span className="question-meta-tag question-meta-tag-vestibular">{question.vestibular}</span>
-                  )}
-                  {question.year && (
-                    <span className="question-meta-tag question-meta-tag-year">{question.year}</span>
-                  )}
-                  <span className={`badge badge-${question.difficulty}`}>
-                    {question.difficulty === 'easy' ? 'Fácil' : question.difficulty === 'medium' ? 'Média' : 'Difícil'}
-                  </span>
-                </div>
-
-                <div className="highlight-toolbar">
-                  <button
-                    className={`highlight-toggle${highlightMode ? ' active' : ''}`}
-                    onClick={() => setHighlightMode(m => !m)}
-                    title="Grifar enunciado"
-                  >
-                    <PenLine size={14} />
-                    Grifar
-                  </button>
-                  {highlights.length > 0 && (
-                    <button className="highlight-clear" onClick={() => setHighlights([])} title="Limpar grifos">
-                      <Trash2 size={14} />
+            {step === 'vestibular' ? (
+              <div className="vestibular-picker">
+                {loading && availableVestibulares.length === 0 ? (
+                  <div className="questions-loading">
+                    <div className="questions-spinner" />
+                    <p>Carregando vestibulares...</p>
+                  </div>
+                ) : (
+                  <div className="vestibular-picker-grid">
+                    <button className="vestibular-card" onClick={() => handleSelectVestibular(ALL_VESTIBULARES_VALUE)}>
+                      <span className="vestibular-card-icon" style={{ background: '#e0e7ff', color: '#3730a3' }}>
+                        <GraduationCap size={22} />
+                      </span>
+                      <span className="vestibular-card-name">Todos os vestibulares</span>
                     </button>
-                  )}
-                </div>
-
-                <p
-                  ref={statementRef}
-                  className={`question-statement${highlightMode ? ' highlight-active' : ''}`}
-                  onMouseUp={handleMouseUp}
-                >
-                  {renderWithHighlights(preprocessStatement(question.statement))}
-                </p>
-
-                {question.image_url && (
-                  <div style={{ marginBottom: '16px' }}>
-                    <img src={question.image_url} alt="Imagem da questão" className="question-image" style={{ marginBottom: '4px' }} />
-                    <p style={{ fontSize: '11px', color: 'var(--text-secondary)', textAlign: 'center', margin: 0 }}>
-                      [{question.year} — {question.image_url.split('/').pop()}]
-                    </p>
+                    {availableVestibulares.map((v, index) => (
+                      <button key={v.id} className="vestibular-card" onClick={() => handleSelectVestibular(String(v.id))}>
+                        <span className="vestibular-card-icon" style={{ background: index % 2 === 0 ? '#eff6ff' : '#eef2ff', color: index % 2 === 0 ? '#1d4ed8' : '#4f46e5' }}>
+                          <GraduationCap size={22} />
+                        </span>
+                        <span className="vestibular-card-name">{v.name}</span>
+                      </button>
+                    ))}
                   </div>
                 )}
+              </div>
+            ) : (
+              <>
+                <div className="questions-step-actions">
+                  <button className="filter-back-btn" onClick={handleBackToVestibulares}>
+                    <ArrowLeft size={14} /> Trocar vestibular
+                  </button>
+                </div>
 
-                {answered && (
-                  <div className={`question-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>
-                    <strong>{isCorrect ? '✓ Resposta correta!' : '✗ Resposta incorreta!'}</strong>
-                    {!isCorrect && (
-                      <span>A resposta correta era: {question.alternatives.find(a => a.is_correct)?.letter}</span>
+                <div className="subject-picker">
+                  {loading && subjects.length === 0 ? (
+                    <div className="questions-loading">
+                      <div className="questions-spinner" />
+                      <p>Carregando matérias...</p>
+                    </div>
+                  ) : (
+                    <div className="subject-picker-grid">
+                      <button className="subject-card" onClick={() => handleSelectSubject(ALL_SUBJECTS_VALUE)}>
+                        <span className="subject-card-icon" style={{ background: '#eef2ff', color: '#3730a3' }}>
+                          <BookOpen size={24} />
+                        </span>
+                        <span className="subject-card-name">Todas as matérias</span>
+                      </button>
+                      {subjects.map((s, index) => {
+                        const { icon: Icon, bg, color } = getSubjectVisual(s.name, index);
+                        return (
+                          <button key={s.id} className="subject-card" onClick={() => handleSelectSubject(String(s.id))}>
+                            <span className="subject-card-icon" style={{ background: bg, color }}>
+                              <Icon size={24} />
+                            </span>
+                            <span className="subject-card-name">{s.name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          <div className="questions-layout">
+	            <div className="questions-filters">
+	              <div className="questions-filters-top">
+	                <h2>
+	                  <Filter size={16} /> Filtros
+	                </h2>
+	              </div>
+
+              <div className="form-group">
+                <label>Matéria</label>
+                <select className="form-control" value={filters.subject_id} onChange={(e) => setFilters({ ...filters, subject_id: e.target.value })}>
+                  <option value="">Selecione uma matéria</option>
+                  <option value={ALL_SUBJECTS_VALUE}>Todas as matérias</option>
+                  {subjects.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Vestibular</label>
+                <select
+                  className="form-control"
+                  value={filters.vestibular_id}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    const vestibular = availableVestibulares.find((v) => String(v.id) === selectedId);
+                    setFilters({
+                      ...filters,
+                      vestibular_id: selectedId,
+                      vestibular_name: isBankVestibularId(selectedId) ? vestibular?.name ?? '' : '',
+                    });
+                  }}
+                >
+                  <option value={ALL_VESTIBULARES_VALUE}>Todos os vestibulares</option>
+                  {availableVestibulares.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Categoria</label>
+                <select
+                  className="form-control"
+                  value={filters.category}
+                  onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                >
+                  <option value="">Todas as categorias</option>
+                  {categories.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.label} ({category.count})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Dificuldade</label>
+                <select className="form-control" value={filters.difficulty} onChange={(e) => setFilters({ ...filters, difficulty: e.target.value })}>
+                  <option value="">Todas</option>
+                  <option value="easy">Fácil</option>
+                  <option value="medium">Média</option>
+                  <option value="hard">Difícil</option>
+                </select>
+              </div>
+
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                <input
+                  type="checkbox"
+                  id="with_image"
+                  checked={filters.with_image === '1'}
+                  onChange={(e) => setFilters({ ...filters, with_image: e.target.checked ? '1' : '' })}
+                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                />
+                <label htmlFor="with_image" style={{ marginBottom: 0, cursor: 'pointer', fontSize: '14px' }}>
+                  Só questões com imagem
+                </label>
+              </div>
+
+              <button className="filter-btn" onClick={() => handleSearch()} disabled={loading}>
+                {loading ? 'Buscando...' : 'Buscar questões'}
+              </button>
+              {hasActiveFilters && (
+                <button
+                  className="filter-clear-btn"
+                  onClick={() =>
+                    setFilters({
+                      subject_id: filters.subject_id,
+                      difficulty: '',
+                      vestibular_id: filters.vestibular_id,
+                      vestibular_name: filters.vestibular_name,
+                      category: '',
+                      with_image: '',
+                    })
+                  }
+                >
+                  Limpar filtros
+                </button>
+              )}
+            </div>
+
+            <div>
+              {loading ? (
+                <div className="questions-loading">
+                  <div className="questions-spinner" />
+                  <p>Carregando questões...</p>
+                </div>
+              ) : finished ? (
+                <div className="question-container">
+                  <div className="question-result">
+                    <span className="result-score">{Math.round((score.correct / score.total) * 100)}%</span>
+                    <h2>Resultado final</h2>
+                    <p>
+                      {score.correct} de {score.total} questões corretas
+                    </p>
+                    <button className="btn-primary" onClick={handleRestart} style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto' }}>
+                      <RotateCcw size={16} />
+                      Tentar novamente
+                    </button>
+                  </div>
+                </div>
+              ) : questions.length === 0 ? (
+                <div className="questions-empty">
+                  <Filter size={48} />
+                  <h3>Nenhuma questão carregada</h3>
+                  <p>Use os filtros ao lado para buscar questões e começar a praticar.</p>
+                </div>
+              ) : question ? (
+                <div className="question-container">
+                  {reportOpen && <ReportModal questionId={question.id} onClose={() => setReportOpen(false)} />}
+
+                  <div className="progress-bar">
+                    <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+                  </div>
+
+                  <div className="question-meta">
+                    {question.subject && <span className="question-meta-tag question-meta-tag-topic">{question.subject}</span>}
+                    {question.vestibular && <span className="question-meta-tag question-meta-tag-vestibular">{question.vestibular}</span>}
+                    {question.year && <span className="question-meta-tag question-meta-tag-year">{question.year}</span>}
+                    <span className={`badge badge-${question.difficulty}`}>
+                      {question.difficulty === 'easy' ? 'Fácil' : question.difficulty === 'medium' ? 'Média' : 'Difícil'}
+                    </span>
+                  </div>
+
+                  <div className="highlight-toolbar">
+                    <button className={`highlight-toggle${highlightMode ? ' active' : ''}`} onClick={() => setHighlightMode((m) => !m)} title="Grifar enunciado">
+                      <PenLine size={14} />
+                      Grifar
+                    </button>
+                    {highlights.length > 0 && (
+                      <button className="highlight-clear" onClick={() => setHighlights([])} title="Limpar grifos">
+                        <Trash2 size={14} />
+                      </button>
                     )}
                   </div>
-                )}
 
-                <div className="alternatives-list">
-                  {[...question.alternatives].sort((a, b) => a.letter.localeCompare(b.letter)).map((alt: Alternative) => {
-                    let cls = 'alternative-item';
-                    if (alt.id === selectedAlt) cls += ' selected';
-                    if (answered) {
-                      cls += ' disabled';
-                      if (alt.is_correct) cls += ' correct';
-                      else if (alt.id === selectedAlt && !alt.is_correct) cls += ' incorrect';
-                    }
-                    return (
-                      <div
-                        key={alt.id}
-                        className={cls}
-                        onClick={() => !answered && setSelectedAlt(alt.id)}
-                      >
-                        <div className="alternative-letter">{alt.letter}</div>
-                        <div className="alternative-text">
-                          {alt.text}
-                          {alt.image_url && <img src={alt.image_url} alt={`Alternativa ${alt.letter}`} className="alternative-image" />}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                  <p ref={statementRef} className={`question-statement${highlightMode ? ' highlight-active' : ''}`} onMouseUp={handleMouseUp}>
+                    {renderWithHighlights(preprocessStatement(question.statement))}
+                  </p>
 
-                <div className="question-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  {!answered ? (
-                    <button
-                      className="btn-primary"
-                      onClick={handleConfirm}
-                      disabled={selectedAlt === null}
-                    >
-                      Confirmar resposta
-                    </button>
-                  ) : (
-                    <button className="btn-primary" onClick={handleNext} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {currentIndex + 1 >= questions.length ? 'Ver resultado' : 'Proxima questao'}
-                      <ChevronRight size={16} />
-                    </button>
+                  {question.image_url && (
+                    <div style={{ marginBottom: '16px' }}>
+                      <img src={question.image_url} alt="Imagem da questão" className="question-image" style={{ marginBottom: '4px' }} />
+                      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', textAlign: 'center', margin: 0 }}>
+                        [{question.year} - {question.image_url.split('/').pop()}]
+                      </p>
+                    </div>
                   )}
-                  <button
-                    onClick={() => setReportOpen(true)}
-                    title="Reportar erro nesta questão"
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      padding: '9px 14px', borderRadius: 9,
-                      border: '1.5px solid var(--border)', background: 'transparent',
-                      color: 'var(--text-secondary)', fontSize: 13, fontWeight: 600,
-                      cursor: 'pointer', transition: 'border-color 0.15s, color 0.15s',
-                      flexShrink: 0,
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#ef4444'; (e.currentTarget as HTMLButtonElement).style.color = '#ef4444'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)'; }}
-                  >
-                    <Flag size={14} />
-                    Reportar erro
-                  </button>
+
+                  {answered && (
+                    <div className={`question-feedback ${isCorrect ? 'correct' : 'incorrect'}`}>
+                      <strong>{isCorrect ? 'Resposta correta!' : 'Resposta incorreta!'}</strong>
+                      {!isCorrect && <span>A resposta correta era: {question.alternatives.find((a) => a.is_correct)?.letter}</span>}
+                    </div>
+                  )}
+
+                  <div className="alternatives-list">
+                    {[...question.alternatives].sort((a, b) => a.letter.localeCompare(b.letter)).map((alt: Alternative) => {
+                      let cls = 'alternative-item';
+                      if (alt.id === selectedAlt) cls += ' selected';
+                      if (answered) {
+                        cls += ' disabled';
+                        if (alt.is_correct) cls += ' correct';
+                        else if (alt.id === selectedAlt && !alt.is_correct) cls += ' incorrect';
+                      }
+                      return (
+                        <div key={alt.id} className={cls} onClick={() => !answered && setSelectedAlt(alt.id)}>
+                          <div className="alternative-letter">{alt.letter}</div>
+                          <div className="alternative-text">
+                            {alt.text}
+                            {alt.image_url && <img src={alt.image_url} alt={`Alternativa ${alt.letter}`} className="alternative-image" />}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="question-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    {!answered ? (
+                      <button className="btn-primary" onClick={handleConfirm} disabled={selectedAlt === null}>
+                        Confirmar resposta
+                      </button>
+                    ) : (
+                      <button className="btn-primary" onClick={handleNext} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {currentIndex + 1 >= questions.length ? 'Ver resultado' : 'Próxima questão'}
+                        <ChevronRight size={16} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setReportOpen(true)}
+                      title="Reportar erro nesta questão"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '9px 14px',
+                        borderRadius: 9,
+                        border: '1.5px solid var(--border)',
+                        background: 'transparent',
+                        color: 'var(--text-secondary)',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'border-color 0.15s, color 0.15s',
+                        flexShrink: 0,
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = '#ef4444';
+                        (e.currentTarget as HTMLButtonElement).style.color = '#ef4444';
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)';
+                        (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-secondary)';
+                      }}
+                    >
+                      <Flag size={14} />
+                      Reportar erro
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
 };
 
 export default Questions;
+
+
+
+
+
